@@ -1,0 +1,314 @@
+{
+  "tr_000": {
+    "maps_to": "card_004",
+    "card_name": "El Emperador"
+  },
+  "tr_001": {
+    "maps_to": "card_003",
+    "card_name": "La Emperatriz"
+  },
+  "tr_002": {
+    "maps_to": "card_073",
+    "card_name": "Diez de Oros"
+  },
+  "tr_003": {
+    "maps_to": "card_006",
+    "card_name": "Los Enamorados"
+  },
+  "tr_004": {
+    "maps_to": "card_068",
+    "card_name": "Cinco de Oros"
+  },
+  "tr_005": {
+    "maps_to": "card_014",
+    "card_name": "La Templanza"
+  },
+  "tr_006": {
+    "maps_to": "card_050",
+    "card_name": "As de Espadas"
+  },
+  "tr_007": {
+    "maps_to": "card_067",
+    "card_name": "Cuatro de Oros"
+  },
+  "tr_008": {
+    "maps_to": "card_074",
+    "card_name": "Paje de Oros"
+  },
+  "tr_009": {
+    "maps_to": "card_019",
+    "card_name": "El Sol"
+  },
+  "tr_010": {
+    "maps_to": "card_076",
+    "card_name": "Reina de Oros"
+  },
+  "tr_011": {
+    "maps_to": "card_052",
+    "card_name": "Tres de Espadas"
+  },
+  "tr_012": {
+    "maps_to": "card_064",
+    "card_name": "As de Oros"
+  },
+  "tr_013": {
+    "maps_to": "card_012",
+    "card_name": "El Colgado"
+  },
+  "tr_014": {
+    "maps_to": "card_009",
+    "card_name": "El Ermitaño"
+  },
+  "tr_015": {
+    "maps_to": "card_065",
+    "card_name": "Dos de Oros"
+  },
+  "tr_016": {
+    "maps_to": "card_056",
+    "card_name": "Siete de Espadas"
+  },
+  "tr_017": {
+    "maps_to": "card_022",
+    "card_name": "As de Bastos"
+  },
+  "tr_018": {
+    "maps_to": "card_023",
+    "card_name": "Dos de Bastos"
+  },
+  "tr_019": {
+    "maps_to": "card_008",
+    "card_name": "La Fortaleza"
+  },
+  "tr_020": {
+    "maps_to": "card_053",
+    "card_name": "Cuatro de Espadas"
+  },
+  "tr_021": {
+    "maps_to": "card_040",
+    "card_name": "Cinco de Copas"
+  },
+  "tr_022": {
+    "maps_to": "card_071",
+    "card_name": "Ocho de Oros"
+  },
+  "tr_023": {
+    "maps_to": "card_075",
+    "card_name": "Caballero de Oros"
+  },
+  "tr_024": {
+    "maps_to": "card_059",
+    "card_name": "Diez de Espadas"
+  },
+  "tr_025": {
+    "maps_to": "card_036",
+    "card_name": "As de Copas"
+  },
+  "tr_026": {
+    "maps_to": "card_062",
+    "card_name": "Reina de Espadas"
+  },
+  "tr_027": {
+    "maps_to": "card_046",
+    "card_name": "Paje de Copas"
+  },
+  "tr_028": {
+    "maps_to": "card_047",
+    "card_name": "Caballero de Copas"
+  },
+  "tr_029": {
+    "maps_to": "card_051",
+    "card_name": "Dos de Espadas"
+  },
+  "tr_030": {
+    "maps_to": "card_069",
+    "card_name": "Seis de Oros"
+  },
+  "tr_031": {
+    "maps_to": "card_024",
+    "card_name": "Tres de Bastos"
+  },
+  "tr_032": {
+    "maps_to": "card_029",
+    "card_name": "Ocho de Bastos"
+  },
+  "tr_033": {
+    "maps_to": "card_032",
+    "card_name": "Paje de Bastos"
+  },
+  "tr_034": {
+    "maps_to": "card_055",
+    "card_name": "Seis de Espadas"
+  },
+  "tr_035": {
+    "maps_to": "card_025",
+    "card_name": "Cuatro de Bastos"
+  },
+  "tr_036": {
+    "maps_to": "card_000",
+    "card_name": "El Loco"
+  },
+  "tr_037": {
+    "maps_to": "card_015",
+    "card_name": "El Diablo"
+  },
+  "tr_038": {
+    "maps_to": "card_016",
+    "card_name": "La Torre"
+  },
+  "tr_039": {
+    "maps_to": "card_058",
+    "card_name": "Nueve de Espadas"
+  },
+  "tr_040": {
+    "maps_to": "card_043",
+    "card_name": "Ocho de Copas"
+  },
+  "tr_041": {
+    "maps_to": "card_044",
+    "card_name": "Nueve de Copas"
+  },
+  "tr_042": {
+    "maps_to": "card_045",
+    "card_name": "Diez de Copas"
+  },
+  "tr_043": {
+    "maps_to": "card_057",
+    "card_name": "Ocho de Espadas"
+  },
+  "tr_044": {
+    "maps_to": "card_037",
+    "card_name": "Dos de Copas"
+  },
+  "tr_045": {
+    "maps_to": "card_060",
+    "card_name": "Paje de Espadas"
+  },
+  "tr_046": {
+    "maps_to": "card_001",
+    "card_name": "El Mago"
+  },
+  "tr_047": {
+    "maps_to": "card_070",
+    "card_name": "Siete de Oros"
+  },
+  "tr_048": {
+    "maps_to": "card_049",
+    "card_name": "Rey de Copas"
+  },
+  "tr_049": {
+    "maps_to": "card_026",
+    "card_name": "Cinco de Bastos"
+  },
+  "tr_050": {
+    "maps_to": "card_028",
+    "card_name": "Siete de Bastos"
+  },
+  "tr_051": {
+    "maps_to": "card_061",
+    "card_name": "Caballero de Espadas"
+  },
+  "tr_052": {
+    "maps_to": "card_063",
+    "card_name": "Rey de Espadas"
+  },
+  "tr_053": {
+    "maps_to": "card_054",
+    "card_name": "Cinco de Espadas"
+  },
+  "tr_054": {
+    "maps_to": "card_027",
+    "card_name": "Seis de Bastos"
+  },
+  "tr_055": {
+    "maps_to": "card_042",
+    "card_name": "Siete de Copas"
+  },
+  "tr_056": {
+    "maps_to": "card_002",
+    "card_name": "La Suma Sacerdotisa"
+  },
+  "tr_057": {
+    "maps_to": "card_072",
+    "card_name": "Nueve de Oros"
+  },
+  "tr_058": {
+    "maps_to": "card_018",
+    "card_name": "La Luna"
+  },
+  "tr_059": {
+    "maps_to": "card_033",
+    "card_name": "Caballero de Bastos"
+  },
+  "tr_060": {
+    "maps_to": "card_031",
+    "card_name": "Diez de Bastos"
+  },
+  "tr_061": {
+    "maps_to": "card_066",
+    "card_name": "Tres de Oros"
+  },
+  "tr_062": {
+    "maps_to": "card_038",
+    "card_name": "Tres de Copas"
+  },
+  "tr_063": {
+    "maps_to": "card_077",
+    "card_name": "Rey de Oros"
+  },
+  "tr_064": {
+    "maps_to": "card_007",
+    "card_name": "El Carro"
+  },
+  "tr_065": {
+    "maps_to": "card_017",
+    "card_name": "La Estrella"
+  },
+  "tr_066": {
+    "maps_to": "card_039",
+    "card_name": "Cuatro de Copas"
+  },
+  "tr_067": {
+    "maps_to": "card_041",
+    "card_name": "Seis de Copas"
+  },
+  "tr_068": {
+    "maps_to": "card_021",
+    "card_name": "El Mundo"
+  },
+  "tr_069": {
+    "maps_to": "card_048",
+    "card_name": "Reina de Copas"
+  },
+  "tr_070": {
+    "maps_to": "card_010",
+    "card_name": "La Rueda de la Fortuna"
+  },
+  "tr_071": {
+    "maps_to": "card_013",
+    "card_name": "La Muerte"
+  },
+  "tr_072": {
+    "maps_to": "card_030",
+    "card_name": "Nueve de Bastos"
+  },
+  "tr_073": {
+    "maps_to": "card_011",
+    "card_name": "La Justicia"
+  },
+  "tr_074": {
+    "maps_to": "card_020",
+    "card_name": "El Juicio"
+  },
+  "tr_075": {
+    "maps_to": "card_035",
+    "card_name": "Rey de Bastos"
+  },
+  "tr_076": {
+    "maps_to": "card_005",
+    "card_name": "El Hierofante"
+  },
+  "tr_077": {
+    "maps_to": "card_034",
+    "card_name": "Reina de Bastos"
+  }
+}

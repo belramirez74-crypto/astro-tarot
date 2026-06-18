@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro Tarot - Astrolog&iacute;a y Tarot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --violeta-oscuro: #0a0e1a;
+            --violeta-medio: #3d1a6e;
+            --violeta-claro: #7b2dbf;
+            --violeta-brillante: #a855f7;
+            --rojo-oscuro: #4a0e0e;
+            --rojo-medio: #8b1a1a;
+            --rojo-claro: #dc2626;
+            --rojo-brillante: #ef4444;
+            --verde-oscuro: #0a2e1a;
+            --verde-medio: #1a6e3d;
+            --verde-claro: #22c55e;
+            --verde-brillante: #4ade80;
+            --oro: #fbbf24;
+            --blanco: #f8fafc;
+            --gris: #94a3b8;
+            --magenta: #c0266e;
+            --magenta-brillo: #ec4899;
+            --azul: #3b82f6;
+            --azul-claro: #60a5fa;
+            --marron: #a0522d;
+            --plata: #9ca3af;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--violeta-oscuro);
+            color: var(--blanco);
+            overflow-x: hidden;
+        }
+        #stars-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        .content { position: relative; z-index: 1; }
+.fade-section {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-section.visible {
+    opacity: 1; transform: translateY(0);
+}
+        .section-divider {
+            width: 100%; height: 80px; position: relative; z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .section-divider::before {
+            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--violeta-claro), var(--violeta-brillante), var(--violeta-claro), transparent);
+            opacity: 0.3;
+        }
+        .section-divider .divider-icon {
+            font-size: 1.2rem; color: var(--violeta-brillante); opacity: 0.25;
+            text-shadow: 0 0 20px rgba(160, 90, 210, 0.3);
+            animation: dividerPulse 3s ease-in-out infinite;
+        }
+        @keyframes dividerPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.1); }
+        }
+        .hero {
+            display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+            padding: 10px 2rem 2rem;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(140, 60, 220, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(100, 30, 180, 0.15) 0%, transparent 40%),
+                linear-gradient(135deg, #0a0e1a 0%, #2a0a4a 50%, #0a0e1a 100%);
+            z-index: 0; opacity: 0.9;
+            animation: pulseBg 10s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        .hero::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+        .constellation-star {
+            position: absolute; color: rgba(200, 176, 224, 0.5);
+            font-size: 1.2rem; z-index: 1; pointer-events: none;
+            text-shadow: 0 0 20px rgba(160, 90, 210, 0.3);
+            animation: floatStar 20s ease-in-out infinite alternate;
+        }
+        .constellation-star:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; font-size: 1.4rem; opacity: 0.6; }
+        .constellation-star:nth-child(2) { top: 25%; left: 70%; animation-delay: -3s; font-size: 1rem; opacity: 0.4; }
+        .constellation-star:nth-child(3) { top: 45%; left: 30%; animation-delay: -6s; font-size: 1.8rem; opacity: 0.5; }
+        .constellation-star:nth-child(4) { top: 55%; left: 80%; animation-delay: -9s; font-size: 1.2rem; opacity: 0.4; }
+        .constellation-star:nth-child(5) { top: 70%; left: 15%; animation-delay: -12s; font-size: 1.6rem; opacity: 0.5; }
+        .constellation-star:nth-child(6) { top: 80%; left: 60%; animation-delay: -15s; font-size: 1rem; opacity: 0.3; }
+        .constellation-star:nth-child(7) { top: 35%; left: 50%; animation-delay: -2s; font-size: 2rem; opacity: 0.4; }
+        .constellation-star:nth-child(8) { top: 10%; left: 45%; animation-delay: -7s; font-size: 0.9rem; opacity: 0.5; }
+        .constellation-star:nth-child(9) { top: 65%; left: 40%; animation-delay: -11s; font-size: 1.3rem; opacity: 0.4; }
+        .constellation-star:nth-child(10) { top: 90%; left: 25%; animation-delay: -14s; font-size: 1.1rem; opacity: 0.3; }
+        .constellation-star:nth-child(11) { top: 20%; left: 10%; animation-delay: -5s; font-size: 0.8rem; opacity: 0.4; }
+        .constellation-star:nth-child(12) { top: 75%; left: 90%; animation-delay: -8s; font-size: 1.5rem; opacity: 0.4; }
+        @keyframes floatStar {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(15px, -10px) scale(1.1) rotate(10deg); }
+            66% { transform: translate(-10px, 15px) scale(0.9) rotate(-5deg); }
+            100% { transform: translate(8px, -8px) scale(1.05) rotate(8deg); }
+        }
+        @keyframes pulseBg {
+            0% { transform: translate(-5%, -5%) scale(1); opacity: 0.3; }
+            50% { transform: translate(2%, 3%) scale(1.05); opacity: 0.5; }
+            100% { transform: translate(-3%, 2%) scale(1.02); opacity: 0.4; }
+        }
+        .hero * { position: relative; z-index: 2; }
+        .hero-symbol { margin-bottom: 0.3rem; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .hero-img { width: 70px; height: auto; filter: drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900;
+            color: var(--violeta-brillante);
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.08em; margin-bottom: 5rem;
+        }
+        .hero p {
+            font-size: clamp(0.95rem, 1.8vw, 1.15rem); color: var(--gris);
+            max-width: 700px; line-height: 1.8; margin-bottom: 6rem;
+        }
+        .btn-scroll {
+            display: inline-block; padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, var(--violeta-claro), var(--rojo-claro));
+            color: var(--blanco); text-decoration: none; border-radius: 50px;
+            font-weight: 600; font-size: 1.1rem; transition: all 0.3s; border: 2px solid transparent;
+        }
+        .btn-scroll:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(168,85,247,0.4);
+            border-color: var(--verde-claro);
+        }
+        .intro {
+            max-width: 900px; margin: 0 auto; padding: 2rem 2rem; text-align: center;
+        }
+        .intro h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 1.5rem; color: #c8b0e0;
+        }
+        .intro p { font-size: 1.1rem; line-height: 1.8; color: var(--gris); }
+        .intro .highlight { color: var(--magenta-brillo); font-weight: 600; }
+        .history-section {
+            max-width: 800px; margin: 0 auto; padding: 1rem 2rem 0;
+            text-align: center;
+        }
+        .history-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2rem;
+            margin-bottom: 1.5rem; color: #c8b0e0;
+        }
+        .history-section p {
+            font-size: 1.05rem; line-height: 1.8; color: var(--gris);
+        }
+        .cards-section {
+            max-width: 1400px; margin: 0 auto; padding: 2rem 2rem 5rem;
+        }
+        .cards-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2rem;
+            text-align: center; margin-bottom: 0.5rem; color: #c8b0e0;
+        }
+        .cards-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 2rem; font-size: 1rem;
+        }
+        .section-label {
+            font-family: 'Cinzel', serif; font-size: 2rem;
+            color: #fff; margin: 3rem 0 1.5rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(120, 80, 160, 0.2);
+            text-align: center; letter-spacing: 0.05em;
+        }
+        .section-label.major,
+        .section-label.wands,
+        .section-label.cups,
+        .section-label.swords,
+        .section-label.pentacles { }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.2rem;
+        }
+        .card-tarot {
+            background: linear-gradient(160deg, #0d0d14, #120a1a, #0a0812);
+            border: 1px solid rgba(120, 80, 160, 0.2);
+            border-radius: 14px;
+            padding: 1.5rem 1rem 1rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+            box-shadow: inset 0 0 60px rgba(80, 30, 120, 0.08), 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .card-tarot::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid rgba(160, 120, 200, 0.08);
+            border-radius: 12px;
+            margin: 6px;
+            pointer-events: none;
+        }
+        .card-tarot::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(100, 40, 160, 0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 70% 80%, rgba(60, 20, 100, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .card-tarot:hover {
+            transform: translateY(-5px);
+            border-color: rgba(140, 100, 200, 0.35);
+            box-shadow: inset 0 0 60px rgba(80, 30, 120, 0.12), 0 15px 40px rgba(60, 20, 100, 0.25);
+        }
+        .card-img-wrapper {
+            display: flex; justify-content: center; align-items: center;
+            min-height: 80px; margin-bottom: 0.6rem;
+        }
+        .card-img-wrapper img {
+            width: 106px; height: auto;
+            filter: drop-shadow(0 3px 12px rgba(0,0,0,0.6));
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .card-name {
+            font-family: 'Cinzel', serif; font-size: 0.95rem;
+            font-weight: 700; text-align: center; margin-bottom: 0.2rem;
+            color: #c8b0e0; letter-spacing: 0.03em;
+            text-shadow: 0 0 20px rgba(140, 100, 200, 0.2);
+        }
+        .card-number {
+            font-family: 'Cinzel', serif; font-size: 0.75rem;
+            text-align: center; color: rgba(160, 120, 200, 0.5);
+            margin-bottom: 0.7rem; letter-spacing: 0.05em;
+        }
+        .card-divider {
+            width: 40px; height: 1px; margin: 0 auto 0.7rem;
+            background: linear-gradient(90deg, transparent, rgba(160, 120, 200, 0.3), transparent);
+        }
+        .card-desc {
+            font-size: 0.78rem; line-height: 1.5; color: #9a8aaa; margin-bottom: 0.8rem;
+            text-align: center; font-style: italic;
+        }
+        .card-details {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem;
+            border-top: 1px solid rgba(120, 80, 160, 0.12); padding-top: 0.5rem;
+        }
+        .card-detail-item { display: flex; flex-direction: column; gap: 0.05rem; }
+        .card-detail-item .label {
+            font-size: 0.55rem; text-transform: uppercase;
+            letter-spacing: 0.8px; color: rgba(160, 120, 200, 0.4);
+        }
+        .card-detail-item .value {
+            font-size: 0.75rem; font-weight: 600;
+            color: #a898c0;
+        }
+        .card-tarot.featured {
+            border-color: rgba(180, 140, 220, 0.25);
+            background: linear-gradient(160deg, #100818, #160d20, #0c0614);
+        }
+        .card-tarot.featured::before {
+            border-color: rgba(180, 140, 220, 0.12);
+        }
+        .card-tarot.featured .card-name {
+            color: #d8c0f0;
+            text-shadow: 0 0 30px rgba(160, 120, 220, 0.3);
+        }
+        footer {
+            display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(168,85,247,0.1);
+            color: var(--gris); font-size: 0.78rem;
+        }
+        footer .footer-symbol { display: flex; }
+        .footer-img { width: 32px; height: auto; opacity: 0.5; display: block; }
+
+        .scroll-indicator {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 0.2rem; color: var(--gris); font-size: 0.8rem; margin-top: 1.2rem;
+        }
+        .scroll-indicator .arrow {
+            font-size: 1.5rem;
+            animation: bounceArrow 2s ease-in-out infinite;
+            background: linear-gradient(135deg, var(--violeta-claro), var(--rojo-claro));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes bounceArrow { 0%,100%{transform:translateY(0);opacity:.6} 50%{transform:translateY(12px);opacity:1} }
+        .nav-sections {
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 0.8rem; margin-bottom: 8rem;
+        }
+        .nav-section {
+            padding: 0.7rem 1.5rem;
+            border: 1px solid rgba(120, 80, 160, 0.25);
+            border-radius: 50px; background: transparent;
+            color: #a898c0; cursor: pointer;
+            font-family: 'Inter', sans-serif; font-size: 1rem;
+            transition: all 0.3s; text-decoration: none;
+        }
+        .nav-section:hover { border-color: rgba(160, 120, 200, 0.4); background: rgba(80, 40, 120, 0.12); }
+        .zodiac-section {
+            max-width: 1320px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .houses-section {
+            max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .houses-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .houses-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.1rem;
+        }
+        .houses-grid {
+            display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+        }
+        .house-card {
+            background: linear-gradient(145deg, #0d0d14, #120a1a);
+            border: 1px solid rgba(160, 120, 200, 0.15);
+            border-radius: 12px; padding: 1.2rem 1.5rem;
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+        }
+        .house-card:hover {
+            border-color: rgba(160, 120, 200, 0.35);
+            box-shadow: 0 8px 32px rgba(80, 40, 120, 0.2);
+            transform: translateY(-2px);
+        }
+        .house-header {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;
+        }
+        .house-num {
+            font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900;
+            color: var(--violeta-brillante); width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(160, 90, 210, 0.1); border-radius: 10px; flex-shrink: 0;
+        }
+        .house-name {
+            font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--blanco);
+        }
+        .house-sign {
+            font-size: 0.85rem; color: var(--violeta-brillante); font-weight: 600;
+            margin-left: auto; white-space: nowrap;
+        }
+        .house-desc {
+            font-size: 0.95rem; line-height: 1.7; color: var(--gris);
+            padding-left: 0; border-left: none;
+        }
+        .zodiac-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .zodiac-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 6rem; font-size: 1.1rem;
+        }
+        .zodiac-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.2rem;
+        }
+        .zodiac-card {
+            background: linear-gradient(145deg, #0d0d14, #120a1a);
+            border: 1px solid rgba(160, 120, 200, 0.15);
+            border-radius: 12px; padding: 1rem;
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+        }
+        .zodiac-img-wrapper {
+            width: 100%; margin-bottom: 0.8rem; border-radius: 8px;
+            overflow: hidden; border: 1px solid rgba(160, 120, 200, 0.12);
+            background: rgba(0,0,0,0.15);
+        }
+        .zodiac-img-label {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--gris); text-align: center; margin-bottom: 0.4rem;
+        }
+        .zodiac-img-wrapper {
+            width: 110px; margin: 0 auto 0.8rem;
+            border-radius: 8px; overflow: hidden;
+            border: 1px solid rgba(160, 120, 200, 0.12);
+            background: rgba(0,0,0,0.1);
+        }
+        .zodiac-img-wrapper img {
+            width: 100%; height: auto; display: block;
+        }
+        .zodiac-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px; border: 1px solid rgba(160, 120, 200, 0.08);
+            pointer-events: none;
+        }
+        .zodiac-card::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(160, 90, 210, 0.04), transparent 60%);
+            pointer-events: none;
+        }
+        .zodiac-card:hover {
+            border-color: rgba(160, 120, 200, 0.35);
+            box-shadow: 0 8px 32px rgba(80, 40, 120, 0.2);
+            transform: translateY(-3px);
+        }
+        .zodiac-header {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+            position: relative; z-index: 1;
+        }
+        .zodiac-symbol {
+            font-size: 1.8rem; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(160, 90, 210, 0.1);
+            border-radius: 12px; flex-shrink: 0;
+            text-shadow: 0 0 20px rgba(160, 90, 210, 0.3);
+        }
+        .zodiac-name {
+            font-family: 'Cinzel', serif; font-size: 1.15rem; color: var(--blanco);
+            line-height: 1.2;
+        }
+        .zodiac-name small {
+            display: block; font-family: 'Inter', sans-serif;
+            font-size: 0.75rem; color: var(--gris); font-weight: 400;
+            letter-spacing: 0.1em; text-transform: uppercase;
+        }
+        .zodiac-dates {
+            font-size: 0.8rem; color: var(--violeta-brillante); margin-top: 0.15rem;
+        }
+        .zodiac-details {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+            margin: 1rem 0; position: relative; z-index: 1;
+        }
+        .zodiac-detail {
+            padding: 0.5rem 0.7rem; border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+        }
+        .zodiac-detail .label {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--gris); display: block; margin-bottom: 0.15rem;
+        }
+        .zodiac-detail .value {
+            font-size: 0.92rem; color: var(--blanco); font-weight: 500;
+        }
+        .zodiac-detail .value .color-dot {
+            display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+            margin-right: 0.3rem; vertical-align: middle; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .zodiac-cards {
+            margin-top: 0.8rem; padding-top: 0.8rem;
+            border-top: 1px solid rgba(160, 120, 200, 0.1);
+            position: relative; z-index: 1;
+        }
+        .zodiac-cards .label {
+            font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--gris); margin-bottom: 0.4rem;
+        }
+        .zodiac-cards-list {
+            display: flex; flex-wrap: wrap; gap: 0.4rem;
+        }
+        .zodiac-cards-list a {
+            font-size: 0.78rem; padding: 0.2rem 0.6rem;
+            border-radius: 20px; background: rgba(160, 90, 210, 0.1);
+            color: var(--violeta-brillante); text-decoration: none;
+            transition: all 0.2s; border: 1px solid transparent;
+        }
+        .zodiac-cards-list a:hover {
+            background: rgba(160, 90, 210, 0.2);
+            border-color: rgba(160, 90, 210, 0.2);
+        }
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 2rem;
+            background: rgba(10, 14, 26, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(160, 120, 200, 0.12);
+            transition: all 0.3s;
+        }
+        .navbar .brand {
+            font-family: 'Cinzel', serif; font-size: 1.2rem;
+            color: var(--violeta-brillante); text-decoration: none;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+            white-space: nowrap;
+        }
+        .navbar .nav-links {
+            display: flex; gap: 0.3rem; list-style: none; align-items: center;
+        }
+        .navbar .nav-links a {
+            padding: 0.4rem 0.9rem; border-radius: 20px;
+            color: #a898c0; text-decoration: none; font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.25s; border: 1px solid transparent;
+        }
+        .navbar .nav-links a:hover,
+        .navbar .nav-links a.active {
+            background: rgba(80, 40, 120, 0.18);
+            border-color: rgba(160, 120, 200, 0.25);
+            color: #d0c0e8;
+        }
+        .nav-toggle {
+            display: none; background: none; border: none; cursor: pointer;
+            padding: 0.4rem; color: var(--violeta-brillante); font-size: 1.5rem;
+            line-height: 1;
+        }
+        body { padding-top: 56px; }
+        .view-hidden { display: none !important; }
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+            .card-img-wrapper img { width: 80px; }
+            .hero h1 { font-size: 2.2rem; }
+            .hero-img { width: 70px; }
+            .navbar .nav-links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0;
+                flex-direction: column; gap: 0.2rem;
+                background: rgba(10, 14, 26, 0.95);
+                backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                padding: 0.8rem 1rem;
+                border-bottom: 1px solid rgba(160, 120, 200, 0.12);
+            }
+            .navbar .nav-links.open { display: flex; }
+            .navbar .nav-links a { width: 100%; text-align: center; }
+            .nav-toggle { display: block; }
+        }
+        @media (max-width: 480px) {
+            .cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="stars-canvas"></canvas>
+    <nav class="navbar" id="navbar">
+        <a href="#" class="brand">Astro Tarot</a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">&#x2630;</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" data-view="all" class="active">Inicio</a></li>
+            <li><a href="#" data-view="cards">Cartas</a></li>
+            <li><a href="#" data-view="zodiac">Zodiaco</a></li>
+            <li><a href="#" data-view="houses">Casas</a></li>
+        </ul>
+    </nav>
+    <div class="content">
+        <section class="hero">
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <span class="constellation-star">&#x2726;</span>
+            <div class="hero-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="hero-img"></div>
+            <h1>Astro Tarot</h1>
+            <p>Explor&aacute; las 78 cartas del Tarot Rider-Waite con sus significados, correspondencias astrol&oacute;gicas y planetarias. Descubr&iacute; los 12 signos zodiacales con sus elementos, colores, piedras y las cartas que resuenan con su energ&iacute;a. Una gu&iacute;a completa para conectar la sabidur&iacute;a del cielo con la del mazo.</p>
+            <a href="#" class="btn-scroll" id="btnExplorar">Explorar</a>
+            <div class="scroll-indicator">
+                <span class="arrow">&#x25BC;</span>
+            </div>
+        </section>
+        <section class="intro fade-section" id="intro-astrologia">
+            <h2>&#x2606; Astrolog&iacute;a &#x2606;</h2>
+            <p>La astrolog&iacute;a es un lenguaje simb&oacute;lico que estudia la relaci&oacute;n entre los movimientos celestes y la experiencia humana. A trav&eacute;s de los <span class="highlight">12 signos</span>, <span class="highlight">10 planetas</span> y <span class="highlight">12 casas</span>, revela patrones de personalidad, ciclos de vida y el prop&oacute;sito del alma en su viaje de evoluci&oacute;n. Cada planeta rige una esencia distinta: Mercurio la comunicaci&oacute;n, Venus el amor, Marte la acci&oacute;n. Cada signo representa una forma &uacute;nica de vibrar con el cosmos, una puerta de entrada a una comprensi&oacute;n m&aacute;s profunda de qui&eacute;nes somos y hacia d&oacute;nde nos dirigimos.</p>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="intro fade-section" id="intro-tarot">
+            <h2>&#x2606; Tarot &#x2606;</h2>
+            <p>El Tarot es un mazo de <span class="highlight">78 cartas</span> que funciona como un espejo del alma. Los 22 Arcanos Mayores representan arquetipos universales y el viaje del h&eacute;roe; los 56 Arcanos Menores se organizan en <span class="highlight">4 palos</span> (Bastos, Copas, Espadas, Oros) que corresponden a los elementos Fuego, Agua, Aire y Tierra. Cada carta contiene im&aacute;genes simb&oacute;licas que hablan directamente al inconsciente, ofreciendo claridad, orientaci&oacute;n y una conexi&oacute;n profunda con la sabidur&iacute;a interna que todos llevamos dentro.</p>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="history-section fade-section" id="historia-tarot">
+            <h2>&#x2726; La Historia del Tarot &#x2726;</h2>
+            <p>El Tarot tiene sus ra&iacute;ces en el siglo XV en Europa, donde surgi&oacute; como un juego de naipes en la corte del norte de Italia. Con el tiempo, sus im&aacute;genes simb&oacute;licas fueron carg&aacute;ndose de significados esot&eacute;ricos y filos&oacute;ficos. En el siglo XVIII, ocultistas como Antoine Court de G&eacute;belin y Eliphas L&eacute;vi reinterpretaron sus arcanos como un libro de sabidur&iacute;a ancestral. Desde entonces, el Tarot ha evolucionado como una herramienta de autoconocimiento y adivinaci&oacute;n, conectando los arquetipos universales con el viaje personal de cada alma.</p>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="history-section fade-section" id="historia-astrologia">
+            <h2>&#x2726; La Historia de la Astrolog&iacute;a &#x2726;</h2>
+            <p>La astrolog&iacute;a es una pr&aacute;ctica milenaria que comenz&oacute; en Mesopotamia, se desarroll&oacute; en Egipto y Grecia, y ha tenido una influencia significativa en la cultura y la historia humana. Su evoluci&oacute;n refleja la relaci&oacute;n del ser humano con el cosmos y su b&uacute;squeda por entender el destino y los ciclos de la vida.</p>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="cards-section fade-section" id="cards">
+            <h2>&#x1F90D; El Mazo Completo</h2>
+            <p class="subtitle">El mazo completo del Tarot con sus 78 cartas, cada una vinculada a signos, planetas y elementos astrol&oacute;gicos</p>
+            <div id="major"><h3 class="section-label major"><span class="icon">&#10023;</span> Arcanos Mayores</h3></div>
+            <div class="cards-grid" id="grid-major"></div>
+            <div id="wands"><h3 class="section-label wands"><span class="icon">&#9827;</span> Bastos &mdash; Elemento Fuego</h3></div>
+            <div class="cards-grid" id="grid-wands"></div>
+            <div id="cups"><h3 class="section-label cups"><span class="icon">&#8746;</span> Copas &mdash; Elemento Agua</h3></div>
+            <div class="cards-grid" id="grid-cups"></div>
+            <div id="swords"><h3 class="section-label swords"><span class="icon">&#9876;</span> Espadas &mdash; Elemento Aire</h3></div>
+            <div class="cards-grid" id="grid-swords"></div>
+            <div id="pentacles"><h3 class="section-label pentacles"><span class="icon">&#9670;</span> Oros &mdash; Elemento Tierra</h3></div>
+            <div class="cards-grid" id="grid-pentacles"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="zodiac-section fade-section" id="zodiac">
+            <h2>&#x2726; Los 12 Signos Zodiacales &#x2726;</h2>
+            <p class="subtitle">Cada signo del zod&iacute;aco est&aacute; vinculado a cartas del Tarot que reflejan su energ&iacute;a, prop&oacute;sito y lecciones k&aacute;rmicas</p>
+            <div class="zodiac-grid" id="grid-zodiac"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="houses-section fade-section" id="houses">
+            <h2>&#x2726; Las 12 Casas Astrol&oacute;gicas &#x2726;</h2>
+            <p class="subtitle">Cada casa representa un &aacute;rea de la vida, regida por un signo y un planeta, revelando los distintos escenarios de nuestra existencia</p>
+            <div class="houses-grid" id="grid-houses"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <footer>
+            <span class="footer-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="footer-img"></span>
+            <span>Astro Tarot &mdash; La sabidur&iacute;a de las estrellas al alcance de tu alma</span>
+        </footer>
+    </div>
+    <script>
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [], W, H;
+        function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        function createStars(c) {
+            stars = [];
+            for (let i = 0; i < c; i++) stars.push({
+                x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.8+0.3,
+                dx: (Math.random()-0.5)*0.15, dy: (Math.random()-0.5)*0.15,
+                alpha: Math.random()*0.8+0.2, pulseSpeed: Math.random()*0.02+0.005,
+                pulsePhase: Math.random()*Math.PI*2
+            });
+        }
+        createStars(500);
+        function drawStars(t) {
+            ctx.clearRect(0,0,W,H);
+            for (const s of stars) {
+                s.x+=s.dx; s.y+=s.dy;
+                if(s.x<0)s.x=W;if(s.x>W)s.x=0;if(s.y<0)s.y=H;if(s.y>H)s.y=0;
+                const p=0.5+0.5*Math.sin(t*s.pulseSpeed+s.pulsePhase);
+                const a=s.alpha*p;
+                ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+                const purple = 200 + Math.floor(55 * (0.5 + 0.5 * Math.sin(t*0.003 + s.x*0.01)));
+                ctx.fillStyle='rgba('+purple+','+Math.floor(purple*0.85)+',255,'+a*0.7+')'; ctx.fill();
+                if (s.r > 1.2) {
+                    ctx.beginPath(); ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);
+                    ctx.fillStyle='rgba(100,50,180,'+a*0.04+')'; ctx.fill();
+                }
+            }
+            requestAnimationFrame(drawStars);
+        }
+        requestAnimationFrame(drawStars);
+
+        // === DATOS DE TODAS LAS 78 CARTAS ===
+        var _cardSeq = 0;
+        function imgPath(ri, ci) {
+            var idx = _cardSeq;
+            _cardSeq++;
+            return 'images/cards/card_' + (idx < 10 ? '00' : idx < 100 ? '0' : '') + idx + '.png';
+        }
+
+        var cardSymbols = {
+  major: {
+    "El Loco": {sym:"\u2604", descG:"Cometa errante, potencial infinito"},
+    "El Mago": {sym:"\u26A1", descG:"Poder divino, manifestacion, canal"},
+    "La Sacerdotisa": {sym:"\u263D", descG:"Luna creciente, misterio, intuicion"},
+    "La Emperatriz": {sym:"\u273F", descG:"Flor de vida, fertilidad, naturaleza"},
+    "El Emperador": {sym:"\u2654", descG:"Corona, autoridad, poder terrenal"},
+    "El Sumo Sacerdote": {sym:"\u271D", descG:"Cruz espiritual, ensenanza divina"},
+    "Los Enamorados": {sym:"\u26A4", descG:"Union de opuestos, eleccion del alma"},
+    "El Carro": {sym:"\u2699", descG:"Voluntad, determinacion, victoria"},
+    "La Fuerza": {sym:"\u221E", descG:"Fortaleza interior, dominio, coraje"},
+    "El Ermita\u00F1o": {sym:"\u2726", descG:"Luz interior, sabiduria, introspeccion"},
+    "Rueda de la Fortuna": {sym:"\u2638", descG:"Rueda del destino, ciclos, cambio"},
+    "La Justicia": {sym:"\u2696", descG:"Balanza, equilibrio, verdad, karma"},
+    "El Colgado": {sym:"\u229C", descG:"Sacrificio, nueva perspectiva, entrega"},
+    "La Muerte": {sym:"\u2620", descG:"Transformacion, renacimiento, final"},
+    "La Templanza": {sym:"\u23D7", descG:"Alquimia, equilibrio de fuerzas, armonia"},
+    "El Diablo": {sym:"\u26E7", descG:"Sombra, atadura, deseo material"},
+    "La Torre": {sym:"\u26CF", descG:"Colapso, revelacion, derrumbe"},
+    "La Estrella": {sym:"\u2727", descG:"Esperanza, guia espiritual, inspiracion"},
+    "La Luna": {sym:"\u263E", descG:"Ilusion, subconsciente, miedo"},
+    "El Sol": {sym:"\u2600", descG:"Alegria, vitalidad, exito, verdad"},
+    "El Juicio": {sym:"\u205C", descG:"Despertar espiritual, llamado superior"},
+    "El Mundo": {sym:"\u25C9", descG:"Totalidad, culminacion, cosmos"},
+  },
+  wands: {
+    "As de Bastos": {sym:"\u2663", descG:"Chispa divina, fuego creador, inicio"},
+    "2 de Bastos": {sym:"\u26B6", descG:"Vision, planificacion, horizontes"},
+    "3 de Bastos": {sym:"\u27D0", descG:"Exploracion, expansion, crecimiento"},
+    "4 de Bastos": {sym:"\u2302", descG:"Hogar, celebracion, harmonia"},
+    "5 de Bastos": {sym:"\u2694", descG:"Conflicto, competencia, desafio"},
+    "6 de Bastos": {sym:"\u265B", descG:"Victoria, reconocimiento, triunfo"},
+    "7 de Bastos": {sym:"\u26CA", descG:"Defensa, perseverancia, posicion"},
+    "8 de Bastos": {sym:"\u27A4", descG:"Velocidad, movimiento, accion"},
+    "9 de Bastos": {sym:"\u229B", descG:"Resiliencia, fortaleza, defensa"},
+    "10 de Bastos": {sym:"\u233A", descG:"Presion, carga, responsabilidad"},
+    "Paje de Bastos": {sym:"\u2604", descG:"Entusiasmo, explorador, mensajero"},
+    "Caballero de Bastos": {sym:"\u265E", descG:"Accion, aventura, pasion"},
+    "Reina de Bastos": {sym:"\u2726", descG:"Calidez, carisma, determinacion"},
+    "Rey de Bastos": {sym:"\u2654", descG:"Liderazgo, vision, autoridad"},
+  },
+  cups: {
+    "As de Copas": {sym:"\u2661", descG:"Amor, apertura del corazon, conexion"},
+    "2 de Copas": {sym:"\u26A4", descG:"Union de almas, amor reciproco"},
+    "3 de Copas": {sym:"\u273F", descG:"Celebracion, amistad, alegria"},
+    "4 de Copas": {sym:"\u229F", descG:"Meditacion, apatia, oportunidad oculta"},
+    "5 de Copas": {sym:"\u2313", descG:"Perdida, duelo, arrepentimiento"},
+    "6 de Copas": {sym:"\u273D", descG:"Nostalgia, recuerdos, ninez"},
+    "7 de Copas": {sym:"\u27DF", descG:"Ilusiones, fantasia, elecciones"},
+    "8 de Copas": {sym:"\u2934", descG:"Abandono, busqueda, renuncia"},
+    "9 de Copas": {sym:"\u2600", descG:"Satisfaccion, abundancia emocional"},
+    "10 de Copas": {sym:"\u2665", descG:"Amor pleno, familia, felicidad"},
+    "Paje de Copas": {sym:"\u263F", descG:"Intuicion, mensajero, sueno"},
+    "Caballero de Copas": {sym:"\u265E", descG:"Romance, imaginacion, propuesta"},
+    "Reina de Copas": {sym:"\u263E", descG:"Empatia, curacion, oceano emocional"},
+    "Rey de Copas": {sym:"\u2654", descG:"Madurez emocional, compasion"},
+  },
+  swords: {
+    "As de Espadas": {sym:"\u2726", descG:"Claridad mental, verdad, justicia"},
+    "2 de Espadas": {sym:"\u2696", descG:"Decision bloqueada, punto muerto"},
+    "3 de Espadas": {sym:"\u2313", descG:"Dolor,traicion, corazon herido"},
+    "4 de Espadas": {sym:"\u229F", descG:"Descanso, meditacion, recuperacion"},
+    "5 de Espadas": {sym:"\u2694", descG:"Conflicto, derrota, tension"},
+    "6 de Espadas": {sym:"\u27A4", descG:"Transicion, viaje, dejar atras"},
+    "7 de Espadas": {sym:"\u27DF", descG:"Estrategia, astucia, engano"},
+    "8 de Espadas": {sym:"\u229B", descG:"Restriccion, confusion, paralisis"},
+    "9 de Espadas": {sym:"\u2313", descG:"Ansiedad, pesadillas, miedo"},
+    "10 de Espadas": {sym:"\u271D", descG:"Final doloroso, renacimiento"},
+    "Paje de Espadas": {sym:"\u263F", descG:"Vigilancia, ideas, curiosidad"},
+    "Caballero de Espadas": {sym:"\u265E", descG:"Determinacion, mental, guerrero"},
+    "Reina de Espadas": {sym:"\u2726", descG:"Claridad, independencia, verdad"},
+    "Rey de Espadas": {sym:"\u2654", descG:"Autoridad mental, etica, justicia"},
+  },
+  pentacles: {
+    "As de Oros": {sym:"\u2666", descG:"Semilla de abundancia, creacion"},
+    "2 de Oros": {sym:"\u26B6", descG:"Equilibrio, cambio, adaptacion"},
+    "3 de Oros": {sym:"\u27D0", descG:"Trabajo en equipo, maestria"},
+    "4 de Oros": {sym:"\u229F", descG:"Control, estabilidad, ahorro"},
+    "5 de Oros": {sym:"\u2313", descG:"Dificultad, perdida, escasez"},
+    "6 de Oros": {sym:"\u2696", descG:"Caridad, generosidad, equilibrio"},
+    "7 de Oros": {sym:"\u229B", descG:"Evaluacion, paciencia, crecimiento"},
+    "8 de Oros": {sym:"\u2726", descG:"Dedicacion, aprendizaje, artesania"},
+    "9 de Oros": {sym:"\u2600", descG:"Abundancia, lujo, exito"},
+    "10 de Oros": {sym:"\u265B", descG:"Legado, herencia, tradicion"},
+    "Paje de Oros": {sym:"\u2604", descG:"Aprendiz, estudio, proyecto"},
+    "Caballero de Oros": {sym:"\u265E", descG:"Perseverancia, responsabilidad"},
+    "Reina de Oros": {sym:"\u273F", descG:"Abundancia, nutricion, tierra"},
+    "Rey de Oros": {sym:"\u2654", descG:"Prosperidad, estabilidad, exito"},
+  },
+};
+
+        function getCardSymbol(name, suit) {
+            return cardSymbols[suit] && cardSymbols[suit][name] ? cardSymbols[suit][name].sym : '';
+        }
+
+        var cardData = {
+            major: [
+                {num:'0',name:'El Loco',img:imgPath(0,0),sig:'Urano',casa:'1\u00aa',sigL:'Urano/Acuario',desc:'Inicio, inocencia, libertad. El alma que se lanza al vacío sin mirar atrás. Representa el espíritu libre que emprende un viaje sin mapa, confiando en el universo. Nos recuerda que cada gran aventura comienza con un salto de fe y que la verdadera sabiduría está en atreverse a ser vulnerable ante lo desconocido.',feat:true},
+                {num:'I',name:'El Mago',img:imgPath(0,1),sig:'Mercurio',casa:'1\u00aa',sigL:'Mercurio',desc:'Poder, habilidad, manifestación. Canaliza la energía divina hacia lo terrenal. El Mago domina los cuatro elementos y los dirige con voluntad consciente. Representa el momento en que reconoces tus talentos únicos y los pones al servicio de tu propósito, recordándote que tienes todas las herramientas necesarias para crear tu realidad.',feat:true},
+                {num:'II',name:'La Sacerdotisa',img:imgPath(0,2),sig:'Luna',casa:'8\u00aa',sigL:'Luna/C\u00e1ncer',desc:'Intuición, misterio, sabiduría interior. Guarda los secretos del inconsciente. Ella se sienta entre los pilares del conocimiento consciente y oculto, invitándote a mirar más allá de lo evidente. Representa la conexión con tu voz interna, esa sabiduría silenciosa que emerge cuando aquietas la mente y escuchas los susurros del alma.',feat:true},
+                {num:'III',name:'La Emperatriz',img:imgPath(0,3),sig:'Venus',casa:'3\u00aa',sigL:'Venus/Tauro',desc:'Fertilidad, abundancia, naturaleza. La madre universal que nutre todo lo que crece. Ella encarna el poder creador de la naturaleza en su máxima expresión. Te invita a conectarte con los ciclos de la vida, a florecer en tu propio tiempo y a recibir la abundancia que el universo tiene para ofrecerte cuando estás en armonía con tu esencia.',feat:false},
+                {num:'IV',name:'El Emperador',img:imgPath(0,4),sig:'Aries',casa:'10\u00aa',sigL:'Aries',desc:'Autoridad, estructura, poder. El liderazgo y la solidez de las instituciones. Representa la fuerza yang, el padre protector que establece leyes y fronteras. Te llama a tomar el control de tu vida con disciplina y responsabilidad, construyendo cimientos sólidos sobre los cuales puedas edificar tus sueños más ambiciosos.',feat:false},
+                {num:'V',name:'El Sumo Sacerdote',img:imgPath(0,5),sig:'Tauro',casa:'9\u00aa',sigL:'Tauro',desc:'Tradición, enseñanza, espiritualidad. El puente entre lo divino y lo humano. Es el guardián del conocimiento sagrado y las enseñanzas ancestrales. Te invita a buscar mentores, estudiar las tradiciones espirituales y encontrar la sabiduría en los rituales que conectan a la humanidad con lo trascendente a lo largo del tiempo.',feat:false},
+                {num:'VI',name:'Los Enamorados',img:imgPath(0,6),sig:'G\u00e9minis',casa:'5\u00aa',sigL:'G\u00e9minis',desc:'Amor, unión, elección. La encrucijada del alma entre el deseo y el deber. No solo habla del amor romántico sino de las decisiones cruciales que definen tu camino. Representa el momento de alinear tu corazón con tu propósito, eligiendo desde la autenticidad y sabiendo que cada decisión amorosa es un acto de valentía.',feat:true},
+                {num:'VII',name:'El Carro',img:imgPath(0,7),sig:'C\u00e1ncer',casa:'7\u00aa',sigL:'C\u00e1ncer',desc:'Victoria, voluntad, determinación. El triunfo sobre los opuestos internos. Guiado por la fuerza de voluntad, el auriga domina dos caballos que tiran en direcciones opuestas. Representa tu capacidad para superar obstáculos mediante la concentración y la disciplina, avanzando hacia tus metas con la certeza de quien ha domado sus propias contradicciones.',feat:false},
+                {num:'VIII',name:'La Fuerza',img:imgPath(0,8),sig:'Leo',casa:'11\u00aa',sigL:'Leo',desc:'Fortaleza, coraje, compasión. El poder sereno de domar la bestia interior. No es la fuerza bruta sino el dominio tranquilo de los instintos primarios. Te recuerda que la verdadera fortaleza reside en la paciencia, la dulzura y la capacidad de enfrentar tus miedos con amor en lugar de agresión.',feat:true},
+                {num:'IX',name:'El Ermita\u00f1o',img:imgPath(0,9),sig:'Virgo',casa:'9\u00aa',sigL:'Virgo',desc:'Soledad, introspección. La lámpara que ilumina el camino interior. Lleva su luz en lo alto, buscando respuestas en el silencio de la montaña. Te invita a retirarte del ruido exterior para encontrar la verdad dentro de ti, recordándote que la sabiduría nace en la soledad elegida y se comparte desde la autenticidad.',feat:false},
+                {num:'X',name:'Rueda de la Fortuna',img:imgPath(0,10),sig:'J\u00fapiter',casa:'5\u00aa',sigL:'J\u00fapiter/Sagitario',desc:'Destino, cambio, ciclos. La rueda cósmica que gira sin cesar. Nos recuerda que la vida es un ciclo constante de altibajos, éxitos y desafíos. Cuando aparece, señala que el cambio es inevitable y necesario, invitándote a fluir con las circunstancias porque lo que baja volverá a subir y viceversa.',feat:true},
+                {num:'XI',name:'La Justicia',img:imgPath(0,11),sig:'Libra',casa:'7\u00aa',sigL:'Libra',desc:'Equilibrio, verdad, consecuencias. La balanza de la causa y el efecto. Ella no juzga desde el castigo sino desde la ecuanimidad más pura. Te llama a asumir la responsabilidad de tus actos, a buscar la verdad con honestidad y a restaurar el equilibrio en áreas de tu vida donde la balanza se ha inclinado.',feat:false},
+                {num:'XII',name:'El Colgado',img:imgPath(0,12),sig:'Neptuno',casa:'12\u00aa',sigL:'Neptuno/Piscis',desc:'Sacrificio, rendición, nueva perspectiva. Ver el mundo desde otro ángulo. Suspendido boca abajo, encuentra la paz en la entrega total. Representa el momento en que debes soltar el control, detener la resistencia y mirar la situación desde una perspectiva radicalmente diferente para encontrar la solución.',feat:false},
+                {num:'XIII',name:'La Muerte',img:imgPath(1,0),sig:'Escorpio',casa:'8\u00aa',sigL:'Escorpio',desc:'Transformación, renacimiento. El final de un ciclo y el nacimiento de lo nuevo. No es la muerte física sino la muerte de lo que ya no te sirve. Te invita a dejar ir relaciones, patrones o creencias que han caducado, confiando en que el vacío que dejan será llenado por algo más auténtico y vivo.',feat:true},
+                {num:'XIV',name:'La Templanza',img:imgPath(1,1),sig:'Sagitario',casa:'6\u00aa',sigL:'Sagitario',desc:'Equilibrio, moderación, armonía. La fusión de los opuestos. El ángel mezcla agua y fuego sin que ninguno extinga al otro. Representa la virtud de encontrar el punto medio, la paciencia para dejar que las cosas maduren y la maestría de integrar las polaridades de tu ser en una danza armónica.',feat:false},
+                {num:'XV',name:'El Diablo',img:imgPath(1,2),sig:'Capricornio',casa:'6\u00aa',sigL:'Capricornio',desc:'Sombra, adicción. Enfrentar las cadenas que nos atamos a nosotros mismos. Representa las ataduras del mundo material, los vicios y las creencias limitantes que nos mantienen prisioneros. Te confronta con tu propia sombra para que reconozcas aquello que te esclaviza y encuentres la fuerza para liberarte.',feat:false},
+                {num:'XVI',name:'La Torre',img:imgPath(1,3),sig:'Marte',casa:'8\u00aa',sigL:'Marte/Aries',desc:'Caos, revelación. El colapso que destruye ilusiones y abre paso a la verdad. Un rayo derriba la estructura más sólida, revelando lo que estaba oculto. Aunque violenta, esta carta trae la liberación que sigue a una crisis necesaria, derrumbando las falsas creencias para que puedas reconstruir desde cimientos más auténticos.',feat:true},
+                {num:'XVII',name:'La Estrella',img:imgPath(1,4),sig:'Acuario',casa:'11\u00aa',sigL:'Acuario',desc:'Esperanza, inspiración. La estrella que guía hacia la sanación y la paz. Después de la tormenta de la Torre, llega la calma serena de la Estrella. Representa la renovación de la fe, la conexión con tu propósito superior y la confianza en que el universo te sostiene en su manto de luz.',feat:true},
+                {num:'XVIII',name:'La Luna',img:imgPath(1,5),sig:'Piscis',casa:'12\u00aa',sigL:'Piscis',desc:'Ilusión, miedo, subconsciente. Navegar las aguas profundas del inconsciente. Iluminada por una luz incierta, revela sombras y criaturas ocultas. Te advierte que no todo es lo que parece y te invita a explorar tus miedos más profundos, recordando que la oscuridad también contiene mensajes valiosos para tu evolución.',feat:false},
+                {num:'XIX',name:'El Sol',img:imgPath(1,6),sig:'Sol',casa:'5\u00aa',sigL:'Sol/Leo',desc:'Alegría, éxito, vitalidad. La carta más positiva: luz y plenitud. Disipa todas las sombras y revela la verdad en su máxima expresión. Representa la alegría sin condiciones, la confianza radiante y la celebración de la vida. Te recuerda que mereces ser feliz y brillar con luz propia.',feat:true},
+                {num:'XX',name:'El Juicio',img:imgPath(1,7),sig:'Plut\u00f3n',casa:'4\u00aa',sigL:'Plut\u00f3n/Escorpio',desc:'Renacimiento, llamado superior. El despertar espiritual y la absolución. Las trompetas anuncian un despertar, una llamada a elevarte hacia tu versión más elevada. Representa el momento de la rendición de cuentas contigo mismo, donde dejas atrás el pasado y respondes al llamado de tu propósito más auténtico.',feat:false},
+                {num:'XXI',name:'El Mundo',img:imgPath(1,8),sig:'Saturno',casa:'10\u00aa',sigL:'Saturno/Capricornio',desc:'Completitud, totalidad. La culminación del viaje del alma. La última carta del viaje simboliza la integración de todas las lecciones aprendidas. Has completado un ciclo importante y te encuentras en un estado de plenitud y realización, listo para celebrar tus logros y prepararte para el próximo gran ciclo.',feat:true}
+            ],
+            wands: [
+                {num:'1',name:'As de Bastos',img:imgPath(1,9),sig:'Marte',casa:'1\u00aa',sigL:'Aries',desc:'Chispa divina, inspiración, nuevo comienzo. El fuego creador que impulsa la acción. Representa el momento de la concepción de una idea, ese instante de claridad donde sientes el llamado a crear algo nuevo. Esta carta te anima a confiar en esa chispa interior y a dar el primer paso hacia lo que tu corazón anhela, porque el universo sostiene tu impulso inicial.'},
+                {num:'2',name:'2 de Bastos',img:imgPath(1,10),sig:'Marte',casa:'1\u00aa',sigL:'Aries',desc:'Planificación, visión, futuro. Mirar hacia adelante con poder y posesión. Sostienes el mundo en tus manos y contemplas horizontes lejanos. Representa el momento en que ya tienes una visión clara de lo que quieres y comienzas a planificar cómo alcanzarlo. Te invita a salir de tu zona de confort y expandir tus límites.'},
+                {num:'3',name:'3 de Bastos',img:imgPath(1,11),sig:'Sol',casa:'1\u00aa',sigL:'Aries',desc:'Expansión, exploración. El éxito que llega después de la planificación. Tus barcos han zarpado y observas el horizonte con confianza. Esta carta confirma que tus planes están dando frutos y que la expansión que buscabas está en marcha. Es el momento de mantener la fe y permitir que tus proyectos crezcan orgánicamente.'},
+                {num:'4',name:'4 de Bastos',img:imgPath(1,12),sig:'Venus',casa:'1\u00aa',sigL:'Aries',desc:'Celebración, armonía, hogar. La alegría de los logros compartidos. Los pilares están firmes y bajo el arco de flores celebras tus éxitos. Representa la estabilidad alcanzada, el merecido descanso después del esfuerzo y la alegría de compartir tus triunfos con quienes amas. Es un recordatorio de celebrar cada paso del camino.'},
+                {num:'5',name:'5 de Bastos',img:imgPath(2,0),sig:'Saturno',casa:'1\u00aa',sigL:'Leo',desc:'Conflicto, competencia, desafío. La lucha que forja el carácter. Bastos entrecruzados en el aire, energías que chocan en busca de dirección. Representa los conflictos inevitables del crecimiento, las diferencias de opinión que ponen a prueba tu determinación. Te invita a ver estos desafíos como oportunidades para fortalecer tu carácter.'},
+                {num:'6',name:'6 de Bastos',img:imgPath(2,1),sig:'J\u00fapiter',casa:'1\u00aa',sigL:'Leo',desc:'Victoria, reconocimiento, confianza. El triunfo público y la admiración. Regresas victorioso montado a caballo mientras las multitudes te aclaman. Esta carta trae el reconocimiento que has merecido por tu esfuerzo y dedicación. Disfruta del éxito pero mantente humilde, recordando que el verdadero líder sirve a quienes lo siguen.'},
+                {num:'7',name:'7 de Bastos',img:imgPath(2,2),sig:'Marte',casa:'1\u00aa',sigL:'Leo',desc:'Desafío, defensa, perseverancia. Mantener la posición ante la adversidad. Desde lo alto defiendes tu terreno contra las críticas y opositores. Representa la necesidad de mantener firmes tus convicciones cuando otros cuestionan tu camino. No se trata de atacar sino de proteger lo que has construido con integridad y valentía.'},
+                {num:'8',name:'8 de Bastos',img:imgPath(2,3),sig:'Mercurio',casa:'1\u00aa',sigL:'Sagitario',desc:'Velocidad, movimiento, flechas del amor. La acción rápida y el cambio. Bastos surcando el cielo en perfecta sincronía, imparable. Anuncia un período de avances rápidos, comunicaciones repentinas y cambios que ocurren a gran velocidad. Prepárate para recibir noticias y para actuar con rapidez aprovechando el impulso del momento.'},
+                {num:'9',name:'9 de Bastos',img:imgPath(2,4),sig:'Luna',casa:'1\u00aa',sigL:'Sagitario',desc:'Resiliencia, última defensa. La fuerza para seguir adelante a pesar del cansancio. Vendado y agotado, aún sostienes tu bastón en posición de defensa. Representa la etapa final de una batalla larga, donde la perseverancia es tu única arma. Te recuerda que la última milla es la más dura pero también la que más te fortalece.'},
+                {num:'10',name:'10 de Bastos',img:imgPath(2,5),sig:'Saturno',casa:'1\u00aa',sigL:'Sagitario',desc:'Carga, responsabilidad, presión. El peso de las obligaciones. Agobiado por el peso de diez bastos, apenas puedes ver el camino. Representa las responsabilidades que has acumulado y que ahora te agotan. Te invita a evaluar qué cargas son realmente tuyas y cuáles puedes delegar o soltar antes de que el peso te derrumbe.'},
+                {num:'P',name:'Paje de Bastos',img:imgPath(2,6),sig:'Marte',casa:'1\u00aa',sigL:'Aries',desc:'Entusiasmo, exploración, noticias. El mensajero del fuego creador. Joven y vibrante, contempla su bastón con la mirada llena de posibilidades. Trae noticias emocionantes y el impulso de comenzar algo nuevo. Representa la energía fresca del principiante que se lanza con pasión a explorar territorios desconocidos.'},
+                {num:'C',name:'Caballero de Bastos',img:imgPath(2,7),sig:'Marte',casa:'1\u00aa',sigL:'Aries',desc:'Acción, aventura, pasión. El guerrero del fuego que cabalga hacia su destino. Montado a caballo con su bastón en alto, avanza con determinación ardiente. Representa la acción impulsiva y apasionada, la necesidad de moverse sin dudar. Te llama a perseguir tus metas con energía imparable, pero cuidando no quemarte en el proceso.'},
+                {num:'Q',name:'Reina de Bastos',img:imgPath(2,8),sig:'Venus',casa:'1\u00aa',sigL:'Leo',desc:'Calidez, determinación, carisma. La madurez del fuego en su expresión más radiante. Ella irradia confianza y creatividad, su mirada segura inspira a quienes la rodean. Representa el dominio del fuego interior: pasión temperada por sabiduría, acción guiada por visión. Te invita a liderar con el ejemplo y a encender la chispa en otros.'},
+                {num:'K',name:'Rey de Bastos',img:imgPath(2,9),sig:'Marte',casa:'1\u00aa',sigL:'Leo',desc:'Liderazgo, visión, poder. El dominio del fuego y la autoridad natural. Sentado en su trono rodeado de llamas, el Rey de Bastos ha dominado el elemento del fuego. Representa al líder nato que inspira con su visión y valentía. Te llama a asumir tu poder con responsabilidad, a actuar con integridad y a encender el camino para quienes te siguen.'}
+            ],
+            cups: [
+                {num:'1',name:'As de Copas',img:imgPath(2,10),sig:'Venus',casa:'1\u00aa',sigL:'C\u00e1ncer',desc:'Amor, apertura emocional, nueva conexión. El manantial del corazón. Una copa dorada de la que fluye agua cristalina, ofreciendo amor incondicional. Representa el comienzo de una nueva etapa emocional, la apertura del corazón al amor y la conexión profunda. Te invita a recibir y dar afecto con la pureza del alma abierta.'},
+                {num:'2',name:'2 de Copas',img:imgPath(2,11),sig:'Venus',casa:'1\u00aa',sigL:'C\u00e1ncer',desc:'Unión, amor recíproco, conexión. El encuentro de dos almas. Dos copas elevadas en señal de celebración y reconocimiento mutuo. Representa las relaciones armoniosas, el amor que fluye en ambas direcciones y la asociación basada en el respeto y la igualdad. Es la carta del amor correspondido y las alianzas sinceras.'},
+                {num:'3',name:'3 de Copas',img:imgPath(2,12),sig:'Mercurio',casa:'1\u00aa',sigL:'C\u00e1ncer',desc:'Celebración, amistad, alegría. La abundancia del corazón compartido. Tres mujeres elevan sus copas en una danza de gratitud y hermandad. Representa la alegría de compartir con amigos, las celebraciones comunitarias y los momentos de felicidad colectiva. Te recuerda que la abundancia se multiplica cuando se comparte.'},
+                {num:'4',name:'4 de Copas',img:imgPath(3,0),sig:'Luna',casa:'1\u00aa',sigL:'Escorpio',desc:'Apatía, meditación, oportunidades no vistas. La insatisfacción interior. Sentado bajo un árbol, mira fijamente tres copas mientras una cuarta le es ofrecida desde el cielo. Representa el momento de estancamiento emocional donde no ves las oportunidades que se te presentan. Te invita a salir de la apatía y abrir los ojos a lo nuevo.'},
+                {num:'5',name:'5 de Copas',img:imgPath(3,1),sig:'Marte',casa:'1\u00aa',sigL:'Escorpio',desc:'Pérdida, duelo, arrepentimiento. Mirar atrás con tristeza. Una figura con manto negro llora sobre tres copas derramadas mientras dos permanecen en pie detrás. Representa el dolor de la pérdida y la tendencia a enfocarse en lo que falta en lugar de lo que aún queda. Te recuerda que detrás de toda pérdida hay una oportunidad de renovación.'},
+                {num:'6',name:'6 de Copas',img:imgPath(3,2),sig:'Sol',casa:'1\u00aa',sigL:'Escorpio',desc:'Nostalgia, recuerdos, inocencia. La pureza del pasado que reconforta. Dos niños en un jardín compartiendo flores, evocando la inocencia perdida. Representa los recuerdos felices, la nostalgia por tiempos pasados y las conexiones que te formaron. Te invita a honrar tu pasado sin quedarte atrapado en él, extrayendo la dulzura sin el apego.'},
+                {num:'7',name:'7 de Copas',img:imgPath(3,3),sig:'Venus',casa:'1\u00aa',sigL:'Piscis',desc:'Ilusiones, fantasía, elecciones. Las múltiples posibilidades del deseo. Siete copas flotando en el aire, cada una con una visión tentadora. Representa la confusión ante demasiadas opciones y el peligro de perderse en fantasías. Te advierte sobre las ilusiones que te distraen de tu camino verdadero y te pide claridad mental.'},
+                {num:'8',name:'8 de Copas',img:imgPath(3,4),sig:'Saturno',casa:'1\u00aa',sigL:'Piscis',desc:'Abandono, búsqueda, renuncia. Dejar atrás lo conocido por lo desconocido. Una figura camina hacia la montaña dejando atrás ocho copas apiladas. Representa la valentía de abandonar lo seguro en busca de un propósito más elevado. Te llama a dejar atrás lo que ya no te nutre espiritualmente, aunque duela.'},
+                {num:'9',name:'9 de Copas',img:imgPath(3,5),sig:'J\u00fapiter',casa:'1\u00aa',sigL:'Piscis',desc:'Satisfacción, abundancia emocional. El deseo cumplido y la felicidad plena. Sentado con los brazos cruzados y las nueve copas dispuestas en arco, sonríe satisfecho. Representa la realización de los deseos, la abundancia emocional y la satisfacción profunda. Es la carta de los sueños cumplidos y la autoestima plena.'},
+                {num:'10',name:'10 de Copas',img:imgPath(3,6),sig:'Marte',casa:'1\u00aa',sigL:'Piscis',desc:'Felicidad total, armonía familiar. La realización del amor incondicional. Una familia con los brazos alzados bajo un arco iris de diez copas celestiales. Representa la felicidad completa, la armonía en el hogar y el amor incondicional que trasciende generaciones. Es la promesa de un corazón pleno y un legado de amor.'},
+                {num:'P',name:'Paje de Copas',img:imgPath(3,7),sig:'Marte',casa:'1\u00aa',sigL:'C\u00e1ncer',desc:'Intuición, sensibilidad, mensaje del corazón. El soñador emocional. Joven con una copa de la que emerge un pez, símbolo del mensaje del inconsciente. Trae noticias del corazón, inspiración creativa y una invitación a explorar tu mundo emocional. Representa la disposición a recibir la sabiduría de tus sueños.'},
+                {num:'C',name:'Caballero de Copas',img:imgPath(3,8),sig:'Marte',casa:'1\u00aa',sigL:'C\u00e1ncer',desc:'Romance, imaginación, propuesta. El caballero que sigue su corazón. Avanza lentamente con su copa en alto, ofreciendo amor y devoción. Representa la llegada de una propuesta romántica, la búsqueda del ideal y la entrega sincera. Te invita a seguir tus sueños con la misma pasión con la que este caballero persigue su visión.'},
+                {num:'Q',name:'Reina de Copas',img:imgPath(3,9),sig:'Venus',casa:'1\u00aa',sigL:'Piscis',desc:'Empatía, curación, amor incondicional. La madre del océano emocional. Sentada en su trono junto al mar, contempla su copa decorada con ángeles. Representa la sabiduría emocional madura, la capacidad de sanar a través del amor y la comprensión profunda de los sentimientos ajenos. Te invita a liderar con el corazón.'},
+                {num:'K',name:'Rey de Copas',img:imgPath(3,10),sig:'Marte',casa:'1\u00aa',sigL:'Escorpio',desc:'Madurez emocional, compasión. El dominio del mundo emocional. Flotando sobre el mar turbulento, sostiene firmemente su copa y su cetro. Representa el control sobre las emociones sin reprimirlas, la compasión equilibrada con sabiduría. Te llama a ser dueño de tu mundo interior, navegando las aguas emocionales con serenidad y madurez.'}
+            ],
+            swords: [
+                {num:'1',name:'As de Espadas',img:imgPath(3,11),sig:'Marte',casa:'1\u00aa',sigL:'Libra',desc:'Claridad, verdad, ruptura. La espada de la mente que corta la ilusión. Una mano emerge de las nubes sosteniendo una espada vertical coronada por una corona. Representa el momento de la verdad absoluta, la claridad mental que disipa la confusión. Te llama a ver la realidad con honestidad, aunque duela, porque la verdad es la única base sólida para decidir.'},
+                {num:'2',name:'2 de Espadas',img:imgPath(3,12),sig:'Luna',casa:'1\u00aa',sigL:'Libra',desc:'Decisión, punto muerto, bloqueo. La mente que no puede ver con claridad. Una figura vendada sostiene dos espadas cruzadas frente a su pecho. Representa la parálisis por análisis y la dificultad para tomar una decisión. Te invita a quitarte la venda, a confiar en tu intuición y a enfrentar la elección que has estado evadiendo.'},
+                {num:'3',name:'3 de Espadas',img:imgPath(4,0),sig:'Saturno',casa:'1\u00aa',sigL:'Libra',desc:'Dolor, traición, corazón herido. El sufrimiento que abre paso a la verdad. Tres espadas atraviesan un corazón en un cielo tormentoso. Representa el dolor emocional profundo, la traición o el desamor que parte el alma. Pero esta carta también trae el mensaje de que el dolor es temporal y que de toda herida nace una sabiduría más honda.'},
+                {num:'4',name:'4 de Espadas',img:imgPath(4,1),sig:'J\u00fapiter',casa:'1\u00aa',sigL:'Libra',desc:'Descanso, meditación, recuperación. La pausa necesaria para sanar. Una figura yacente con las manos en posición de oración, tres espadas en la pared y una a su lado. Representa la necesidad de retirarte para recuperarte. Te invita a tomarte un descanso mental y emocional, confiando en que la pausa no es debilidad sino preparación para renacer.'},
+                {num:'5',name:'5 de Espadas',img:imgPath(4,2),sig:'Venus',casa:'1\u00aa',sigL:'Acuario',desc:'Conflicto, derrota, tensión. La victoria vacía que deja heridas. Una figura sonríe mientras recoge tres espadas, dos más yacen en el suelo. Representa los conflictos donde nadie gana realmente, las peleas que dejan cicatrices. Te advierte sobre el costo de tener la razón a toda costa y te invita a elegir sabiamente tus batallas.'},
+                {num:'6',name:'6 de Espadas',img:imgPath(4,3),sig:'Mercurio',casa:'1\u00aa',sigL:'Acuario',desc:'Transición, viaje, dejar atrás. Navegar hacia aguas más tranquilas. Una barca transporta seis espadas verticales mientras una figura empuja la embarcación. Representa el viaje hacia un lugar mejor, dejando atrás las turbulencias. Te asegura que después de la tormenta llegará la calma, solo debes confiar en el movimiento hacia adelante.'},
+                {num:'7',name:'7 de Espadas',img:imgPath(4,4),sig:'Luna',casa:'1\u00aa',sigL:'Acuario',desc:'Engaño, estrategia, sigilo. La mente astuta que busca su camino. Una figura hurta cinco espadas mientras dos quedan atrás. Representa la necesidad de actuar con astucia, de pensar estratégicamente ante una situación adversa. Te advierte sobre el engaño externo pero también sobre tu propia capacidad de autoengaño y te pide honestidad.'},
+                {num:'8',name:'8 de Espadas',img:imgPath(4,5),sig:'J\u00fapiter',casa:'1\u00aa',sigL:'G\u00e9minis',desc:'Restricción, confusión, parálisis. Las ataduras de la mente. Una figura vendada y atada rodeada de ocho espadas clavadas en la tierra. Representa la sensación de estar atrapado sin salida. Pero las ataduras son sueltas y no hay paredes alrededor, solo tu mente te limita. Te invita a ver que las únicas cadenas son las que tú mismo te impones.'},
+                {num:'9',name:'9 de Espadas',img:imgPath(4,6),sig:'Marte',casa:'1\u00aa',sigL:'G\u00e9minis',desc:'Ansiedad, pesadillas, preocupación. El peso de los miedos nocturnos. Una figura sentada en la cama con el rostro entre las manos, nueve espadas colgando sobre ella. Representa la angustia mental, las noches de insomnio y la tendencia a magnificar los problemas. Te recuerda que la oscuridad siempre antecede al amanecer y que tus miedos son menos poderosos de lo que parecen.'},
+                {num:'10',name:'10 de Espadas',img:imgPath(4,7),sig:'Sol',casa:'1\u00aa',sigL:'G\u00e9minis',desc:'Final, derrota, renacimiento. El fin doloroso que antecede al amanecer. Una figura yace atravesada por diez espadas mientras el horizonte se ilumina. Representa el final inevitable, la situación que ha llegado a su término. Pero en la distancia, el sol comienza a salir. La derrota aparente es el preludio necesario para un nuevo comienzo.'},
+                {num:'P',name:'Paje de Espadas',img:imgPath(4,8),sig:'Marte',casa:'1\u00aa',sigL:'G\u00e9minis',desc:'Vigilancia, ideas nuevas, curiosidad. El mensajero del viento mental. Joven alerta con la espada en alto, observando el horizonte en busca de conocimiento. Representa la mente despierta, la curiosidad intelectual y la disposición para aprender. Trae nuevas ideas, descubrimientos y la necesidad de comunicar lo que has comprendido.'},
+                {num:'C',name:'Caballero de Espadas',img:imgPath(4,9),sig:'Marte',casa:'1\u00aa',sigL:'G\u00e9minis',desc:'Determinación, acción mental. El guerrero que corta con la espada de la verdad. Cabalga a toda velocidad con la espada en alto, listo para enfrentar cualquier desafío. Representa la acción decidida basada en la verdad, la comunicación directa y la defensa de tus principios. Te llama a actuar con valentía intelectual y a no retroceder ante la verdad.'},
+                {num:'Q',name:'Reina de Espadas',img:imgPath(4,10),sig:'Venus',casa:'1\u00aa',sigL:'Libra',desc:'Claridad, independencia, sabiduría. La señora del aire que ve la verdad. Sentada en su trono adornado con ángeles, sostiene su espada con firmeza. Representa la sabiduría ganada a través de la experiencia y el dolor. Su mirada penetrante no tolera mentiras. Te invita a cortar lo que ya no sirve con la espada de la verdad y la compasión.'},
+                {num:'K',name:'Rey de Espadas',img:imgPath(4,11),sig:'Marte',casa:'1\u00aa',sigL:'Acuario',desc:'Autoridad intelectual, ética. El poder de la mente y la justicia. En su trono elevado entre las nubes, sostiene su espada firmemente. Representa la autoridad basada en la sabiduría, la justicia impartida con ecuanimidad y el poder de la mente clara. Te llama a tomar decisiones con lógica y ética, poniendo la verdad por encima de los intereses personales.'}
+            ],
+            pentacles: [
+                {num:'1',name:'As de Oros',img:imgPath(4,12),sig:'Venus',casa:'1\u00aa',sigL:'Tauro',desc:'Creación, prosperidad, nuevo ciclo. La semilla de la abundancia material. Una mano del cielo sostiene un gran oro del que brota un jardín. Representa el comienzo de una empresa material, una oportunidad financiera o el inicio de un proyecto concreto. Te invita a plantar las semillas de tu abundancia con confianza y dedicación.'},
+                {num:'2',name:'2 de Oros',img:imgPath(5,0),sig:'J\u00fapiter',casa:'1\u00aa',sigL:'Tauro',desc:'Equilibrio, adaptación, cambio. El malabarista que danza con la vida. Un hombre hace malabares con dos oros mientras el mar ondula a sus espaldas. Representa la necesidad de equilibrar múltiples responsabilidades y recursos. Te recuerda que la vida es un flujo constante y que tu habilidad para adaptarte determina tu éxito. Mantén el equilibrio entre dar y recibir.'},
+                {num:'3',name:'3 de Oros',img:imgPath(5,1),sig:'Marte',casa:'1\u00aa',sigL:'Capricornio',desc:'Trabajo en equipo, maestría, creación. La colaboración que construye. Tres personas trabajando juntas en la construcción de una catedral. Representa el poder de la colaboración, la maestría técnica y el fruto del trabajo en equipo. Te recuerda que las grandes obras no se logran en soledad y que cada uno aporta un don único al proyecto común.'},
+                {num:'4',name:'4 de Oros',img:imgPath(5,2),sig:'Sol',casa:'1\u00aa',sigL:'Capricornio',desc:'Estabilidad, control, ahorro. La seguridad de poseer y retener. Un hombre aferra cuatro oros protegiéndolos celosamente. Representa la necesidad de seguridad material, el ahorro prudente y el control sobre los recursos. Pero también advierte sobre el apego excesivo al dinero y la tendencia a cerrarse por miedo a perder lo que tienes.'},
+                {num:'5',name:'5 de Oros',img:imgPath(5,3),sig:'Mercurio',casa:'1\u00aa',sigL:'Tauro',desc:'Dificultad, pérdida material. La prueba de la fe en tiempos de escasez. Dos figuras harapientas pasan frente a una iglesia iluminada sin entrar. Representa la pérdida material, la exclusión y los momentos de escasez. Pero te recuerda que la ayuda está disponible si abres los ojos y pides apoyo, y que la verdadera riqueza reside en el espíritu.'},
+                {num:'6',name:'6 de Oros',img:imgPath(5,4),sig:'Luna',casa:'1\u00aa',sigL:'Tauro',desc:'Generosidad, caridad, equilibrio. La justa distribución de los recursos. Un hombre con balanza reparte monedas a dos mendigos. Representa la generosidad equilibrada, la caridad consciente y la justa distribución de la riqueza. Te invita a dar y recibir con equidad, reconociendo que todos somos tanto maestros como aprendices en la danza de la abundancia.'},
+                {num:'7',name:'7 de Oros',img:imgPath(5,5),sig:'Saturno',casa:'1\u00aa',sigL:'Tauro',desc:'Evaluación, paciencia, crecimiento. La cosecha que tarda en llegar. Un hombre observa su cosecha de oros colgados en un arbusto. Representa la evaluación de tus inversiones y el fruto de tu trabajo paciente. Te invita a reflexionar sobre lo que has sembrado, a tener paciencia con los resultados y a decidir si continuar invirtiendo o cambiar de dirección.'},
+                {num:'8',name:'8 de Oros',img:imgPath(5,6),sig:'Sol',casa:'1\u00aa',sigL:'Virgo',desc:'Dedicación, aprendizaje, artesanía. La maestría que nace del trabajo constante. Un artesano concentrado talla cada oro con esmero y dedicación. Representa el aprendizaje meticuloso, la práctica constante y el orgullo del trabajo bien hecho. Te recuerda que la maestría no llega por inspiración sino por la repetición consciente y el amor al oficio.'},
+                {num:'9',name:'9 de Oros',img:imgPath(5,7),sig:'Venus',casa:'1\u00aa',sigL:'Virgo',desc:'Lujo, abundancia, autosuficiencia. La cosecha de los esfuerzos pasados. Una mujer rodeada de lujo en su jardín privado, con nueve oros dispuestos en arco. Representa la abundancia material alcanzada, la autosuficiencia y el disfrute de los frutos de tu trabajo. Te invita a celebrar tu éxito sin culpa y a compartir tu abundancia desde la plenitud.'},
+                {num:'10',name:'10 de Oros',img:imgPath(5,8),sig:'Mercurio',casa:'1\u00aa',sigL:'Virgo',desc:'Legado, herencia, tradición. La riqueza que trasciende generaciones. Una familia reunida bajo un arco de diez oros que representa la prosperidad familiar. Habla de herencia, tradiciones familiares y el legado que construyes para las generaciones futuras. Te invita a honrar tus raíces mientras construyes un futuro sólido para quienes vendrán.'},
+                {num:'P',name:'Paje de Oros',img:imgPath(5,9),sig:'Marte',casa:'1\u00aa',sigL:'Tauro',desc:'Estudio, aplicación, nuevo proyecto. El aprendiz del mundo material. Joven observa con atención el oro que flota frente a él, dispuesto a aprender. Representa el inicio de un proyecto práctico, el estudio dedicado y la aplicación paciente. Te anima a poner manos a la obra, a aprender haciendo y a valorar cada pequeño paso en tu formación.'},
+                {num:'C',name:'Caballero de Oros',img:imgPath(5,10),sig:'Marte',casa:'1\u00aa',sigL:'Tauro',desc:'Perseverancia, responsabilidad. El guardián paciente de la tierra. Montado en un caballo lento y pesado, sostiene su oro con firmeza. Representa la perseverancia, la responsabilidad y el trabajo constante. No es rápido ni espectacular pero siempre llega a su destino. Te invita a avanzar paso a paso, confiando en que la constancia vence la resistencia.'},
+                {num:'Q',name:'Reina de Oros',img:imgPath(5,11),sig:'Venus',casa:'1\u00aa',sigL:'Capricornio',desc:'Abundancia, practicidad, nutrición. La madre tierra que provee y protege. En su trono rodeado de naturaleza, sostiene su oro con seguridad. Representa la abundancia práctica, la capacidad de administrar los recursos con sabiduría y de nutrir tanto el cuerpo como el espíritu. Te invita a crear seguridad material sin perder la conexión con la tierra.'},
+                {num:'K',name:'Rey de Oros',img:imgPath(5,12),sig:'Marte',casa:'1\u00aa',sigL:'Capricornio',desc:'Prosperidad, éxito, estabilidad. El señor del mundo material realizado. Rodeado de todos los símbolos de su éxito, el Rey de Oros ha alcanzado la cima del mundo material. Representa la prosperidad estable, la sabiduría financiera y el liderazgo empresarial. Te recuerda que el verdadero éxito incluye generosidad, responsabilidad y visión a largo plazo.'}
+            ]
+        };
+
+        // === RENDER ===
+        function renderCard(c, isMajor, suit) {
+            var numHtml = isMajor
+                ? '<div class="card-number">' + c.num + '</div>'
+                : '<div class="card-number">' + (c.num === 'P' ? 'Paje' : c.num === 'C' ? 'Caballero' : c.num === 'Q' ? 'Reina' : c.num === 'K' ? 'Rey' : 'N\u00famero ' + c.num) + '</div>';
+            return '<div class="card-tarot' + (c.feat ? ' featured' : '') + '">' +
+                (c.img ? '<div class="card-img-wrapper"><img src="' + c.img + '" alt="' + c.name + '" loading="lazy"></div>' : '') +
+                '<div class="card-name">' + c.name + '</div>' +
+                numHtml +
+                '<div class="card-divider"></div>' +
+                '<div class="card-desc">' + c.desc + '</div>' +
+                '<div class="card-details">' +
+                    '<div class="card-detail-item"><span class="label">Signo</span><span class="value">' + c.sigL + '</span></div>' +
+                    '<div class="card-detail-item"><span class="label">Casa</span><span class="value">' + c.casa + '</span></div>' +
+                    '<div class="card-detail-item"><span class="label">N\u00famero</span><span class="value">' + c.num + '</span></div>' +
+                    '<div class="card-detail-item"><span class="label">Planeta</span><span class="value">' + c.sig + '</span></div>' +
+                '</div></div>';
+        }
+
+        function renderSection(id, data, isMajor, suit) {
+            var html = '';
+            data.forEach(function(c) { html += renderCard(c, isMajor, suit); });
+            document.getElementById(id).innerHTML = html;
+        }
+
+        renderSection('grid-major', cardData.major, true, 'major');
+        renderSection('grid-wands', cardData.wands, false, 'wands');
+        renderSection('grid-cups', cardData.cups, false, 'cups');
+        renderSection('grid-swords', cardData.swords, false, 'swords');
+        renderSection('grid-pentacles', cardData.pentacles, false, 'pentacles');
+
+        // === HOUSES DATA ===
+        var housesData = [
+            {num:'I',name:'La Casa del Ser',signo:'Aries',planeta:'Marte',desc:'Representa la personalidad, la apariencia f\u00edsica, el inicio de la vida y c\u00f3mo te presentas al mundo. Es la casa del yo, la identidad primordial, la m\u00e1scara que mostramos y la manera en que los dem\u00e1s nos perciben. Aqu\u00ed se refleja tu impulso vital, tu espontaneidad y la chispa \u00fanica que te distingue como individuo.'},
+            {num:'II',name:'La Casa de los Valores',signo:'Tauro',planeta:'Venus',desc:'Gobierna los recursos materiales, el dinero, los talentos innatos y la autoestima. Revela tu relaci\u00f3n con la abundancia, lo que valoras y c\u00f3mo generas seguridad. Esta casa habla de tus posesiones, no solo materiales sino tambi\u00e9n emocionales, y de la capacidad de disfrutar los placeres de la vida.'},
+            {num:'III',name:'La Casa de la Comunicaci\u00f3n',signo:'G\u00e9minis',planeta:'Mercurio',desc:'Rige la mente, la comunicaci\u00f3n, los hermanos, los viajes cortos y el aprendizaje temprano. Representa c\u00f3mo procesas la informaci\u00f3n, tu curiosidad intelectual y tu manera de expresarte. Es la casa de las conexiones cotidianas, los vecinos, y todo aquello que estimula tu mente inquieta.'},
+            {num:'IV',name:'La Casa del Hogar',signo:'C\u00e1ncer',planeta:'Luna',desc:'Representa el hogar, la familia, las ra\u00edces y la base emocional. Habla de tu infancia, tus ancestros y el refugio seguro que buscas. Es la casa m\u00e1s \u00edntima, donde guardas tus memorias m\u00e1s profundas y desde donde te relacionas con el mundo en t\u00e9rminos de seguridad y pertenencia.'},
+            {num:'V',name:'La Casa de la Creatividad',signo:'Leo',planeta:'Sol',desc:'Gobierna la creatividad, el romance, los hijos, el juego y la expresi\u00f3n personal. Es la casa del coraz\u00f3n, de aquello que haces por puro placer. Representa tu capacidad de brillar, de amar apasionadamente y de crear vida en todas sus formas, ya sea a trav\u00e9s del arte, los hijos o tus proyectos m\u00e1s entra\u00f1ables.'},
+            {num:'VI',name:'La Casa del Servicio',signo:'Virgo',planeta:'Mercurio',desc:'Rige la salud, el trabajo diario, el servicio a los dem\u00e1s y las rutinas. Representa tu dedicaci\u00f3n al bienestar f\u00edsico y mental, c\u00f3mo organizas tu d\u00eda a d\u00eda y la manera en que sirves al pr\u00f3jimo. Es la casa de la mejora continua, del an\u00e1lisis meticuloso y de encontrar prop\u00f3sito en las peque\u00f1as cosas.'},
+            {num:'VII',name:'La Casa de las Asociaciones',signo:'Libra',planeta:'Venus',desc:'Gobierna el matrimonio, las sociedades, las alianzas y las relaciones significativas. Representa el espejo del otro, lo que buscamos en una pareja y c\u00f3mo nos relacionamos en igualdad. Es la casa del equilibrio, la diplomacia y la capacidad de crear v\u00ednculos profundos basados en el respeto mutuo y la armon\u00eda.'},
+            {num:'VIII',name:'La Casa de la Transformaci\u00f3n',signo:'Escorpio',planeta:'Plut\u00f3n',desc:'Rige la muerte y el renacimiento, la sexualidad, las herencias y los recursos compartidos. Es la casa m\u00e1s intensa del zod\u00edaco, donde enfrentas tus miedos y te transformas. Representa las crisis que te obligan a evolucionar, la capacidad de regenerarte y los lazos que trascienden lo material, como el sexo y la muerte.'},
+            {num:'IX',name:'La Casa de la Expansi\u00f3n',signo:'Sagitario',planeta:'J\u00fapiter',desc:'Gobierna los viajes largos, la filosof\u00eda, la educaci\u00f3n superior y la b\u00fasqueda de significado. Representa tu visi\u00f3n del mundo, tus creencias y tu deseo de expandir horizontes. Es la casa del explorador, del estudiante eterno que busca la verdad m\u00e1s all\u00e1 de las fronteras f\u00edsicas y mentales.'},
+            {num:'X',name:'La Casa de la Carrera',signo:'Capricornio',planeta:'Saturno',desc:'Rige la profesi\u00f3n, el estatus social, la reputaci\u00f3n y el legado. Representa tu ambici\u00f3n, tu lugar en el mundo y la huella que deseas dejar. Es la casa del \u00e9xito p\u00fablico, de la autoridad conquistada con esfuerzo y de la responsabilidad que asumes ante la sociedad.'},
+            {num:'XI',name:'La Casa de las Amistades',signo:'Acuario',planeta:'Urano',desc:'Gobierna las amistades, los grupos sociales, los proyectos colectivos y los ideales. Representa tu tribu, tus conexiones con comunidades afines y tu visi\u00f3n del futuro. Es la casa de la colaboraci\u00f3n, la innovaci\u00f3n social y los sue\u00f1os compartidos que trascienden el individuo.'},
+            {num:'XII',name:'La Casa del Inconsciente',signo:'Piscis',planeta:'Neptuno',desc:'Rige el subconsciente, los sue\u00f1os, la espiritualidad, el karma y el retiro. Es la casa del alma, donde guardas los patrones invisibles que te condicionan. Representa la conexi\u00f3n con lo divino, la compasi\u00f3n universal y el viaje hacia el interior donde encuentras la unidad con todo lo que existe.'},
+        ];
+
+        function renderHouses() {
+            var html = '';
+            housesData.forEach(function(h) {
+                html += '<div class="house-card">' +
+                    '<div class="house-header">' +
+                        '<div class="house-num">' + h.num + '</div>' +
+                        '<div class="house-name">' + h.name + '</div>' +
+                        '<div class="house-sign">' + h.signo + ' · ' + h.planeta + '</div>' +
+                    '</div>' +
+                    '<div class="house-desc">' + h.desc + '</div>' +
+                '</div>';
+            });
+            document.getElementById('grid-houses').innerHTML = html;
+        }
+        renderHouses();
+
+        // === ZODIAC DATA ===
+        var zodiacData = [
+{num:1,name:'Aries',sym:'\u2648\uFE0E',dates:'21 Mar \u2013 19 Abr',elem:'Fuego',planeta:'Marte',casa:'1\u00aa',colores:['#dc2626','#ff6b35'],piedras:'Rub\u00ed, Diamante',piedrasDesc:'Rub\xED, Diamante',img:'images/signos-0/aries-0.jpg',cards:['El Emperador','As de Bastos','2 de Bastos','3 de Bastos','4 de Bastos','Paje de Bastos','Caballero de Bastos']},
+{num:2,name:'Tauro',sym:'\u2649\uFE0E',dates:'20 Abr \u2013 20 May',elem:'Tierra',planeta:'Venus',casa:'2\u00aa',colores:['#22c55e','#f9a8d4'],piedras:'Esmeralda, Cuarzo Rosa',piedrasDesc:'Esmeralda, Cuarzo Rosa',img:'images/signos-0/tauro-0.jpg',cards:['El Sumo Sacerdote','La Emperatriz','As de Oros','2 de Oros','5 de Oros','6 de Oros','7 de Oros','Paje de Oros','Caballero de Oros']},
+{num:3,name:'G\u00e9minis',sym:'\u264A\uFE0E',dates:'21 May \u2013 20 Jun',elem:'Aire',planeta:'Mercurio',casa:'3\u00aa',colores:['#eab308','#9ca3af'],piedras:'\u00c1gata, Piedra Luna',piedrasDesc:'\xC1gata, Piedra Luna',img:'images/signos-0/geminis-0.jpg',cards:['Los Enamorados','8 de Espadas','9 de Espadas','10 de Espadas','Paje de Espadas','Caballero de Espadas']},
+{num:4,name:'C\u00e1ncer',sym:'\u264B\uFE0E',dates:'21 Jun \u2013 22 Jul',elem:'Agua',planeta:'Luna',casa:'4\u00aa',colores:['#e2e8f0','#94a3b8'],piedras:'Perla, Selenita',piedrasDesc:'Perla, Selenita',img:'images/signos-0/cancer-0.jpg',cards:['El Carro','La Sacerdotisa','As de Copas','2 de Copas','3 de Copas','Paje de Copas','Caballero de Copas']},
+{num:5,name:'Leo',sym:'\u264C\uFE0E',dates:'23 Jul \u2013 22 Ago',elem:'Fuego',planeta:'Sol',casa:'5\u00aa',colores:['#fbbf24','#f97316'],piedras:'Topacio, Ojo de Tigre',piedrasDesc:'Topacio, Ojo de Tigre',img:'images/signos-0/leo-0.jpg',cards:['La Fuerza','5 de Bastos','6 de Bastos','7 de Bastos','Reina de Bastos','Rey de Bastos']},
+{num:6,name:'Virgo',sym:'\u264D\uFE0E',dates:'23 Ago \u2013 22 Sep',elem:'Tierra',planeta:'Mercurio',casa:'6\u00aa',colores:['#a0522d','#eab308'],piedras:'Jaspe, Aguamarina',piedrasDesc:'Jaspe, Aguamarina',img:'images/signos-0/virgo-0.jpg',cards:['El Ermita\u00f1o','8 de Oros','9 de Oros','10 de Oros']},
+{num:7,name:'Libra',sym:'\u264E\uFE0E',dates:'23 Sep \u2013 22 Oct',elem:'Aire',planeta:'Venus',casa:'7\u00aa',colores:['#f472b6','#60a5fa'],piedras:'\u00d3palo, Lapisl\u00e1zuli',piedrasDesc:'\xD3palo, Lapisl\xE1zuli',img:'images/signos-0/libra-0.jpg',cards:['La Justicia','As de Espadas','2 de Espadas','3 de Espadas','4 de Espadas','Reina de Espadas']},
+{num:8,name:'Escorpio',sym:'\u264F\uFE0E',dates:'23 Oct \u2013 21 Nov',elem:'Agua',planeta:'Plut\u00f3n',casa:'8\u00aa',colores:['#4a0e0e','#0a0a0a'],piedras:'\u00d3nice, Granate',piedrasDesc:'\xD3nice, Granate',img:'images/signos-0/escorpio-0.jpg',cards:['La Muerte','4 de Copas','5 de Copas','6 de Copas','Rey de Copas']},
+{num:9,name:'Sagitario',sym:'\u2650\uFE0E',dates:'22 Nov \u2013 21 Dic',elem:'Fuego',planeta:'J\u00fapiter',casa:'9\u00aa',colores:['#7b2dbf','#3b82f6'],piedras:'Turquesa, Amatista',piedrasDesc:'Turquesa, Amatista',img:'images/signos-0/sagitario-0.jpg',cards:['La Templanza','Rueda de la Fortuna','8 de Bastos','9 de Bastos','10 de Bastos']},
+{num:10,name:'Capricornio',sym:'\u2651\uFE0E',dates:'22 Dic \u2013 19 Ene',elem:'Tierra',planeta:'Saturno',casa:'10\u00aa',colores:['#4a0e0e','#1a1a2e'],piedras:'Granate, Turmalina Negra',piedrasDesc:'Granate, Turmalina Negra',img:'images/signos-0/capricornio-0.jpg',cards:['El Diablo','3 de Oros','4 de Oros','Reina de Oros','Rey de Oros']},
+{num:11,name:'Acuario',sym:'\u2652\uFE0E',dates:'20 Ene \u2013 18 Feb',elem:'Aire',planeta:'Urano',casa:'11\u00aa',colores:['#3b82f6','#60a5fa'],piedras:'Zafiro, Azurita',piedrasDesc:'Zafiro, Azurita',img:'images/signos-0/acuario-0.jpg',cards:['La Estrella','El Loco','5 de Espadas','6 de Espadas','7 de Espadas','Rey de Espadas']},
+{num:12,name:'Piscis',sym:'\u2653\uFE0E',dates:'19 Feb \u2013 20 Mar',elem:'Agua',planeta:'Neptuno',casa:'12\u00aa',colores:['#22d3ee','#c084fc'],piedras:'Amatista, Aguamarina',piedrasDesc:'Amatista, Aguamarina',img:'images/signos-0/piscis-0.jpg',cards:['El Colgado','La Luna','7 de Copas','8 de Copas','9 de Copas','10 de Copas']},
+        ];
+
+        function renderZodiac() {
+            var html = '';
+            var cardsMap = {};
+            // build lookup from cardData
+            cardData.major.forEach(function(c){cardsMap[c.name]=c.name;});
+            cardData.wands.forEach(function(c){cardsMap[c.name]=c.name;});
+            cardData.cups.forEach(function(c){cardsMap[c.name]=c.name;});
+            cardData.swords.forEach(function(c){cardsMap[c.name]=c.name;});
+            cardData.pentacles.forEach(function(c){cardsMap[c.name]=c.name;});
+
+            zodiacData.forEach(function(z) {
+                var colorsHtml = '';
+                z.colores.forEach(function(c) {
+                    colorsHtml += '<span class="color-dot" style="background:' + c + '"></span>';
+                });
+                var cardsHtml = '';
+                z.cards.forEach(function(cn) {
+                    cardsHtml += '<a href="#cards">' + cn + '</a>';
+                });
+                html += '<div class="zodiac-card">' +
+                    '<div class="zodiac-header">' +
+                        '<div class="zodiac-symbol">' + z.sym + '</div>' +
+                        '<div class="zodiac-name">' + z.name + '<small>' + z.dates + '</small></div>' +
+                    '</div>' +
+                    '<div class="zodiac-img-label">Constelaci\u00f3n</div>' +
+                    '<div class="zodiac-img-wrapper"><img src="' + z.img + '" alt="' + z.name + '" loading="lazy"></div>' +
+                    '<div class="zodiac-details">' +
+                        '<div class="zodiac-detail"><span class="label">Elemento</span><span class="value">' + z.elem + '</span></div>' +
+                        '<div class="zodiac-detail"><span class="label">Planeta</span><span class="value">' + z.planeta + '</span></div>' +
+                        '<div class="zodiac-detail"><span class="label">Casa</span><span class="value">' + z.casa + '</span></div>' +
+                        '<div class="zodiac-detail"><span class="label">Colores</span><span class="value">' + colorsHtml + '</span></div>' +
+                        '<div class="zodiac-detail" style="grid-column: 1 / -1"><span class="label">Piedras</span><span class="value">' + z.piedras + '</span></div>' +
+                    '</div>' +
+                    '<div class="zodiac-cards">' +
+                        '<div class="label">Cartas asociadas</div>' +
+                        '<div class="zodiac-cards-list">' + cardsHtml + '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            document.getElementById('grid-zodiac').innerHTML = html;
+        }
+        renderZodiac();
+
+        // === NAVBAR TOGGLE ===
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+        document.querySelector('.navbar .brand').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('[data-view="all"]').click();
+        });
+        // === EXPLORAR BUTTON ===
+        document.getElementById('btnExplorar').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('[data-view="cards"]').click();
+        });
+
+        // === VIEW SWITCHING ===
+        var cardsSection = document.querySelector('.cards-section');
+        var zodiacSection = document.querySelector('.zodiac-section');
+        var housesSection = document.querySelector('.houses-section');
+        var intro = document.getElementById('intro');
+
+        // Initial state: hide cards, zodiac, houses
+        cardsSection.classList.add('view-hidden');
+        zodiacSection.classList.add('view-hidden');
+        housesSection.classList.add('view-hidden');
+
+        var viewLinks = document.querySelectorAll('.nav-links a[data-view]');
+        viewLinks.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                var view = this.getAttribute('data-view');
+                viewLinks.forEach(function(l) { l.classList.remove('active'); });
+                this.classList.add('active');
+                cardsSection.classList.add('view-hidden');
+                zodiacSection.classList.add('view-hidden');
+                housesSection.classList.add('view-hidden');
+                if (view === 'cards') {
+                    cardsSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'zodiac') {
+                    zodiacSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    zodiacSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'houses') {
+                    housesSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    housesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // === CARTAS SUB-NAV ===
+        var subNav = document.createElement('div');
+        subNav.className = 'nav-sections';
+        subNav.innerHTML =
+            '<a href="#major" class="nav-section">Arcanos Mayores</a>' +
+            '<a href="#wands" class="nav-section">Bastos</a>' +
+            '<a href="#cups" class="nav-section">Copas</a>' +
+            '<a href="#swords" class="nav-section">Espadas</a>' +
+            '<a href="#pentacles" class="nav-section">Oros</a>';
+        cardsSection.querySelector('.subtitle').after(subNav);
+
+        // === SUB-NAV ACTIVE ON SCROLL ===
+        var sections = document.querySelectorAll('.fade-section[id]');
+        var subLinks = document.querySelectorAll('.cards-section .nav-section');
+        window.addEventListener('scroll', function() {
+            var current = '';
+            sections.forEach(function(s) {
+                var top = s.getBoundingClientRect().top;
+                if (top < 120) { current = s.id; }
+            });
+            subLinks.forEach(function(a) {
+                a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+            });
+        });
+
+        // === INTERSECTION OBSERVER ===
+        document.querySelectorAll('.fade-section').forEach(function(el) { el.classList.add('visible'); });
+        var observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) { e.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-section').forEach(function(el) { observer.observe(el); });
+    </script>
+</body>
+</html>
