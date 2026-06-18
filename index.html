@@ -72,16 +72,17 @@
         .hero {
             display: flex; flex-direction: column;
             align-items: center; text-align: center;
-            padding: 10px 2rem 2rem;
+            padding: 20px 2rem 2rem;
             position: relative; overflow: hidden;
         }
         .hero::before {
             content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
             background: 
-                radial-gradient(circle at 30% 40%, rgba(140, 60, 220, 0.25) 0%, transparent 40%),
-                radial-gradient(circle at 70% 60%, rgba(100, 30, 180, 0.15) 0%, transparent 40%),
-                linear-gradient(135deg, #0a0e1a 0%, #2a0a4a 50%, #0a0e1a 100%);
-            z-index: 0; opacity: 0.9;
+                radial-gradient(circle at 30% 40%, rgba(140, 60, 220, 0.4) 0%, transparent 60%),
+                radial-gradient(circle at 70% 60%, rgba(100, 30, 180, 0.3) 0%, transparent 60%),
+                radial-gradient(circle at 50% 0%, rgba(180, 80, 255, 0.15) 0%, transparent 50%),
+                linear-gradient(180deg, #1a0a2e 0%, #2a0a4a 30%, #0a0e1a 100%);
+            z-index: 0; opacity: 1;
             animation: pulseBg 10s ease-in-out infinite alternate;
             pointer-events: none;
         }
@@ -119,7 +120,7 @@
             100% { transform: translate(-3%, 2%) scale(1.02); opacity: 0.4; }
         }
         .hero * { position: relative; z-index: 2; }
-        .hero-symbol { margin-bottom: 0.3rem; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        .hero-symbol { margin-bottom: 0.5rem; min-height: 40px; display: flex; align-items: center; justify-content: center; }
         .hero-img { width: 70px; height: auto; filter: drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
         .hero h1 {
@@ -127,11 +128,11 @@
             font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900;
             color: var(--violeta-brillante);
             text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-            letter-spacing: 0.08em; margin-bottom: 5rem;
+            letter-spacing: 0.08em; margin-bottom: 1.5rem;
         }
         .hero p {
             font-size: clamp(0.95rem, 1.8vw, 1.15rem); color: var(--gris);
-            max-width: 700px; line-height: 1.8; margin-bottom: 6rem;
+            max-width: 700px; line-height: 1.8; margin-bottom: 2rem;
         }
         .btn-scroll {
             display: inline-block; padding: 0.9rem 2.5rem;
@@ -145,7 +146,7 @@
             border-color: var(--verde-claro);
         }
         .intro {
-            max-width: 900px; margin: 0 auto; padding: 2rem 2rem; text-align: center;
+            max-width: 900px; margin: 0 auto; padding: 2rem; text-align: center;
         }
         .intro h2 {
             font-family: 'Cinzel', serif; font-size: 2.5rem;
@@ -684,6 +685,12 @@
             .card-img-wrapper img { width: 80px; }
             .hero h1 { font-size: 2.2rem; }
             .hero-img { width: 70px; }
+            .house-header { flex-wrap: wrap; gap: 0.5rem; }
+            .house-sign { margin-left: 0; white-space: normal; font-size: 0.75rem; }
+            .house-name { font-size: 1rem; }
+            .house-num { width: 36px; height: 36px; font-size: 1.3rem; }
+            .house-card { padding: 1rem; }
+            .house-desc { font-size: 0.85rem; }
             .navbar .nav-links {
                 display: none; position: absolute; top: 100%; left: 0; right: 0;
                 flex-direction: column; gap: 0.2rem;
@@ -1223,7 +1230,7 @@
         // === EXPLORAR BUTTON ===
         document.getElementById('btnExplorar').addEventListener('click', function(e) {
             e.preventDefault();
-            document.querySelector('[data-view="cards"]').click();
+            document.getElementById('intro-astrologia').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
         // === VIEW SWITCHING ===
