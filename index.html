@@ -273,13 +273,13 @@
             text-shadow: 0 0 30px rgba(160, 120, 220, 0.3);
         }
         footer {
-            display: flex; align-items: center; justify-content: center; gap: 0.7rem;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             padding: 1.5rem 2rem;
             border-top: 1px solid rgba(168,85,247,0.1);
             color: var(--gris); font-size: 0.78rem;
         }
-        footer .footer-symbol { display: flex; }
-        .footer-img { width: 32px; height: auto; opacity: 0.5; display: block; }
+        footer .footer-symbol { display: flex; align-items: center; line-height: 0; }
+        .footer-img { width: 32px; height: auto; opacity: 0.5; }
 
         .scroll-indicator {
             display: flex; flex-direction: column; align-items: center;
@@ -306,6 +306,179 @@
             transition: all 0.3s; text-decoration: none;
         }
         .nav-section:hover { border-color: rgba(160, 120, 200, 0.4); background: rgba(80, 40, 120, 0.12); }
+        .planets-section {
+            max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .planets-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .planets-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.1rem;
+        }
+        .planets-grid {
+            display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+        }
+        .planet-card {
+            background: linear-gradient(145deg, #0d0d14, #120a1a);
+            border: 1px solid rgba(160, 120, 200, 0.15);
+            border-radius: 12px; padding: 1.2rem 1.5rem;
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+            display: flex; gap: 1.5rem;
+        }
+        .planet-card:hover {
+            border-color: rgba(160, 120, 200, 0.35);
+            box-shadow: 0 8px 32px rgba(80, 40, 120, 0.2);
+            transform: translateY(-2px);
+        }
+        .planet-sym {
+            font-size: 3.5rem; width: 90px; height: 90px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(160, 90, 210, 0.1); border-radius: 14px; flex-shrink: 0;
+        }
+        .planet-body {
+            flex: 1; display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .planet-header {
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .planet-name {
+            font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--blanco);
+        }
+        .planet-sign {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem; color: var(--violeta-brillante); font-weight: 600;
+            white-space: nowrap;
+        }
+        .planet-desc {
+            font-size: 0.95rem; line-height: 1.7; color: var(--gris);
+        }
+        .elements-section {
+            max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .elements-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .elements-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.1rem;
+        }
+        .elements-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+        }
+        .element-card {
+            border-radius: 14px; padding: 1.5rem;
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .element-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+        .element-card.fire {
+            background: linear-gradient(145deg, #12080a, #1a0a08);
+            border-color: rgba(180, 60, 60, 0.2);
+        }
+        .element-card.fire:hover { border-color: rgba(180, 60, 60, 0.4); box-shadow: 0 12px 40px rgba(150, 40, 40, 0.1); }
+        .element-card.earth {
+            background: linear-gradient(145deg, #080f08, #0a1808);
+            border-color: rgba(60, 140, 70, 0.2);
+        }
+        .element-card.earth:hover { border-color: rgba(60, 140, 70, 0.4); box-shadow: 0 12px 40px rgba(50, 120, 60, 0.1); }
+        .element-card.air {
+            background: linear-gradient(145deg, #0a0a24, #001040);
+            border-color: rgba(70, 130, 220, 0.3);
+        }
+        .element-card.air:hover { border-color: rgba(70, 130, 220, 0.5); box-shadow: 0 12px 40px rgba(50, 100, 200, 0.15); }
+        .element-card.water {
+            background: linear-gradient(145deg, #061824, #002a38);
+            border-color: rgba(50, 180, 210, 0.3);
+        }
+        .element-card.water:hover { border-color: rgba(50, 180, 210, 0.5); box-shadow: 0 12px 40px rgba(30, 160, 200, 0.15); }
+        .element-header {
+            display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem;
+        }
+        .element-sym {
+            font-size: 2.5rem; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; flex-shrink: 0;
+        }
+        .element-card.fire .element-sym { background: rgba(180, 60, 60, 0.15); }
+        .element-card.earth .element-sym { background: rgba(60, 140, 70, 0.15); }
+        .element-card.air .element-sym { background: rgba(70, 130, 220, 0.15); }
+        .element-card.water .element-sym { background: rgba(50, 180, 210, 0.15); }
+        .element-name {
+            font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--blanco);
+        }
+        .element-signs {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;
+        }
+        .element-signs span {
+            font-size: 0.8rem; padding: 0.2rem 0.7rem;
+            border-radius: 20px; font-weight: 600;
+        }
+        .element-card.fire .element-signs span { background: rgba(180, 60, 60, 0.15); color: #e5a0a0; }
+        .element-card.earth .element-signs span { background: rgba(60, 140, 70, 0.15); color: #a0d0a0; }
+        .element-card.air .element-signs span { background: rgba(70, 130, 220, 0.15); color: #a0c4f0; }
+        .element-card.water .element-signs span { background: rgba(50, 180, 210, 0.15); color: #88e0f0; }
+        .element-desc {
+            font-size: 0.9rem; line-height: 1.7; color: var(--gris);
+        }
+        .elements-section .section-divider { margin-top: 2rem; }
+        @media (max-width: 640px) {
+            .elements-grid { grid-template-columns: 1fr; }
+        }
+
+        /* === CARD SCROLL ANIMATIONS === */
+        .card-tarot, .zodiac-card, .house-card, .planet-card, .element-card {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .fade-section.visible .card-tarot { opacity: 1; transform: translateY(0); }
+        .fade-section.visible .zodiac-card { opacity: 1; transform: translateY(0); }
+        .fade-section.visible .house-card { opacity: 1; transform: translateY(0); }
+        .fade-section.visible .planet-card { opacity: 1; transform: translateY(0); }
+        .fade-section.visible .element-card { opacity: 1; transform: translateY(0); }
+
+        .fade-section.visible .card-tarot:nth-child(1) { transition-delay: 0s; }
+        .fade-section.visible .card-tarot:nth-child(2) { transition-delay: 0.04s; }
+        .fade-section.visible .card-tarot:nth-child(3) { transition-delay: 0.08s; }
+        .fade-section.visible .card-tarot:nth-child(4) { transition-delay: 0.12s; }
+        .fade-section.visible .card-tarot:nth-child(5) { transition-delay: 0.16s; }
+        .fade-section.visible .card-tarot:nth-child(6) { transition-delay: 0.2s; }
+        .fade-section.visible .card-tarot:nth-child(7) { transition-delay: 0.24s; }
+        .fade-section.visible .card-tarot:nth-child(8) { transition-delay: 0.28s; }
+        .fade-section.visible .card-tarot:nth-child(9) { transition-delay: 0.32s; }
+        .fade-section.visible .card-tarot:nth-child(10) { transition-delay: 0.36s; }
+        .fade-section.visible .house-card:nth-child(1) { transition-delay: 0s; }
+        .fade-section.visible .house-card:nth-child(2) { transition-delay: 0.05s; }
+        .fade-section.visible .house-card:nth-child(3) { transition-delay: 0.1s; }
+        .fade-section.visible .house-card:nth-child(4) { transition-delay: 0.15s; }
+        .fade-section.visible .house-card:nth-child(5) { transition-delay: 0.2s; }
+        .fade-section.visible .house-card:nth-child(6) { transition-delay: 0.25s; }
+        .fade-section.visible .house-card:nth-child(7) { transition-delay: 0.3s; }
+        .fade-section.visible .house-card:nth-child(8) { transition-delay: 0.35s; }
+        .fade-section.visible .house-card:nth-child(9) { transition-delay: 0.4s; }
+        .fade-section.visible .house-card:nth-child(10) { transition-delay: 0.45s; }
+        .fade-section.visible .house-card:nth-child(11) { transition-delay: 0.5s; }
+        .fade-section.visible .house-card:nth-child(12) { transition-delay: 0.55s; }
+        .fade-section.visible .planet-card:nth-child(1) { transition-delay: 0s; }
+        .fade-section.visible .planet-card:nth-child(2) { transition-delay: 0.06s; }
+        .fade-section.visible .planet-card:nth-child(3) { transition-delay: 0.12s; }
+        .fade-section.visible .planet-card:nth-child(4) { transition-delay: 0.18s; }
+        .fade-section.visible .planet-card:nth-child(5) { transition-delay: 0.24s; }
+        .fade-section.visible .planet-card:nth-child(6) { transition-delay: 0.3s; }
+        .fade-section.visible .planet-card:nth-child(7) { transition-delay: 0.36s; }
+        .fade-section.visible .planet-card:nth-child(8) { transition-delay: 0.42s; }
+        .fade-section.visible .planet-card:nth-child(9) { transition-delay: 0.48s; }
+        .fade-section.visible .planet-card:nth-child(10) { transition-delay: 0.54s; }
+        .fade-section.visible .element-card:nth-child(1) { transition-delay: 0.05s; }
+        .fade-section.visible .element-card:nth-child(2) { transition-delay: 0.15s; }
+        .fade-section.visible .element-card:nth-child(3) { transition-delay: 0.25s; }
+        .fade-section.visible .element-card:nth-child(4) { transition-delay: 0.35s; }
         .zodiac-section {
             max-width: 1320px; margin: 0 auto; padding: 5rem 2rem;
         }
@@ -538,6 +711,8 @@
             <li><a href="#" data-view="cards">Cartas</a></li>
             <li><a href="#" data-view="zodiac">Zodiaco</a></li>
             <li><a href="#" data-view="houses">Casas</a></li>
+            <li><a href="#" data-view="planets">Planetas</a></li>
+            <li><a href="#" data-view="elements">Elementos</a></li>
         </ul>
     </nav>
     <div class="content">
@@ -607,6 +782,18 @@
             <h2>&#x2726; Las 12 Casas Astrol&oacute;gicas &#x2726;</h2>
             <p class="subtitle">Cada casa representa un &aacute;rea de la vida, regida por un signo y un planeta, revelando los distintos escenarios de nuestra existencia</p>
             <div class="houses-grid" id="grid-houses"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="planets-section fade-section" id="planets">
+            <h2>&#x2726; Los 10 Planetas Astrol&oacute;gicos &#x2726;</h2>
+            <p class="subtitle">Cada planeta rige &aacute;reas espec&iacute;ficas de la vida y resuena con uno o dos signos zodiacales, influyendo en nuestra personalidad y destino</p>
+            <div class="planets-grid" id="grid-planets"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="elements-section fade-section" id="elements">
+            <h2>&#x2726; Los 4 Elementos Astrol&oacute;gicos &#x2726;</h2>
+            <p class="subtitle">Los elementos representan las energ&iacute;as fundamentales que componen el zod&iacute;aco: cada signo pertenece a un elemento que define su esencia y su forma de interactuar con el mundo</p>
+            <div class="elements-grid" id="grid-elements"></div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
         <footer>
@@ -877,18 +1064,18 @@
 
         // === HOUSES DATA ===
         var housesData = [
-            {num:'I',name:'La Casa del Ser',signo:'Aries',planeta:'Marte',desc:'Representa la personalidad, la apariencia f\u00edsica, el inicio de la vida y c\u00f3mo te presentas al mundo. Es la casa del yo, la identidad primordial, la m\u00e1scara que mostramos y la manera en que los dem\u00e1s nos perciben. Aqu\u00ed se refleja tu impulso vital, tu espontaneidad y la chispa \u00fanica que te distingue como individuo.'},
-            {num:'II',name:'La Casa de los Valores',signo:'Tauro',planeta:'Venus',desc:'Gobierna los recursos materiales, el dinero, los talentos innatos y la autoestima. Revela tu relaci\u00f3n con la abundancia, lo que valoras y c\u00f3mo generas seguridad. Esta casa habla de tus posesiones, no solo materiales sino tambi\u00e9n emocionales, y de la capacidad de disfrutar los placeres de la vida.'},
-            {num:'III',name:'La Casa de la Comunicaci\u00f3n',signo:'G\u00e9minis',planeta:'Mercurio',desc:'Rige la mente, la comunicaci\u00f3n, los hermanos, los viajes cortos y el aprendizaje temprano. Representa c\u00f3mo procesas la informaci\u00f3n, tu curiosidad intelectual y tu manera de expresarte. Es la casa de las conexiones cotidianas, los vecinos, y todo aquello que estimula tu mente inquieta.'},
-            {num:'IV',name:'La Casa del Hogar',signo:'C\u00e1ncer',planeta:'Luna',desc:'Representa el hogar, la familia, las ra\u00edces y la base emocional. Habla de tu infancia, tus ancestros y el refugio seguro que buscas. Es la casa m\u00e1s \u00edntima, donde guardas tus memorias m\u00e1s profundas y desde donde te relacionas con el mundo en t\u00e9rminos de seguridad y pertenencia.'},
-            {num:'V',name:'La Casa de la Creatividad',signo:'Leo',planeta:'Sol',desc:'Gobierna la creatividad, el romance, los hijos, el juego y la expresi\u00f3n personal. Es la casa del coraz\u00f3n, de aquello que haces por puro placer. Representa tu capacidad de brillar, de amar apasionadamente y de crear vida en todas sus formas, ya sea a trav\u00e9s del arte, los hijos o tus proyectos m\u00e1s entra\u00f1ables.'},
-            {num:'VI',name:'La Casa del Servicio',signo:'Virgo',planeta:'Mercurio',desc:'Rige la salud, el trabajo diario, el servicio a los dem\u00e1s y las rutinas. Representa tu dedicaci\u00f3n al bienestar f\u00edsico y mental, c\u00f3mo organizas tu d\u00eda a d\u00eda y la manera en que sirves al pr\u00f3jimo. Es la casa de la mejora continua, del an\u00e1lisis meticuloso y de encontrar prop\u00f3sito en las peque\u00f1as cosas.'},
-            {num:'VII',name:'La Casa de las Asociaciones',signo:'Libra',planeta:'Venus',desc:'Gobierna el matrimonio, las sociedades, las alianzas y las relaciones significativas. Representa el espejo del otro, lo que buscamos en una pareja y c\u00f3mo nos relacionamos en igualdad. Es la casa del equilibrio, la diplomacia y la capacidad de crear v\u00ednculos profundos basados en el respeto mutuo y la armon\u00eda.'},
-            {num:'VIII',name:'La Casa de la Transformaci\u00f3n',signo:'Escorpio',planeta:'Plut\u00f3n',desc:'Rige la muerte y el renacimiento, la sexualidad, las herencias y los recursos compartidos. Es la casa m\u00e1s intensa del zod\u00edaco, donde enfrentas tus miedos y te transformas. Representa las crisis que te obligan a evolucionar, la capacidad de regenerarte y los lazos que trascienden lo material, como el sexo y la muerte.'},
-            {num:'IX',name:'La Casa de la Expansi\u00f3n',signo:'Sagitario',planeta:'J\u00fapiter',desc:'Gobierna los viajes largos, la filosof\u00eda, la educaci\u00f3n superior y la b\u00fasqueda de significado. Representa tu visi\u00f3n del mundo, tus creencias y tu deseo de expandir horizontes. Es la casa del explorador, del estudiante eterno que busca la verdad m\u00e1s all\u00e1 de las fronteras f\u00edsicas y mentales.'},
-            {num:'X',name:'La Casa de la Carrera',signo:'Capricornio',planeta:'Saturno',desc:'Rige la profesi\u00f3n, el estatus social, la reputaci\u00f3n y el legado. Representa tu ambici\u00f3n, tu lugar en el mundo y la huella que deseas dejar. Es la casa del \u00e9xito p\u00fablico, de la autoridad conquistada con esfuerzo y de la responsabilidad que asumes ante la sociedad.'},
-            {num:'XI',name:'La Casa de las Amistades',signo:'Acuario',planeta:'Urano',desc:'Gobierna las amistades, los grupos sociales, los proyectos colectivos y los ideales. Representa tu tribu, tus conexiones con comunidades afines y tu visi\u00f3n del futuro. Es la casa de la colaboraci\u00f3n, la innovaci\u00f3n social y los sue\u00f1os compartidos que trascienden el individuo.'},
-            {num:'XII',name:'La Casa del Inconsciente',signo:'Piscis',planeta:'Neptuno',desc:'Rige el subconsciente, los sue\u00f1os, la espiritualidad, el karma y el retiro. Es la casa del alma, donde guardas los patrones invisibles que te condicionan. Representa la conexi\u00f3n con lo divino, la compasi\u00f3n universal y el viaje hacia el interior donde encuentras la unidad con todo lo que existe.'},
+            {num:'1',name:'La Casa del Ser',signo:'Aries',planeta:'Marte',desc:'Representa la personalidad, la apariencia f\u00edsica, el inicio de la vida y c\u00f3mo te presentas al mundo. Es la casa del yo, la identidad primordial, la m\u00e1scara que mostramos y la manera en que los dem\u00e1s nos perciben. Aqu\u00ed se refleja tu impulso vital, tu espontaneidad y la chispa \u00fanica que te distingue como individuo.'},
+            {num:'2',name:'La Casa de los Valores',signo:'Tauro',planeta:'Venus',desc:'Gobierna los recursos materiales, el dinero, los talentos innatos y la autoestima. Revela tu relaci\u00f3n con la abundancia, lo que valoras y c\u00f3mo generas seguridad. Esta casa habla de tus posesiones, no solo materiales sino tambi\u00e9n emocionales, y de la capacidad de disfrutar los placeres de la vida.'},
+            {num:'3',name:'La Casa de la Comunicaci\u00f3n',signo:'G\u00e9minis',planeta:'Mercurio',desc:'Rige la mente, la comunicaci\u00f3n, los hermanos, los viajes cortos y el aprendizaje temprano. Representa c\u00f3mo procesas la informaci\u00f3n, tu curiosidad intelectual y tu manera de expresarte. Es la casa de las conexiones cotidianas, los vecinos, y todo aquello que estimula tu mente inquieta.'},
+            {num:'4',name:'La Casa del Hogar',signo:'C\u00e1ncer',planeta:'Luna',desc:'Representa el hogar, la familia, las ra\u00edces y la base emocional. Habla de tu infancia, tus ancestros y el refugio seguro que buscas. Es la casa m\u00e1s \u00edntima, donde guardas tus memorias m\u00e1s profundas y desde donde te relacionas con el mundo en t\u00e9rminos de seguridad y pertenencia.'},
+            {num:'5',name:'La Casa de la Creatividad',signo:'Leo',planeta:'Sol',desc:'Gobierna la creatividad, el romance, los hijos, el juego y la expresi\u00f3n personal. Es la casa del coraz\u00f3n, de aquello que haces por puro placer. Representa tu capacidad de brillar, de amar apasionadamente y de crear vida en todas sus formas, ya sea a trav\u00e9s del arte, los hijos o tus proyectos m\u00e1s entra\u00f1ables.'},
+            {num:'6',name:'La Casa del Servicio',signo:'Virgo',planeta:'Mercurio',desc:'Rige la salud, el trabajo diario, el servicio a los dem\u00e1s y las rutinas. Representa tu dedicaci\u00f3n al bienestar f\u00edsico y mental, c\u00f3mo organizas tu d\u00eda a d\u00eda y la manera en que sirves al pr\u00f3jimo. Es la casa de la mejora continua, del an\u00e1lisis meticuloso y de encontrar prop\u00f3sito en las peque\u00f1as cosas.'},
+            {num:'7',name:'La Casa de las Asociaciones',signo:'Libra',planeta:'Venus',desc:'Gobierna el matrimonio, las sociedades, las alianzas y las relaciones significativas. Representa el espejo del otro, lo que buscamos en una pareja y c\u00f3mo nos relacionamos en igualdad. Es la casa del equilibrio, la diplomacia y la capacidad de crear v\u00ednculos profundos basados en el respeto mutuo y la armon\u00eda.'},
+            {num:'8',name:'La Casa de la Transformaci\u00f3n',signo:'Escorpio',planeta:'Plut\u00f3n',desc:'Rige la muerte y el renacimiento, la sexualidad, las herencias y los recursos compartidos. Es la casa m\u00e1s intensa del zod\u00edaco, donde enfrentas tus miedos y te transformas. Representa las crisis que te obligan a evolucionar, la capacidad de regenerarte y los lazos que trascienden lo material, como el sexo y la muerte.'},
+            {num:'9',name:'La Casa de la Expansi\u00f3n',signo:'Sagitario',planeta:'J\u00fapiter',desc:'Gobierna los viajes largos, la filosof\u00eda, la educaci\u00f3n superior y la b\u00fasqueda de significado. Representa tu visi\u00f3n del mundo, tus creencias y tu deseo de expandir horizontes. Es la casa del explorador, del estudiante eterno que busca la verdad m\u00e1s all\u00e1 de las fronteras f\u00edsicas y mentales.'},
+            {num:'10',name:'La Casa de la Carrera',signo:'Capricornio',planeta:'Saturno',desc:'Rige la profesi\u00f3n, el estatus social, la reputaci\u00f3n y el legado. Representa tu ambici\u00f3n, tu lugar en el mundo y la huella que deseas dejar. Es la casa del \u00e9xito p\u00fablico, de la autoridad conquistada con esfuerzo y de la responsabilidad que asumes ante la sociedad.'},
+            {num:'11',name:'La Casa de las Amistades',signo:'Acuario',planeta:'Urano',desc:'Gobierna las amistades, los grupos sociales, los proyectos colectivos y los ideales. Representa tu tribu, tus conexiones con comunidades afines y tu visi\u00f3n del futuro. Es la casa de la colaboraci\u00f3n, la innovaci\u00f3n social y los sue\u00f1os compartidos que trascienden el individuo.'},
+            {num:'12',name:'La Casa del Inconsciente',signo:'Piscis',planeta:'Neptuno',desc:'Rige el subconsciente, los sue\u00f1os, la espiritualidad, el karma y el retiro. Es la casa del alma, donde guardas los patrones invisibles que te condicionan. Representa la conexi\u00f3n con lo divino, la compasi\u00f3n universal y el viaje hacia el interior donde encuentras la unidad con todo lo que existe.'},
         ];
 
         function renderHouses() {
@@ -906,6 +1093,65 @@
             document.getElementById('grid-houses').innerHTML = html;
         }
         renderHouses();
+
+        // === PLANETS DATA ===
+        var planetsData = [
+            {num:1,name:'Sol',sym:'\u2609',signos:'Leo',desc:'Representa la conciencia, la vitalidad, el ego y la identidad central. El Sol es la fuente de toda vida y en la carta astral revela tu prop\u00f3sito fundamental, la esencia de qui\u00e9n eres. Gobierna la autoexpresi\u00f3n, la creatividad y la capacidad de brillar con luz propia. Tu signo solar es lo que la mayor\u00eda conoce como tu \u00absigno zodiacal\u00bb y refleja tu personalidad nuclear.'},
+            {num:2,name:'Luna',sym:'\u263D',signos:'C\u00e1ncer',desc:'Gobierna las emociones, la intuici\u00f3n, el subconsciente y los h\u00e1bitos. La Luna representa tu mundo interior, tus reacciones instintivas y tu necesidad de seguridad emocional. Revela c\u00f3mo nutres y c\u00f3mo necesitas ser nutrido. En la carta astral, tu signo lunar muestra tu lado m\u00e1s vulnerable y aut\u00e9ntico, la forma en que procesas los sentimientos y tu conexi\u00f3n con el pasado.'},
+            {num:3,name:'Mercurio',sym:'\u263F',signos:'G\u00e9minis, Virgo',desc:'Rige la comunicaci\u00f3n, la mente, el intelecto y el intercambio de ideas. Mercurio determina c\u00f3mo piensas, hablas, escribes y procesas la informaci\u00f3n. Gobierna los viajes cortos, el comercio y la tecnolog\u00eda. En la carta astral, revela tu estilo de aprendizaje, tu curiosidad mental y c\u00f3mo te expresas verbalmente, as\u00ed como tu habilidad para analizar y sintetizar conceptos.'},
+            {num:4,name:'Venus',sym:'\u2640',signos:'Tauro, Libra',desc:'Gobierna el amor, la belleza, los valores y las relaciones. Venus representa lo que valoras, tu sentido est\u00e9tico y c\u00f3mo amas y te relacionas con los dem\u00e1s. Rige la armon\u00eda, el placer, el romance y los recursos materiales. En la carta astral, muestra tu forma de dar y recibir afecto, tus talentos art\u00edsticos y lo que encuentras bello y placentero en la vida.'},
+            {num:5,name:'Marte',sym:'\u2642',signos:'Aries',desc:'Representa la acci\u00f3n, la pasi\u00f3n, la energ\u00eda y el impulso. Marte es el planeta del deseo, la agresividad constructiva y la fuerza de voluntad. Gobierna la iniciativa, la competencia y la manera en que persigues lo que quieres. En la carta astral, revela tu impulso sexual, tu temperamento, tu coraje y la forma en que afirmas tu individualidad frente a los desaf\u00edos.'},
+            {num:6,name:'J\u00fapiter',sym:'\u2643',signos:'Sagitario',desc:'Rige la expansi\u00f3n, la abundancia, la sabidur\u00eda y la buena fortuna. J\u00fapiter es el planeta de la suerte, el optimismo y el crecimiento en todas sus formas. Gobierna los viajes largos, la educaci\u00f3n superior, la filosof\u00eda y la b\u00fasqueda de significado. En la carta astral, se\u00f1ala \u00e1reas de bendici\u00f3n y expansi\u00f3n natural, as\u00ed como tu capacidad para ver el panorama general.'},
+            {num:7,name:'Saturno',sym:'\u2644',signos:'Capricornio',desc:'Gobierna la disciplina, la responsabilidad, la estructura y el karma. Saturno es el planeta de las lecciones de vida, la madurez y la autoridad. Representa los l\u00edmites, las restricciones y el trabajo duro que conduce al \u00e9xito duradero. En la carta astral, revela tus mayores desaf\u00edos y las \u00e1reas donde debes desarrollar paciencia, perseverancia y autocontrol para cosechar frutos a largo plazo.'},
+            {num:8,name:'Urano',sym:'\u2645',signos:'Acuario',desc:'Representa la innovaci\u00f3n, la rebeli\u00f3n, la originalidad y el cambio repentino. Urano es el planeta del despertar, la libertad y la ruptura con lo establecido. Gobierna la tecnolog\u00eda, la ciencia, los movimientos sociales y todo aquello que rompe con la tradici\u00f3n. En la carta astral, indica d\u00f3nde buscas libertad e individualidad, y c\u00f3mo expresas tu singularidad de manera aut\u00e9ntica.'},
+            {num:9,name:'Neptuno',sym:'\u2646',signos:'Piscis',desc:'Rige la espiritualidad, los sue\u00f1os, la imaginaci\u00f3n y la trascendencia. Neptuno es el planeta de la inspiraci\u00f3n divina, la compasi\u00f3n universal y la disoluci\u00f3n de los l\u00edmites. Gobierna el arte, la m\u00fasica, la poes\u00eda y la conexi\u00f3n con lo sagrado. En la carta astral, revela tu sensibilidad espiritual, tu capacidad de empat\u00eda y las \u00e1reas donde puedes experimentar ilusi\u00f3n o confusi\u00f3n.'},
+            {num:10,name:'Plut\u00f3n',sym:'\u2647',signos:'Escorpio',desc:'Gobierna la transformaci\u00f3n, el poder, la muerte y el renacimiento. Plut\u00f3n es el planeta de la regeneraci\u00f3n profunda, la sombra y la evoluci\u00f3n del alma. Representa los procesos de destrucci\u00f3n creativa que te obligan a transformarte radicalmente. En la carta astral, indica las \u00e1reas de tu vida donde experimentar\u00e1s crisis transformadoras y donde posees un poder oculto para sanar y renacer.'},
+        ];
+
+        function renderPlanets() {
+            var html = '';
+            planetsData.forEach(function(p) {
+                html += '<div class="planet-card">' +
+                    '<div class="planet-sym">' + p.sym + '</div>' +
+                    '<div class="planet-body">' +
+                        '<div class="planet-header">' +
+                            '<div class="planet-name">' + p.name + ' <span class="planet-sign">\u2014 ' + p.signos + '</span></div>' +
+                        '</div>' +
+                        '<div class="planet-desc">' + p.desc + '</div>' +
+                    '</div>' +
+                '</div>';
+            });
+            document.getElementById('grid-planets').innerHTML = html;
+        }
+        renderPlanets();
+
+        // === ELEMENTS DATA ===
+        var elementsData = [
+            {id:'fire',name:'Fuego',sym:'\u25B3',signos:['Aries','Leo','Sagitario'],desc:'El Fuego es la energ\u00eda de la vida, la chispa divina que impulsa la acci\u00f3n y la creaci\u00f3n. Los signos de fuego son apasionados, valientes, entusiastas y dotados de un esp\u00edritu pionero. Viven con intensidad, inspiran a quienes los rodean y poseen una fe inquebrantable en s\u00ed mismos. Su lecci\u00f3n k\u00e1rmica es canalizar su poder sin consumirse ni quemar a los dem\u00e1s.'},
+            {id:'earth',name:'Tierra',sym:'\u25BD',signos:['Tauro','Virgo','Capricornio'],desc:'La Tierra es la base s\u00f3lida de la existencia, la materia que da forma a nuestros sue\u00f1os. Los signos de tierra son pr\u00e1cticos, leales, perseverantes y dotados de un sentido innato para construir seguridad material. Valoran lo concreto, el trabajo constante y los resultados tangibles. Su lecci\u00f3n k\u00e1rmica es equilibrar la ambici\u00f3n material con la evoluci\u00f3n espiritual.'},
+            {id:'air',name:'Aire',sym:'\u25CB',signos:['G\u00e9minis','Libra','Acuario'],desc:'El Aire es el reino de la mente, las ideas y la comunicaci\u00f3n. Los signos de aire son intelectuales, sociales, curiosos y dotados de una capacidad \u00fanica para ver m\u00faltiples perspectivas. Viven en el mundo de las ideas, buscan el conocimiento y prosperan en la conexi\u00f3n con los dem\u00e1s. Su lecci\u00f3n k\u00e1rmica es conectar la mente con el coraz\u00f3n sin perderse en la teor\u00eda.'},
+            {id:'water',name:'Agua',sym:'\u25CB',signos:['C\u00e1ncer','Escorpio','Piscis'],desc:'El Agua es el oc\u00e9ano de las emociones, la intuici\u00f3n y el mundo interior. Los signos de agua son sensibles, emp\u00e1ticos, profundos y dotados de una conexi\u00f3n extraordinaria con el reino emocional. Sienten todo con intensidad, poseen una sabidur\u00eda intuitiva y una capacidad natural para sanar. Su lecci\u00f3n k\u00e1rmica es proteger su sensibilidad sin cerrar su coraz\u00f3n al mundo.'},
+        ];
+
+        function renderElements() {
+            var html = '';
+            elementsData.forEach(function(e) {
+                var signsHtml = '';
+                e.signos.forEach(function(s) {
+                    signsHtml += '<span>' + s + '</span>';
+                });
+                html += '<div class="element-card ' + e.id + '">' +
+                    '<div class="element-header">' +
+                        '<div class="element-sym">' + e.sym + '</div>' +
+                        '<div class="element-name">' + e.name + '</div>' +
+                    '</div>' +
+                    '<div class="element-signs">' + signsHtml + '</div>' +
+                    '<div class="element-desc">' + e.desc + '</div>' +
+                '</div>';
+            });
+            document.getElementById('grid-elements').innerHTML = html;
+        }
+        renderElements();
 
         // === ZODIAC DATA ===
         var zodiacData = [
@@ -984,12 +1230,16 @@
         var cardsSection = document.querySelector('.cards-section');
         var zodiacSection = document.querySelector('.zodiac-section');
         var housesSection = document.querySelector('.houses-section');
+        var planetsSection = document.querySelector('.planets-section');
+        var elementsSection = document.querySelector('.elements-section');
         var intro = document.getElementById('intro');
 
-        // Initial state: hide cards, zodiac, houses
+        // Initial state: hide cards, zodiac, houses, planets, elements
         cardsSection.classList.add('view-hidden');
         zodiacSection.classList.add('view-hidden');
         housesSection.classList.add('view-hidden');
+        planetsSection.classList.add('view-hidden');
+        elementsSection.classList.add('view-hidden');
 
         var viewLinks = document.querySelectorAll('.nav-links a[data-view]');
         viewLinks.forEach(function(link) {
@@ -1001,6 +1251,8 @@
                 cardsSection.classList.add('view-hidden');
                 zodiacSection.classList.add('view-hidden');
                 housesSection.classList.add('view-hidden');
+                planetsSection.classList.add('view-hidden');
+                elementsSection.classList.add('view-hidden');
                 if (view === 'cards') {
                     cardsSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
@@ -1013,6 +1265,14 @@
                     housesSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     housesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'planets') {
+                    planetsSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    planetsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'elements') {
+                    elementsSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    elementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
