@@ -604,14 +604,23 @@
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
         }
-        .user-sign-badge {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(168, 85, 247, 0.1);
-            border: 1px solid var(--violeta-claro);
-            padding: 0.4rem 1rem; border-radius: 20px;
-            font-size: 0.85rem; color: var(--violeta-brillante);
-            margin-top: 0.8rem; margin-bottom: 0.2rem;
+        /* User Profile */
+        .user-profile {
+            max-width: 320px; margin: -0.5rem auto 1rem; text-align: center;
+            opacity: 0; transition: opacity 0.6s ease; pointer-events: none;
         }
+        .user-profile.show { opacity: 1; pointer-events: auto; }
+        .profile-content {
+            display: inline-flex; align-items: center; gap: 0.8rem;
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px; padding: 0.5rem 1.2rem;
+        }
+        .profile-sym { font-size: 2rem; line-height: 1; }
+        .profile-info { text-align: left; }
+        .profile-label { font-size: 0.65rem; color: var(--gris); display: block; text-transform: uppercase; letter-spacing: 1.5px; }
+        .profile-sign { font-size: 1.1rem; color: var(--blanco); font-weight: 600; display: block; }
+        .profile-element { font-size: 0.85rem; color: var(--violeta-brillante); display: block; }
 
         /* Transits Section */
         .transits-section {
@@ -1091,7 +1100,7 @@
     <div class="birthday-modal" id="birthdayModal">
         <div class="birthday-modal-content">
             <h2>&#x2726; Bienvenido a Astro Tarot &#x2726;</h2>
-            <p>Ingres&aacute; tu fecha de nacimiento para personalizar tu experiencia con el Tarot y la Astrolog&iacute;a. Conocer tu signo nos ayudar&aacute; a darte se&ntilde;ales m&aacute;s afines.</p>
+            <p>Ingres&aacute; tu fecha de nacimiento para se&ntilde;ales m&aacute;s afines a vos.</p>
             <form id="birthdayForm">
                 <input type="date" id="birthdayInput" required>
                 <button type="submit">Comenzar viaje</button>
@@ -1141,6 +1150,16 @@
                 <span class="arrow">&#x25BC;</span>
             </div>
         </section>
+        <div class="user-profile" id="userProfile">
+            <div class="profile-content">
+                <span class="profile-sym" id="profileSym"></span>
+                <div class="profile-info">
+                    <span class="profile-label">Tu signo</span>
+                    <span class="profile-sign" id="profileSign"></span>
+                    <span class="profile-element" id="profileElement"></span>
+                </div>
+            </div>
+        </div>
         <section class="intro fade-section" id="intro-astrologia">
             <h2>&#x2606; Astrolog&iacute;a &#x2606;</h2>
             <p>La astrolog&iacute;a es un lenguaje simb&oacute;lico que estudia la relaci&oacute;n entre los movimientos celestes y la experiencia humana. A trav&eacute;s de los <span class="highlight">12 signos</span>, <span class="highlight">10 planetas</span> y <span class="highlight">12 casas</span>, revela patrones de personalidad, ciclos de vida y el prop&oacute;sito del alma en su viaje de evoluci&oacute;n. Cada planeta rige una esencia distinta: Mercurio la comunicaci&oacute;n, Venus el amor, Marte la acci&oacute;n. Cada signo representa una forma &uacute;nica de vibrar con el cosmos, una puerta de entrada a una comprensi&oacute;n m&aacute;s profunda de qui&eacute;nes somos y hacia d&oacute;nde nos dirigimos.</p>
@@ -1991,9 +2010,25 @@
                 if (val) {
                     localStorage.setItem('astroBirthday', val);
                     modal.style.display = 'none';
-                    addUserSignBadge(val);
+                    showUserProfile(val);
                 }
             });
+        })();
+
+        function showUserProfile(dateStr) {
+            var parts = dateStr.split('-');
+            var sign = getZodiacSign(parseInt(parts[2]), parseInt(parts[1]));
+            var profile = document.getElementById('userProfile');
+            document.getElementById('profileSym').textContent = sign.sym;
+            document.getElementById('profileSign').textContent = sign.name;
+            document.getElementById('profileElement').textContent = sign.element;
+            profile.classList.add('show');
+        }
+
+        // Restore profile on page load if birthday exists
+        (function() {
+            var stored = localStorage.getItem('astroBirthday');
+            if (stored) showUserProfile(stored);
         })();
 
         function getZodiacSign(day, month) {
@@ -2025,25 +2060,6 @@
             }
             return signs[0];
         }
-
-        function addUserSignBadge(dateStr) {
-            var parts = dateStr.split('-');
-            var sign = getZodiacSign(parseInt(parts[2]), parseInt(parts[1]));
-            var signalCard = document.querySelector('.signal-inner h2');
-            var existing = document.getElementById('userSignBadge');
-            if (existing) existing.remove();
-            var badge = document.createElement('div');
-            badge.id = 'userSignBadge';
-            badge.className = 'user-sign-badge';
-            badge.textContent = sign.sym + ' ' + sign.name + ' \u2014 ' + sign.element;
-            signalCard.parentNode.insertBefore(badge, signalCard.nextSibling);
-        }
-
-        // Restore badge on page load if birthday exists
-        (function() {
-            var stored = localStorage.getItem('astroBirthday');
-            if (stored) addUserSignBadge(stored);
-        })();
 
         // === Transit Positions ===
         (function() {
