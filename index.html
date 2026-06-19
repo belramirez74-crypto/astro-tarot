@@ -544,6 +544,151 @@
             .element-desc { font-size: 0.85rem; }
         }
 
+        /* Birthday Modal */
+        .birthday-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 14, 26, 0.95);
+            display: none; align-items: center; justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .birthday-modal-content {
+            background: linear-gradient(135deg, var(--violeta-medio), var(--violeta-oscuro));
+            border: 1px solid var(--violeta-claro);
+            border-radius: 16px; padding: 2.5rem;
+            max-width: 440px; width: 92%;
+            text-align: center;
+            animation: modalFadeIn 0.6s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .birthday-modal-content h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4rem; color: var(--violeta-brillante);
+            margin-bottom: 0.8rem;
+        }
+        .birthday-modal-content p {
+            font-size: 0.9rem; color: var(--gris);
+            margin-bottom: 1.5rem; line-height: 1.5;
+        }
+        .birthday-modal-content form {
+            display: flex; flex-direction: column;
+            gap: 1rem; align-items: center;
+        }
+        .birthday-modal-content input[type="date"] {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--violeta-claro);
+            border-radius: 8px; padding: 0.8rem 1rem;
+            color: var(--blanco);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem; width: 100%;
+            max-width: 280px; outline: none; cursor: pointer;
+        }
+        .birthday-modal-content input[type="date"]:focus {
+            border-color: var(--violeta-brillante);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+        .birthday-modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1); cursor: pointer;
+        }
+        .birthday-modal-content button {
+            background: linear-gradient(135deg, var(--violeta-claro), var(--violeta-brillante));
+            border: none; color: var(--blanco);
+            padding: 0.8rem 2.5rem; border-radius: 25px;
+            font-family: 'Cinzel', serif; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s ease;
+        }
+        .birthday-modal-content button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+        .user-sign-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid var(--violeta-claro);
+            padding: 0.4rem 1rem; border-radius: 20px;
+            font-size: 0.85rem; color: var(--violeta-brillante);
+            margin-top: 0.8rem; margin-bottom: 0.2rem;
+        }
+
+        /* Transits Section */
+        .transits-section {
+            padding: 3rem 2rem;
+            max-width: 900px; margin: 0 auto; text-align: center;
+        }
+        .transits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem; margin-top: 2rem;
+        }
+        .transit-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 12px; padding: 1rem 0.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .transit-card:hover {
+            border-color: var(--violeta-claro);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+            transform: translateY(-2px);
+        }
+        .transit-card .planet-symbol {
+            font-size: 1.8rem; display: block;
+            margin-bottom: 0.4rem; color: var(--violeta-brillante);
+        }
+        .transit-card .planet-name {
+            font-size: 0.85rem; color: var(--gris);
+            font-weight: 600; display: block; margin-bottom: 0.2rem;
+        }
+        .transit-card .planet-sign {
+            font-size: 1.1rem; color: var(--blanco);
+            font-weight: 600; display: block;
+        }
+        .transit-card .planet-degree {
+            font-size: 0.75rem; color: var(--gris);
+            display: block; margin-top: 0.1rem;
+        }
+
+        /* Recommendations Section */
+        .recommendations-section {
+            padding: 3rem 2rem;
+            max-width: 900px; margin: 0 auto; text-align: center;
+        }
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem; margin-top: 2rem;
+        }
+        .rec-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 12px; padding: 1.5rem;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .rec-card:hover {
+            border-color: var(--violeta-claro);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.1);
+            transform: translateY(-2px);
+        }
+        .rec-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem; color: var(--violeta-brillante);
+            margin-bottom: 1rem; text-align: center;
+        }
+        .rec-card ul { list-style: none; padding: 0; }
+        .rec-card li {
+            padding: 0.4rem 0; font-size: 0.85rem;
+            color: var(--blanco);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            line-height: 1.5;
+        }
+        .rec-card li:last-child { border-bottom: none; }
+        .rec-card li strong { color: var(--violeta-brillante); }
+
         /* === CARD SCROLL ANIMATIONS === */
         .card-tarot, .zodiac-card, .house-card, .planet-card, .element-card {
             opacity: 0;
@@ -857,6 +1002,8 @@
             .planets-section h2 { font-size: 2rem; }
             .elements-section h2 { font-size: 2rem; }
             .signal-section h2 { font-size: 1.8rem; }
+            .transits-section h2 { font-size: 1.8rem; }
+            .recommendations-section h2 { font-size: 1.8rem; }
             .intro h2 { font-size: 2rem; }
             .history-section h2 { font-size: 1.8rem; }
             .zodiac-section { padding: 3rem 1.5rem; }
@@ -864,6 +1011,8 @@
             .planets-section { padding: 3rem 1.5rem; }
             .elements-section { padding: 3rem 1.5rem; }
             .signal-section { padding: 3rem 1.5rem; }
+            .transits-section { padding: 3rem 1.5rem; }
+            .recommendations-section { padding: 3rem 1.5rem; }
             .cards-section { padding: 3rem 1.5rem 4rem; }
             .intro { padding: 2.5rem 1.5rem; }
             .history-section { padding: 2.5rem 1.5rem; }
@@ -877,6 +1026,8 @@
             .planet-sym { width: 70px; height: 70px; font-size: 2.8rem; }
             .planet-header { justify-content: center; }
             .planet-sign { margin-left: 0; }
+            .transits-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; }
+            .recommendations-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
             .navbar .nav-links {
                 display: none; position: absolute; top: 100%; left: 0; right: 0;
                 flex-direction: column; gap: 0.2rem;
@@ -921,10 +1072,32 @@
             .element-sym { font-size: 1.8rem; width: 44px; height: 44px; }
             .element-name { font-size: 1.15rem; }
             .element-desc { font-size: 0.85rem; }
+            .transits-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.7rem; }
+            .transit-card { padding: 0.7rem 0.5rem; }
+            .transit-card .planet-symbol { font-size: 1.4rem; }
+            .transits-section { padding: 2rem 1.2rem; }
+            .transits-section h2 { font-size: 1.5rem; }
+            .recommendations-section { padding: 2rem 1.2rem; }
+            .recommendations-section h2 { font-size: 1.5rem; }
+            .recommendations-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .rec-card { padding: 1.2rem; }
+        }
+        @media (max-width: 380px) {
+            .transits-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
+    <div class="birthday-modal" id="birthdayModal">
+        <div class="birthday-modal-content">
+            <h2>&#x2726; Bienvenido a Astro Tarot &#x2726;</h2>
+            <p>Ingres&aacute; tu fecha de nacimiento para personalizar tu experiencia con el Tarot y la Astrolog&iacute;a. Conocer tu signo nos ayudar&aacute; a darte se&ntilde;ales m&aacute;s afines.</p>
+            <form id="birthdayForm">
+                <input type="date" id="birthdayInput" required>
+                <button type="submit">Comenzar viaje</button>
+            </form>
+        </div>
+    </div>
     <canvas id="stars-canvas"></canvas>
     <nav class="navbar" id="navbar">
         <a href="#" class="brand">Astro Tarot</a>
@@ -1025,6 +1198,43 @@
             <h2>&#x2726; Los 4 Elementos Astrol&oacute;gicos &#x2726;</h2>
             <p class="subtitle">Los elementos representan las energ&iacute;as fundamentales que componen el zod&iacute;aco: cada signo pertenece a un elemento que define su esencia y su forma de interactuar con el mundo</p>
             <div class="elements-grid" id="grid-elements"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="transits-section fade-section" id="transits">
+            <h2>&#x2726; Planetas del D&iacute;a &#x2726;</h2>
+            <p class="subtitle">Posiciones planetarias calculadas para hoy &mdash; cada planeta transita por un signo influyendo en nuestra energ&iacute;a colectiva</p>
+            <div class="transits-grid" id="transitsGrid"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="recommendations-section fade-section" id="recommendations">
+            <h2>&#x2726; Recomendaciones para Aprender &#x2726;</h2>
+            <p class="subtitle">Recursos seleccionados para profundizar en astrolog&iacute;a y tarot</p>
+            <div class="recommendations-grid">
+                <div class="rec-card">
+                    <h3>&#x2726; Libros Esenciales &#x2726;</h3>
+                    <ul>
+                        <li><strong>El Tarot Rider-Waite</strong> &mdash; Arthur Edward Waite. La gu&iacute;a cl&aacute;sica del mazo con interpretaciones detalladas de cada l&aacute;mina.</li>
+                        <li><strong>Astrolog&iacute;a para el Alma</strong> &mdash; Jan Spiller. Una profunda exploraci&oacute;n de los planetas nodales y el prop&oacute;sito de vida.</li>
+                        <li><strong>Los Secretos del Tarot</strong> &mdash; Hajo Banzhaf. T&eacute;cnicas avanzadas de interpretaci&oacute;n y combinaci&oacute;n de cartas.</li>
+                    </ul>
+                </div>
+                <div class="rec-card">
+                    <h3>&#x2726; Recursos en L&iacute;nea &#x2726;</h3>
+                    <ul>
+                        <li><strong>Astro.com</strong> &mdash; Cartas natales profesionales gratuitas con interpretaciones detalladas de tr&aacute;nsitos y sinastr&iacute;a.</li>
+                        <li><strong>Biddy Tarot</strong> &mdash; Significados detallados de cada carta del Tarot Rider-Waite con enfoque pr&aacute;ctico.</li>
+                        <li><strong>NASA Eyes</strong> &mdash; Visualizaci&oacute;n 3D interactiva del sistema solar en tiempo real para comprender las &oacute;rbitas planetarias.</li>
+                    </ul>
+                </div>
+                <div class="rec-card">
+                    <h3>&#x2726; Consejos Pr&aacute;cticos &#x2726;</h3>
+                    <ul>
+                        <li><strong>Tir&aacute; una carta al d&iacute;a</strong> y reflexion&aacute; sobre su significado en tu jornada. La pr&aacute;ctica constante es la mejor maestra.</li>
+                        <li><strong>Llev&aacute; un diario astrol&oacute;gico</strong> para registrar tr&aacute;nsitos, fases lunares y c&oacute;mo influyen en tu estado de &aacute;nimo.</li>
+                        <li><strong>Estudi&aacute; tu carta natal</strong> &mdash; conocer tu signo ascendente y la posici&oacute;n de tu Luna transforma completamente la perspectiva astrol&oacute;gica.</li>
+                    </ul>
+                </div>
+            </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
         <section class="signal-section fade-section" id="signal">
@@ -1513,6 +1723,8 @@
         var housesSection = document.querySelector('.houses-section');
         var planetsSection = document.querySelector('.planets-section');
         var elementsSection = document.querySelector('.elements-section');
+        var transitsSection = document.querySelector('.transits-section');
+        var recsSection = document.querySelector('.recommendations-section');
         var intro = document.getElementById('intro');
 
         // Initial state: hide cards, zodiac, houses, planets, elements
@@ -1534,6 +1746,8 @@
                 housesSection.classList.add('view-hidden');
                 planetsSection.classList.add('view-hidden');
                 elementsSection.classList.add('view-hidden');
+                transitsSection.classList.add('view-hidden');
+                recsSection.classList.add('view-hidden');
                 if (view === 'cards') {
                     cardsSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
@@ -1555,9 +1769,13 @@
                     document.getElementById('navLinks').classList.remove('open');
                     elementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (view === 'signal') {
+                    transitsSection.classList.remove('view-hidden');
+                    recsSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     document.getElementById('signal').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
+                    transitsSection.classList.remove('view-hidden');
+                    recsSection.classList.remove('view-hidden');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             });
@@ -1758,6 +1976,111 @@
                 signalResult.style.transform = 'scale(1)';
             }, 50);
         });
+
+        // === Birthday Modal ===
+        (function() {
+            var modal = document.getElementById('birthdayModal');
+            var form = document.getElementById('birthdayForm');
+            var input = document.getElementById('birthdayInput');
+            if (!localStorage.getItem('astroBirthday')) {
+                modal.style.display = 'flex';
+            }
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var val = input.value;
+                if (val) {
+                    localStorage.setItem('astroBirthday', val);
+                    modal.style.display = 'none';
+                    addUserSignBadge(val);
+                }
+            });
+        })();
+
+        function getZodiacSign(day, month) {
+            var signs = [
+                { name: 'Capricornio', sym: '♑', element: 'Tierra', startM: 12, startD: 22, endM: 1, endD: 19 },
+                { name: 'Acuario', sym: '♒', element: 'Aire', startM: 1, startD: 20, endM: 2, endD: 18 },
+                { name: 'Piscis', sym: '♓', element: 'Agua', startM: 2, startD: 19, endM: 3, endD: 20 },
+                { name: 'Aries', sym: '♈', element: 'Fuego', startM: 3, startD: 21, endM: 4, endD: 19 },
+                { name: 'Tauro', sym: '♉', element: 'Tierra', startM: 4, startD: 20, endM: 5, endD: 20 },
+                { name: 'Géminis', sym: '♊', element: 'Aire', startM: 5, startD: 21, endM: 6, endD: 20 },
+                { name: 'Cáncer', sym: '♋', element: 'Agua', startM: 6, startD: 21, endM: 7, endD: 22 },
+                { name: 'Leo', sym: '♌', element: 'Fuego', startM: 7, startD: 23, endM: 8, endD: 22 },
+                { name: 'Virgo', sym: '♍', element: 'Tierra', startM: 8, startD: 23, endM: 9, endD: 22 },
+                { name: 'Libra', sym: '♎', element: 'Aire', startM: 9, startD: 23, endM: 10, endD: 22 },
+                { name: 'Escorpio', sym: '♏', element: 'Agua', startM: 10, startD: 23, endM: 11, endD: 21 },
+                { name: 'Sagitario', sym: '♐', element: 'Fuego', startM: 11, startD: 22, endM: 12, endD: 21 }
+            ];
+            var d = day, m = month;
+            var dateNum = m * 100 + d;
+            for (var i = 0; i < signs.length; i++) {
+                var s = signs[i];
+                var sNum = s.startM * 100 + s.startD;
+                var eNum = s.endM * 100 + s.endD;
+                if (sNum <= eNum) {
+                    if (dateNum >= sNum && dateNum <= eNum) return s;
+                } else {
+                    if (dateNum >= sNum || dateNum <= eNum) return s;
+                }
+            }
+            return signs[0];
+        }
+
+        function addUserSignBadge(dateStr) {
+            var parts = dateStr.split('-');
+            var sign = getZodiacSign(parseInt(parts[2]), parseInt(parts[1]));
+            var signalCard = document.querySelector('.signal-inner h2');
+            var existing = document.getElementById('userSignBadge');
+            if (existing) existing.remove();
+            var badge = document.createElement('div');
+            badge.id = 'userSignBadge';
+            badge.className = 'user-sign-badge';
+            badge.textContent = sign.sym + ' ' + sign.name + ' \u2014 ' + sign.element;
+            signalCard.parentNode.insertBefore(badge, signalCard.nextSibling);
+        }
+
+        // Restore badge on page load if birthday exists
+        (function() {
+            var stored = localStorage.getItem('astroBirthday');
+            if (stored) addUserSignBadge(stored);
+        })();
+
+        // === Transit Positions ===
+        (function() {
+            var grid = document.getElementById('transitsGrid');
+            if (!grid) return;
+            var now = new Date();
+            var start = new Date(2026, 0, 1);
+            var days = (now - start) / 86400000;
+            var signs = ['Aries','Tauro','G\u00e9minis','C\u00e1ncer','Leo','Virgo','Libra','Escorpio','Sagitario','Capricornio','Acuario','Piscis'];
+            var signSym = ['\u2648','\u2649','\u264a','\u264b','\u264c','\u264d','\u264e','\u264f','\u2650','\u2651','\u2652','\u2653'];
+            var planets = [
+                { name: 'Sol', sym: '\u2609', lon: 280, rate: 0.9856 },
+                { name: 'Luna', sym: '\u263d', lon: 120, rate: 13.176 },
+                { name: 'Mercurio', sym: '\u263f', lon: 255, rate: 1.2 },
+                { name: 'Venus', sym: '\u2640', lon: 310, rate: 0.95 },
+                { name: 'Marte', sym: '\u2642', lon: 235, rate: 0.524 },
+                { name: 'J\u00fapiter', sym: '\u2643', lon: 60, rate: 0.083 },
+                { name: 'Saturno', sym: '\u2644', lon: 340, rate: 0.033 },
+                { name: 'Urano', sym: '\u2645', lon: 55, rate: 0.012 },
+                { name: 'Neptuno', sym: '\u2646', lon: 342, rate: 0.006 },
+                { name: 'Plut\u00f3n', sym: '\u2647', lon: 300, rate: 0.004 }
+            ];
+            for (var i = 0; i < planets.length; i++) {
+                var p = planets[i];
+                var lon = (p.lon + days * p.rate + 36000) % 360;
+                var signIdx = Math.floor(lon / 30);
+                var deg = Math.floor(lon % 30);
+                var min = Math.floor((lon % 1) * 60);
+                var card = document.createElement('div');
+                card.className = 'transit-card';
+                card.innerHTML = '<span class="planet-symbol">' + p.sym + '</span>' +
+                    '<span class="planet-name">' + p.name + '</span>' +
+                    '<span class="planet-sign">' + signSym[signIdx] + ' ' + signs[signIdx] + '</span>' +
+                    '<span class="planet-degree">' + deg + '\u00b0 ' + min + "'</span>";
+                grid.appendChild(card);
+            }
+        })();
     </script>
 </body>
 </html>
