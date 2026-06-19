@@ -135,6 +135,7 @@
         img[src*="bola-de-cristal"] { filter: brightness(0) invert(1) drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); }
         .hero-img { width: 70px; height: auto; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+        @keyframes floatPlanet { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .hero h1 {
             font-family: 'Cinzel', serif;
             font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900;
@@ -339,12 +340,12 @@
         .planet-card:hover {
             border-color: rgba(160, 120, 200, 0.35);
             box-shadow: 0 8px 32px rgba(80, 40, 120, 0.2);
-            transform: translateY(-2px);
         }
         .planet-sym {
-            font-size: 3.5rem; width: 90px; height: 90px;
+            font-size: 4rem; width: 90px; height: 90px;
             display: flex; align-items: center; justify-content: center;
             background: rgba(160, 90, 210, 0.1); border-radius: 14px; flex-shrink: 0;
+            animation: floatPlanet 4s ease-in-out infinite;
         }
         .planet-body {
             flex: 1; display: flex; flex-direction: column; gap: 0.5rem;
@@ -587,6 +588,16 @@
         .fade-section.visible .planet-card:nth-child(8) { transition-delay: 0.42s; }
         .fade-section.visible .planet-card:nth-child(9) { transition-delay: 0.48s; }
         .fade-section.visible .planet-card:nth-child(10) { transition-delay: 0.54s; }
+        .planet-card:nth-child(1) .planet-sym { animation-delay: -0s; }
+        .planet-card:nth-child(2) .planet-sym { animation-delay: -0.4s; }
+        .planet-card:nth-child(3) .planet-sym { animation-delay: -0.8s; }
+        .planet-card:nth-child(4) .planet-sym { animation-delay: -1.2s; }
+        .planet-card:nth-child(5) .planet-sym { animation-delay: -1.6s; }
+        .planet-card:nth-child(6) .planet-sym { animation-delay: -2s; }
+        .planet-card:nth-child(7) .planet-sym { animation-delay: -2.4s; }
+        .planet-card:nth-child(8) .planet-sym { animation-delay: -2.8s; }
+        .planet-card:nth-child(9) .planet-sym { animation-delay: -3.2s; }
+        .planet-card:nth-child(10) .planet-sym { animation-delay: -3.6s; }
         .fade-section.visible .element-card:nth-child(1) { transition-delay: 0.05s; }
         .fade-section.visible .element-card:nth-child(2) { transition-delay: 0.15s; }
         .fade-section.visible .element-card:nth-child(3) { transition-delay: 0.25s; }
@@ -863,7 +874,7 @@
             .house-card { padding: 1rem; }
             .house-desc { font-size: 0.85rem; }
             .planet-card { flex-direction: column; align-items: center; text-align: center; gap: 0.8rem; }
-            .planet-sym { width: 70px; height: 70px; font-size: 2.5rem; }
+            .planet-sym { width: 70px; height: 70px; font-size: 2.8rem; }
             .planet-header { justify-content: center; }
             .planet-sign { margin-left: 0; }
             .navbar .nav-links {
@@ -905,7 +916,7 @@
             .signal-card { padding: 1.5rem 1rem; }
             .signal-name { font-size: 1.2rem; }
             .signal-details { gap: 0.8rem; }
-            .planet-sym { width: 60px; height: 60px; font-size: 2rem; }
+            .planet-sym { width: 60px; height: 60px; font-size: 2.3rem; }
             .element-card { padding: 1rem; }
             .element-sym { font-size: 1.8rem; width: 44px; height: 44px; }
             .element-name { font-size: 1.15rem; }
