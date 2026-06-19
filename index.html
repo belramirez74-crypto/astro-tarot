@@ -37,6 +37,7 @@
             background: var(--violeta-oscuro);
             color: var(--blanco);
             overflow-x: hidden;
+            padding-top: 46px;
         }
         #stars-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -72,7 +73,7 @@
         .hero {
             display: flex; flex-direction: column;
             align-items: center; text-align: center;
-            padding: 20px 2rem 2rem;
+            padding: 3rem 2rem 0.5rem;
             position: relative; overflow: hidden;
         }
         .hero::before {
@@ -90,36 +91,46 @@
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none;
         }
+        .hero * { position: relative; z-index: 2; }
         .constellation-star {
             position: absolute; color: rgba(200, 176, 224, 0.5);
-            font-size: 1.2rem; z-index: 1; pointer-events: none;
+            z-index: 1; pointer-events: none;
             text-shadow: 0 0 20px rgba(160, 90, 210, 0.3);
             animation: floatStar 20s ease-in-out infinite alternate;
         }
-        .constellation-star:nth-child(1) { top: 15%; left: 20%; animation-delay: 0s; font-size: 1.4rem; opacity: 0.6; }
-        .constellation-star:nth-child(2) { top: 25%; left: 70%; animation-delay: -3s; font-size: 1rem; opacity: 0.4; }
-        .constellation-star:nth-child(3) { top: 45%; left: 30%; animation-delay: -6s; font-size: 1.8rem; opacity: 0.5; }
-        .constellation-star:nth-child(4) { top: 55%; left: 80%; animation-delay: -9s; font-size: 1.2rem; opacity: 0.4; }
-        .constellation-star:nth-child(5) { top: 70%; left: 15%; animation-delay: -12s; font-size: 1.6rem; opacity: 0.5; }
-        .constellation-star:nth-child(6) { top: 80%; left: 60%; animation-delay: -15s; font-size: 1rem; opacity: 0.3; }
-        .constellation-star:nth-child(7) { top: 35%; left: 50%; animation-delay: -2s; font-size: 2rem; opacity: 0.4; }
-        .constellation-star:nth-child(8) { top: 10%; left: 45%; animation-delay: -7s; font-size: 0.9rem; opacity: 0.5; }
-        .constellation-star:nth-child(9) { top: 65%; left: 40%; animation-delay: -11s; font-size: 1.3rem; opacity: 0.4; }
-        .constellation-star:nth-child(10) { top: 90%; left: 25%; animation-delay: -14s; font-size: 1.1rem; opacity: 0.3; }
-        .constellation-star:nth-child(11) { top: 20%; left: 10%; animation-delay: -5s; font-size: 0.8rem; opacity: 0.4; }
-        .constellation-star:nth-child(12) { top: 75%; left: 90%; animation-delay: -8s; font-size: 1.5rem; opacity: 0.4; }
+        .constellation-stars { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
         @keyframes floatStar {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            33% { transform: translate(15px, -10px) scale(1.1) rotate(10deg); }
-            66% { transform: translate(-10px, 15px) scale(0.9) rotate(-5deg); }
-            100% { transform: translate(8px, -8px) scale(1.05) rotate(8deg); }
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(25px, -15px) scale(1.1) rotate(12deg); }
+            50% { transform: translate(-20px, 20px) scale(0.9) rotate(-8deg); }
+            75% { transform: translate(15px, 10px) scale(1.05) rotate(5deg); }
+            100% { transform: translate(-10px, -20px) scale(1) rotate(-3deg); }
         }
         @keyframes pulseBg {
             0% { transform: translate(-5%, -5%) scale(1); opacity: 0.3; }
             50% { transform: translate(2%, 3%) scale(1.05); opacity: 0.5; }
             100% { transform: translate(-3%, 2%) scale(1.02); opacity: 0.4; }
         }
-        .hero * { position: relative; z-index: 2; }
+        .orbit-star {
+            position: absolute; width: 0; height: 0; z-index: 0;
+            pointer-events: none; color: rgba(200, 176, 224, 0.3);
+            font-size: 1rem; animation: orbitMotion 12s linear infinite;
+        }
+        .orbit-star::after { content: '\2726'; position: absolute; }
+        .orbit-star:nth-child(1) { left: 20%; top: 30%; animation-duration: 14s; }
+        .orbit-star:nth-child(1)::after { transform: translateY(-50px); font-size: 1.2rem; }
+        .orbit-star:nth-child(2) { left: 70%; top: 25%; animation-duration: 18s; animation-direction: reverse; }
+        .orbit-star:nth-child(2)::after { transform: translateY(-60px); font-size: 1rem; }
+        .orbit-star:nth-child(3) { left: 50%; top: 60%; animation-duration: 16s; }
+        .orbit-star:nth-child(3)::after { transform: translateY(-70px); font-size: 1.4rem; }
+        .orbit-star:nth-child(4) { left: 85%; top: 50%; animation-duration: 20s; animation-direction: reverse; }
+        .orbit-star:nth-child(4)::after { transform: translateY(-45px); font-size: 0.9rem; }
+        .orbit-star:nth-child(5) { left: 10%; top: 65%; animation-duration: 15s; }
+        .orbit-star:nth-child(5)::after { transform: translateY(-55px); font-size: 1.1rem; }
+        @keyframes orbitMotion {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .hero-symbol { margin-bottom: 0.5rem; min-height: 40px; display: flex; align-items: center; justify-content: center; }
         .hero-img { width: 70px; height: auto; filter: drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
@@ -128,11 +139,11 @@
             font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900;
             color: var(--violeta-brillante);
             text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-            letter-spacing: 0.08em; margin-bottom: 1.5rem;
+            letter-spacing: 0.08em; margin: 0 0 1.5rem;
         }
         .hero p {
             font-size: clamp(0.95rem, 1.8vw, 1.15rem); color: var(--gris);
-            max-width: 700px; line-height: 1.8; margin-bottom: 2rem;
+            max-width: 850px; line-height: 1.8; margin-bottom: 2rem;
         }
         .btn-scroll {
             display: inline-block; padding: 0.9rem 2.5rem;
@@ -146,8 +157,9 @@
             border-color: var(--verde-claro);
         }
         .intro {
-            max-width: 900px; margin: 0 auto; padding: 2rem; text-align: center;
+            max-width: 900px; margin: 0 auto; padding: 3rem 2rem; text-align: center;
         }
+        #intro-astrologia { padding-top: 8rem; }
         .intro h2 {
             font-family: 'Cinzel', serif; font-size: 2.5rem;
             margin-bottom: 1.5rem; color: #c8b0e0;
@@ -155,7 +167,7 @@
         .intro p { font-size: 1.1rem; line-height: 1.8; color: var(--gris); }
         .intro .highlight { color: var(--magenta-brillo); font-weight: 600; }
         .history-section {
-            max-width: 800px; margin: 0 auto; padding: 1rem 2rem 0;
+            max-width: 800px; margin: 0 auto; padding: 3rem 2rem;
             text-align: center;
         }
         .history-section h2 {
@@ -166,26 +178,21 @@
             font-size: 1.05rem; line-height: 1.8; color: var(--gris);
         }
         .cards-section {
-            max-width: 1400px; margin: 0 auto; padding: 2rem 2rem 5rem;
+            max-width: 1400px; margin: 0 auto; padding: 4rem 2rem 5rem;
         }
         .cards-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2rem;
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
             text-align: center; margin-bottom: 0.5rem; color: #c8b0e0;
         }
         .cards-section .subtitle {
-            text-align: center; color: var(--gris); margin-bottom: 2rem; font-size: 1rem;
+            text-align: center; color: var(--gris); margin-bottom: 1.5rem; font-size: 1rem;
         }
         .section-label {
             font-family: 'Cinzel', serif; font-size: 2rem;
-            color: #fff; margin: 3rem 0 1.5rem; padding-bottom: 0.5rem;
+            color: #fff; margin: 2rem 0 1rem; padding-bottom: 0.5rem;
             border-bottom: 1px solid rgba(120, 80, 160, 0.2);
             text-align: center; letter-spacing: 0.05em;
         }
-        .section-label.major,
-        .section-label.wands,
-        .section-label.cups,
-        .section-label.swords,
-        .section-label.pentacles { }
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -284,7 +291,7 @@
 
         .scroll-indicator {
             display: flex; flex-direction: column; align-items: center;
-            gap: 0.2rem; color: var(--gris); font-size: 0.8rem; margin-top: 1.2rem;
+            gap: 0.2rem; color: var(--gris); font-size: 0.8rem; margin-top: 0.5rem;
         }
         .scroll-indicator .arrow {
             font-size: 1.5rem;
@@ -296,7 +303,7 @@
         @keyframes bounceArrow { 0%,100%{transform:translateY(0);opacity:.6} 50%{transform:translateY(12px);opacity:1} }
         .nav-sections {
             display: flex; justify-content: center; flex-wrap: wrap;
-            gap: 0.8rem; margin-bottom: 8rem;
+            gap: 0.8rem; margin-bottom: 4.5rem;
         }
         .nav-section {
             padding: 0.7rem 1.5rem;
@@ -428,8 +435,120 @@
             font-size: 0.9rem; line-height: 1.7; color: var(--gris);
         }
         .elements-section .section-divider { margin-top: 2rem; }
+        .signal-section {
+            max-width: 700px; margin: 0 auto; padding: 5rem 2rem 2rem;
+            text-align: center;
+        }
+        .signal-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.2rem;
+            margin-bottom: 0.5rem; color: var(--violeta-brillante);
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+        }
+        .signal-section .subtitle {
+            color: var(--gris); margin-bottom: 2.5rem; font-size: 1rem;
+        }
+        .signal-card {
+            background: linear-gradient(145deg, #0d0d14, #120a1a);
+            border: 1px solid rgba(160, 120, 200, 0.2);
+            border-radius: 20px; padding: 2.5rem 2rem;
+            position: relative;
+            box-shadow: inset 0 0 80px rgba(80, 30, 120, 0.06), 0 10px 40px rgba(0,0,0,0.4);
+        }
+        .signal-placeholder {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 1rem; padding: 2rem 0;
+        }
+        .signal-placeholder .signal-icon {
+            font-size: 3rem; color: var(--violeta-brillante);
+            opacity: 0.3; animation: dividerPulse 3s ease-in-out infinite;
+        }
+        .signal-placeholder p {
+            color: var(--gris); font-size: 1.1rem;
+            text-align: center; max-width: 380px; line-height: 1.7;
+        }
+        .signal-result {
+            display: none; flex-direction: column; align-items: center;
+            gap: 1.2rem; padding: 0.5rem 0;
+        }
+        .signal-result.show { display: flex; }
+        .signal-img-wrapper {
+            width: 130px; border-radius: 10px; overflow: hidden;
+            border: 2px solid rgba(160, 120, 200, 0.2);
+            box-shadow: 0 0 30px rgba(160, 90, 210, 0.15);
+        }
+        .signal-img-wrapper img { width: 100%; height: auto; display: block; }
+        .signal-info { text-align: center; }
+        .signal-name {
+            font-family: 'Cinzel', serif; font-size: 1.5rem;
+            color: var(--violeta-brillante); margin-bottom: 0.2rem;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .signal-number { font-size: 0.85rem; color: rgba(160, 120, 200, 0.5); margin-bottom: 0.5rem; }
+        .signal-divider {
+            width: 50px; height: 1px; margin: 0 auto 0.8rem;
+            background: linear-gradient(90deg, transparent, rgba(160, 120, 200, 0.4), transparent);
+        }
+        .signal-desc {
+            font-size: 0.95rem; line-height: 1.7; color: var(--gris);
+            max-width: 500px; margin: 0 auto 1rem;
+        }
+        .signal-details {
+            display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+        }
+        .signal-details span {
+            font-size: 0.8rem; color: rgba(160, 120, 200, 0.6);
+            background: rgba(160, 90, 210, 0.06);
+            padding: 0.3rem 0.8rem; border-radius: 20px;
+        }
+        .signal-advice {
+            margin-top: 1rem; padding: 0.7rem 1rem;
+            border-radius: 10px;
+            background: rgba(160, 90, 210, 0.06);
+            border: 1px solid rgba(160, 120, 200, 0.12);
+            font-size: 0.88rem; color: #c8b0e0; line-height: 1.5; text-align: center;
+            font-style: italic;
+        }
+        .signal-advice::before { content: '\2726 '; color: var(--violeta-brillante); }
+        .signal-advice::after { content: ' \2726'; color: var(--violeta-brillante); }
+        .signal-btn {
+            margin-top: 1.5rem; padding: 0.9rem 2.5rem;
+            background: linear-gradient(135deg, var(--violeta-claro), var(--rojo-claro));
+            color: var(--blanco); border: none; border-radius: 50px;
+            font-family: 'Cinzel', serif; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(160, 90, 210, 0.2);
+        }
+        .signal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(160, 90, 210, 0.35);
+        }
+        @keyframes rainbowGlow {
+            0% { filter: brightness(1.4) drop-shadow(0 0 40px rgba(255,100,100,0.8)) hue-rotate(0deg); }
+            20% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(255,200,50,0.8)) hue-rotate(72deg); }
+            40% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(100,255,100,0.8)) hue-rotate(144deg); }
+            60% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(50,200,255,0.8)) hue-rotate(216deg); }
+            80% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(150,100,255,0.8)) hue-rotate(288deg); }
+            100% { filter: brightness(1.4) drop-shadow(0 0 40px rgba(255,100,255,0.8)) hue-rotate(360deg); }
+        }
+        .crystal-symbol {
+            position: relative; vertical-align: middle; display: inline-block;
+        }
+        .crystal-symbol img { display: block; object-fit: contain; }
+        .crystal-symbol.lg img { width: 100px; height: 120px; }
+        .signal-icon .crystal-symbol.lg img {
+            animation: rainbowGlow 4s ease-in-out infinite alternate;
+            filter: brightness(1.2) drop-shadow(0 0 20px rgba(255,255,255,0.3));
+        }
+        .crystal-symbol.xs img { width: 18px; height: 22px; }
+        .crystal-symbol.sm img { width: 20px; height: 24px; margin-right: 4px; }
+        .crystal-symbol.xs svg { width: 18px; height: 22px; }
+        .crystal-symbol.sm svg { width: 20px; height: 24px; margin-right: 4px; }
         @media (max-width: 640px) {
             .elements-grid { grid-template-columns: 1fr; }
+            .element-sym { font-size: 1.8rem; width: 44px; height: 44px; }
+            .element-name { font-size: 1.15rem; }
+            .element-desc { font-size: 0.85rem; }
         }
 
         /* === CARD SCROLL ANIMATIONS === */
@@ -544,7 +663,8 @@
             border: 1px solid rgba(160, 120, 200, 0.15);
             border-radius: 12px; padding: 1rem;
             position: relative; overflow: hidden;
-            transition: all 0.3s;
+            perspective: 1000px;
+            cursor: default;
         }
         .zodiac-img-wrapper {
             width: 100%; margin-bottom: 0.8rem; border-radius: 8px;
@@ -578,6 +698,44 @@
             border-color: rgba(160, 120, 200, 0.35);
             box-shadow: 0 8px 32px rgba(80, 40, 120, 0.2);
             transform: translateY(-3px);
+        }
+        .zodiac-inner {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+        .zodiac-card:hover .zodiac-inner {
+            transform: rotateY(180deg);
+        }
+        .zodiac-front, .zodiac-back {
+            backface-visibility: hidden;
+        }
+        .zodiac-front {
+            position: relative;
+        }
+        .zodiac-back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transform: rotateY(180deg);
+            display: flex; flex-direction: column;
+            overflow-y: auto;
+        }
+        .zodiac-back-header {
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+        }
+        .zodiac-rasgos {
+            list-style: none; padding: 0; margin: 0;
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .zodiac-rasgos li {
+            padding: 0.45rem 0.7rem; border-radius: 8px;
+            background: rgba(160, 90, 210, 0.08);
+            border-left: 2px solid rgba(160, 90, 210, 0.3);
+            font-size: 0.88rem; color: var(--blanco);
+            line-height: 1.3;
+        }
+        .zodiac-rasgos li::before {
+            content: '\2726'; margin-right: 0.5rem;
+            color: var(--violeta-brillante); font-size: 0.7rem;
         }
         .zodiac-header {
             display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
@@ -621,6 +779,10 @@
             display: inline-block; width: 12px; height: 12px; border-radius: 50%;
             margin-right: 0.3rem; vertical-align: middle; border: 1px solid rgba(255,255,255,0.1);
         }
+        .zodiac-detail.elem-fuego { border-left: 2px solid rgba(180, 60, 60, 0.2); background: rgba(180, 60, 60, 0.03); }
+        .zodiac-detail.elem-tierra { border-left: 2px solid rgba(60, 140, 70, 0.2); background: rgba(60, 140, 70, 0.03); }
+        .zodiac-detail.elem-aire { border-left: 2px solid rgba(70, 130, 220, 0.15); background: rgba(70, 130, 220, 0.03); }
+        .zodiac-detail.elem-agua { border-left: 2px solid rgba(50, 180, 210, 0.15); background: rgba(50, 180, 210, 0.03); }
         .zodiac-cards {
             margin-top: 0.8rem; padding-top: 0.8rem;
             border-top: 1px solid rgba(160, 120, 200, 0.1);
@@ -646,24 +808,24 @@
         .navbar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0.7rem 2rem;
+            padding: 0.6rem 1.8rem;
             background: rgba(10, 14, 26, 0.85);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(160, 120, 200, 0.12);
             transition: all 0.3s;
         }
         .navbar .brand {
-            font-family: 'Cinzel', serif; font-size: 1.2rem;
+            font-family: 'Cinzel', serif; font-size: 1.15rem;
             color: var(--violeta-brillante); text-decoration: none;
             text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
             white-space: nowrap;
         }
         .navbar .nav-links {
-            display: flex; gap: 0.3rem; list-style: none; align-items: center;
+            display: flex; gap: 0.15rem; list-style: none; align-items: center;
         }
         .navbar .nav-links a {
-            padding: 0.4rem 0.9rem; border-radius: 20px;
-            color: #a898c0; text-decoration: none; font-size: 0.85rem;
+            padding: 0.35rem 0.7rem; border-radius: 18px;
+            color: #a898c0; text-decoration: none; font-size: 0.82rem;
             font-family: 'Inter', sans-serif;
             transition: all 0.25s; border: 1px solid transparent;
         }
@@ -678,19 +840,40 @@
             padding: 0.4rem; color: var(--violeta-brillante); font-size: 1.5rem;
             line-height: 1;
         }
-        body { padding-top: 56px; }
         .view-hidden { display: none !important; }
         @media (max-width: 768px) {
             .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
             .card-img-wrapper img { width: 80px; }
             .hero h1 { font-size: 2.2rem; }
             .hero-img { width: 70px; }
+            .zodiac-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .section-label { font-size: 1.5rem; }
+            .cards-section h2 { font-size: 2rem; }
+            .zodiac-section h2 { font-size: 2rem; }
+            .houses-section h2 { font-size: 2rem; }
+            .planets-section h2 { font-size: 2rem; }
+            .elements-section h2 { font-size: 2rem; }
+            .signal-section h2 { font-size: 1.8rem; }
+            .intro h2 { font-size: 2rem; }
+            .history-section h2 { font-size: 1.8rem; }
+            .zodiac-section { padding: 3rem 1.5rem; }
+            .houses-section { padding: 3rem 1.5rem; }
+            .planets-section { padding: 3rem 1.5rem; }
+            .elements-section { padding: 3rem 1.5rem; }
+            .signal-section { padding: 3rem 1.5rem; }
+            .cards-section { padding: 3rem 1.5rem 4rem; }
+            .intro { padding: 2.5rem 1.5rem; }
+            .history-section { padding: 2.5rem 1.5rem; }
             .house-header { flex-wrap: wrap; gap: 0.5rem; }
             .house-sign { margin-left: 0; white-space: normal; font-size: 0.75rem; }
             .house-name { font-size: 1rem; }
             .house-num { width: 36px; height: 36px; font-size: 1.3rem; }
             .house-card { padding: 1rem; }
             .house-desc { font-size: 0.85rem; }
+            .planet-card { flex-direction: column; align-items: center; text-align: center; gap: 0.8rem; }
+            .planet-sym { width: 70px; height: 70px; font-size: 2.5rem; }
+            .planet-header { justify-content: center; }
+            .planet-sign { margin-left: 0; }
             .navbar .nav-links {
                 display: none; position: absolute; top: 100%; left: 0; right: 0;
                 flex-direction: column; gap: 0.2rem;
@@ -705,6 +888,36 @@
         }
         @media (max-width: 480px) {
             .cards-grid { grid-template-columns: 1fr; }
+            .hero p { line-height: 1.6; }
+            .zodiac-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+            .zodiac-img-wrapper { width: 80px; }
+            .nav-sections { gap: 0.5rem; margin-bottom: 2rem; }
+            .nav-section { padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+            .section-label { font-size: 1.15rem; margin: 1.2rem 0 0.8rem; }
+            .cards-section h2 { font-size: 1.5rem; }
+            .zodiac-section h2 { font-size: 1.5rem; }
+            .houses-section h2 { font-size: 1.5rem; }
+            .planets-section h2 { font-size: 1.5rem; }
+            .elements-section h2 { font-size: 1.5rem; }
+            .signal-section h2 { font-size: 1.5rem; }
+            .intro h2 { font-size: 1.5rem; }
+            .history-section h2 { font-size: 1.5rem; }
+            .zodiac-section { padding: 2rem 1.2rem; }
+            .houses-section { padding: 2rem 1.2rem; }
+            .planets-section { padding: 2rem 1.2rem; }
+            .elements-section { padding: 2rem 1.2rem; }
+            .signal-section { padding: 2rem 1.2rem 1.5rem; }
+            .cards-section { padding: 2rem 1.2rem 3rem; }
+            .intro { padding: 2rem 1.2rem; }
+            .history-section { padding: 2rem 1.2rem; }
+            .signal-card { padding: 1.5rem 1rem; }
+            .signal-name { font-size: 1.2rem; }
+            .signal-details { gap: 0.8rem; }
+            .planet-sym { width: 60px; height: 60px; font-size: 2rem; }
+            .element-card { padding: 1rem; }
+            .element-sym { font-size: 1.8rem; width: 44px; height: 44px; }
+            .element-name { font-size: 1.15rem; }
+            .element-desc { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -715,6 +928,7 @@
         <button class="nav-toggle" id="navToggle" aria-label="Menu">&#x2630;</button>
         <ul class="nav-links" id="navLinks">
             <li><a href="#" data-view="all" class="active">Inicio</a></li>
+            <li><a href="#" data-view="signal">Se&ntilde;al</a></li>
             <li><a href="#" data-view="cards">Cartas</a></li>
             <li><a href="#" data-view="zodiac">Zodiaco</a></li>
             <li><a href="#" data-view="houses">Casas</a></li>
@@ -724,21 +938,28 @@
     </nav>
     <div class="content">
         <section class="hero">
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
-            <span class="constellation-star">&#x2726;</span>
+            <span class="orbit-star"></span>
+            <span class="orbit-star"></span>
+            <span class="orbit-star"></span>
+            <span class="orbit-star"></span>
+            <span class="orbit-star"></span>
+            <div class="constellation-stars">
+                <span class="constellation-star" style="top:3%;left:5%;font-size:1.4rem;opacity:0.5;animation-delay:0s">&#x2726;</span>
+                <span class="constellation-star" style="top:12%;left:88%;font-size:1rem;opacity:0.4;animation-delay:-2s">&#x2726;</span>
+                <span class="constellation-star" style="top:25%;left:8%;font-size:1.8rem;opacity:0.5;animation-delay:-4s">&#x2726;</span>
+                <span class="constellation-star" style="top:35%;left:78%;font-size:1.2rem;opacity:0.4;animation-delay:-6s">&#x2726;</span>
+                <span class="constellation-star" style="top:48%;left:2%;font-size:1.6rem;opacity:0.5;animation-delay:-8s">&#x2726;</span>
+                <span class="constellation-star" style="top:52%;left:93%;font-size:1rem;opacity:0.3;animation-delay:-10s">&#x2726;</span>
+                <span class="constellation-star" style="top:65%;left:15%;font-size:2rem;opacity:0.4;animation-delay:-12s">&#x2726;</span>
+                <span class="constellation-star" style="top:72%;left:73%;font-size:0.9rem;opacity:0.5;animation-delay:-14s">&#x2726;</span>
+                <span class="constellation-star" style="top:82%;left:42%;font-size:1.3rem;opacity:0.4;animation-delay:-16s">&#x2726;</span>
+                <span class="constellation-star" style="top:92%;left:6%;font-size:1.1rem;opacity:0.3;animation-delay:-18s">&#x2726;</span>
+                <span class="constellation-star" style="top:7%;left:52%;font-size:0.8rem;opacity:0.4;animation-delay:-20s">&#x2726;</span>
+                <span class="constellation-star" style="top:42%;left:48%;font-size:1.5rem;opacity:0.4;animation-delay:-22s">&#x2726;</span>
+            </div>
             <div class="hero-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="hero-img"></div>
             <h1>Astro Tarot</h1>
-            <p>Explor&aacute; las 78 cartas del Tarot Rider-Waite con sus significados, correspondencias astrol&oacute;gicas y planetarias. Descubr&iacute; los 12 signos zodiacales con sus elementos, colores, piedras y las cartas que resuenan con su energ&iacute;a. Una gu&iacute;a completa para conectar la sabidur&iacute;a del cielo con la del mazo.</p>
+            <p>Explor&aacute; las 78 cartas del Tarot Rider-Waite con sus significados y correspondencias astrol&oacute;gicas. Descubr&iacute; los 12 signos del zod&iacute;aco, sus cartas asociadas y los rasgos de personalidad que los definen. Naveg&aacute; por las Casas, Planetas y Elementos para una visi&oacute;n completa de la astrolog&iacute;a. Ped&iacute; tu Se&ntilde;al y dej&aacute; que el universo te hable a trav&eacute;s del mazo.</p>
             <a href="#" class="btn-scroll" id="btnExplorar">Explorar</a>
             <div class="scroll-indicator">
                 <span class="arrow">&#x25BC;</span>
@@ -765,7 +986,7 @@
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
         <section class="cards-section fade-section" id="cards">
-            <h2>&#x1F90D; El Mazo Completo</h2>
+            <h2>El Mazo Completo</h2>
             <p class="subtitle">El mazo completo del Tarot con sus 78 cartas, cada una vinculada a signos, planetas y elementos astrol&oacute;gicos</p>
             <div id="major"><h3 class="section-label major"><span class="icon">&#10023;</span> Arcanos Mayores</h3></div>
             <div class="cards-grid" id="grid-major"></div>
@@ -801,6 +1022,30 @@
             <h2>&#x2726; Los 4 Elementos Astrol&oacute;gicos &#x2726;</h2>
             <p class="subtitle">Los elementos representan las energ&iacute;as fundamentales que componen el zod&iacute;aco: cada signo pertenece a un elemento que define su esencia y su forma de interactuar con el mundo</p>
             <div class="elements-grid" id="grid-elements"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="signal-section fade-section" id="signal">
+            <div class="signal-inner">
+                <h2>Tu Se&ntilde;al del Tarot</h2>
+                <div class="signal-card" id="signalCard">
+                    <div class="signal-placeholder" id="signalPlaceholder">
+                        <span class="signal-icon"><span class="crystal-symbol lg"><img src="images/bola-de-cristal.png" alt=""></span></span>
+                        <p>El mazo guarda un mensaje para vos. Ped&iacute; tu se&ntilde;al y deja que el universo hable.</p>
+                    </div>
+                    <div class="signal-result" id="signalResult">
+                        <div class="signal-img-wrapper"><img id="signalImg" src="" alt="Carta"></div>
+                        <div class="signal-info">
+                            <div class="signal-name" id="signalName"></div>
+                            <div class="signal-number" id="signalNumber"></div>
+                            <div class="signal-divider"></div>
+                            <div class="signal-desc" id="signalDesc"></div>
+                            <div class="signal-details" id="signalDetails"></div>
+                            <div class="signal-advice" id="signalAdvice"></div>
+                        </div>
+                    </div>
+                    <button class="signal-btn" id="signalBtn">Tu se&ntilde;al</button>
+                </div>
+            </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
         <footer>
@@ -1040,9 +1285,20 @@
 
         // === RENDER ===
         function renderCard(c, isMajor, suit) {
-            var numHtml = isMajor
-                ? '<div class="card-number">' + c.num + '</div>'
-                : '<div class="card-number">' + (c.num === 'P' ? 'Paje' : c.num === 'C' ? 'Caballero' : c.num === 'Q' ? 'Reina' : c.num === 'K' ? 'Rey' : 'N\u00famero ' + c.num) + '</div>';
+            function romanToNum(r) {
+                var map = {I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+                var n = 0, i = 0;
+                while (i < r.length) {
+                    var cur = map[r[i]], nxt = map[r[i+1]] || 0;
+                    if (cur < nxt) { n += nxt - cur; i += 2; }
+                    else { n += cur; i++; }
+                }
+                return n;
+            }
+            var displayNum = isMajor
+                ? (c.num === '0' ? '0' : romanToNum(c.num) + '')
+                : (c.num === 'P' ? 'Paje' : c.num === 'C' ? 'Caballero' : c.num === 'Q' ? 'Reina' : c.num === 'K' ? 'Rey' : 'N\u00famero ' + c.num);
+            var numHtml = '<div class="card-number">' + displayNum + '</div>';
             return '<div class="card-tarot' + (c.feat ? ' featured' : '') + '">' +
                 (c.img ? '<div class="card-img-wrapper"><img src="' + c.img + '" alt="' + c.name + '" loading="lazy"></div>' : '') +
                 '<div class="card-name">' + c.name + '</div>' +
@@ -1162,18 +1418,18 @@
 
         // === ZODIAC DATA ===
         var zodiacData = [
-{num:1,name:'Aries',sym:'\u2648\uFE0E',dates:'21 Mar \u2013 19 Abr',elem:'Fuego',planeta:'Marte',casa:'1\u00aa',colores:['#dc2626','#ff6b35'],piedras:'Rub\u00ed, Diamante',piedrasDesc:'Rub\xED, Diamante',img:'images/signos-0/aries-0.jpg',cards:['El Emperador','As de Bastos','2 de Bastos','3 de Bastos','4 de Bastos','Paje de Bastos','Caballero de Bastos']},
-{num:2,name:'Tauro',sym:'\u2649\uFE0E',dates:'20 Abr \u2013 20 May',elem:'Tierra',planeta:'Venus',casa:'2\u00aa',colores:['#22c55e','#f9a8d4'],piedras:'Esmeralda, Cuarzo Rosa',piedrasDesc:'Esmeralda, Cuarzo Rosa',img:'images/signos-0/tauro-0.jpg',cards:['El Sumo Sacerdote','La Emperatriz','As de Oros','2 de Oros','5 de Oros','6 de Oros','7 de Oros','Paje de Oros','Caballero de Oros']},
-{num:3,name:'G\u00e9minis',sym:'\u264A\uFE0E',dates:'21 May \u2013 20 Jun',elem:'Aire',planeta:'Mercurio',casa:'3\u00aa',colores:['#eab308','#9ca3af'],piedras:'\u00c1gata, Piedra Luna',piedrasDesc:'\xC1gata, Piedra Luna',img:'images/signos-0/geminis-0.jpg',cards:['Los Enamorados','8 de Espadas','9 de Espadas','10 de Espadas','Paje de Espadas','Caballero de Espadas']},
-{num:4,name:'C\u00e1ncer',sym:'\u264B\uFE0E',dates:'21 Jun \u2013 22 Jul',elem:'Agua',planeta:'Luna',casa:'4\u00aa',colores:['#e2e8f0','#94a3b8'],piedras:'Perla, Selenita',piedrasDesc:'Perla, Selenita',img:'images/signos-0/cancer-0.jpg',cards:['El Carro','La Sacerdotisa','As de Copas','2 de Copas','3 de Copas','Paje de Copas','Caballero de Copas']},
-{num:5,name:'Leo',sym:'\u264C\uFE0E',dates:'23 Jul \u2013 22 Ago',elem:'Fuego',planeta:'Sol',casa:'5\u00aa',colores:['#fbbf24','#f97316'],piedras:'Topacio, Ojo de Tigre',piedrasDesc:'Topacio, Ojo de Tigre',img:'images/signos-0/leo-0.jpg',cards:['La Fuerza','5 de Bastos','6 de Bastos','7 de Bastos','Reina de Bastos','Rey de Bastos']},
-{num:6,name:'Virgo',sym:'\u264D\uFE0E',dates:'23 Ago \u2013 22 Sep',elem:'Tierra',planeta:'Mercurio',casa:'6\u00aa',colores:['#a0522d','#eab308'],piedras:'Jaspe, Aguamarina',piedrasDesc:'Jaspe, Aguamarina',img:'images/signos-0/virgo-0.jpg',cards:['El Ermita\u00f1o','8 de Oros','9 de Oros','10 de Oros']},
-{num:7,name:'Libra',sym:'\u264E\uFE0E',dates:'23 Sep \u2013 22 Oct',elem:'Aire',planeta:'Venus',casa:'7\u00aa',colores:['#f472b6','#60a5fa'],piedras:'\u00d3palo, Lapisl\u00e1zuli',piedrasDesc:'\xD3palo, Lapisl\xE1zuli',img:'images/signos-0/libra-0.jpg',cards:['La Justicia','As de Espadas','2 de Espadas','3 de Espadas','4 de Espadas','Reina de Espadas']},
-{num:8,name:'Escorpio',sym:'\u264F\uFE0E',dates:'23 Oct \u2013 21 Nov',elem:'Agua',planeta:'Plut\u00f3n',casa:'8\u00aa',colores:['#4a0e0e','#0a0a0a'],piedras:'\u00d3nice, Granate',piedrasDesc:'\xD3nice, Granate',img:'images/signos-0/escorpio-0.jpg',cards:['La Muerte','4 de Copas','5 de Copas','6 de Copas','Rey de Copas']},
-{num:9,name:'Sagitario',sym:'\u2650\uFE0E',dates:'22 Nov \u2013 21 Dic',elem:'Fuego',planeta:'J\u00fapiter',casa:'9\u00aa',colores:['#7b2dbf','#3b82f6'],piedras:'Turquesa, Amatista',piedrasDesc:'Turquesa, Amatista',img:'images/signos-0/sagitario-0.jpg',cards:['La Templanza','Rueda de la Fortuna','8 de Bastos','9 de Bastos','10 de Bastos']},
-{num:10,name:'Capricornio',sym:'\u2651\uFE0E',dates:'22 Dic \u2013 19 Ene',elem:'Tierra',planeta:'Saturno',casa:'10\u00aa',colores:['#4a0e0e','#1a1a2e'],piedras:'Granate, Turmalina Negra',piedrasDesc:'Granate, Turmalina Negra',img:'images/signos-0/capricornio-0.jpg',cards:['El Diablo','3 de Oros','4 de Oros','Reina de Oros','Rey de Oros']},
-{num:11,name:'Acuario',sym:'\u2652\uFE0E',dates:'20 Ene \u2013 18 Feb',elem:'Aire',planeta:'Urano',casa:'11\u00aa',colores:['#3b82f6','#60a5fa'],piedras:'Zafiro, Azurita',piedrasDesc:'Zafiro, Azurita',img:'images/signos-0/acuario-0.jpg',cards:['La Estrella','El Loco','5 de Espadas','6 de Espadas','7 de Espadas','Rey de Espadas']},
-{num:12,name:'Piscis',sym:'\u2653\uFE0E',dates:'19 Feb \u2013 20 Mar',elem:'Agua',planeta:'Neptuno',casa:'12\u00aa',colores:['#22d3ee','#c084fc'],piedras:'Amatista, Aguamarina',piedrasDesc:'Amatista, Aguamarina',img:'images/signos-0/piscis-0.jpg',cards:['El Colgado','La Luna','7 de Copas','8 de Copas','9 de Copas','10 de Copas']},
+{num:1,name:'Aries',sym:'\u2648\uFE0E',dates:'21 Mar \u2013 19 Abr',elem:'Fuego',planeta:'Marte',casa:'1\u00aa',colores:['#dc2626','#ff6b35'],piedras:'Rub\u00ed, Diamante',piedrasDesc:'Rub\xED, Diamante',img:'images/signos-0/aries-0.jpg',cards:['El Emperador','As de Bastos','2 de Bastos','3 de Bastos','4 de Bastos','Paje de Bastos','Caballero de Bastos'],rasgos:['Audaz y decidido', 'Energ\u00eda inagotable', 'Impulsivo y directo', 'L\u00edder nato', 'Competitivo', 'Aventurero', 'Pasional', 'Franco y sincero']},
+{num:2,name:'Tauro',sym:'\u2649\uFE0E',dates:'20 Abr \u2013 20 May',elem:'Tierra',planeta:'Venus',casa:'2\u00aa',colores:['#22c55e','#f9a8d4'],piedras:'Esmeralda, Cuarzo Rosa',piedrasDesc:'Esmeralda, Cuarzo Rosa',img:'images/signos-0/tauro-0.jpg',cards:['El Sumo Sacerdote','La Emperatriz','As de Oros','2 de Oros','5 de Oros','6 de Oros','7 de Oros','Paje de Oros','Caballero de Oros'],rasgos:['Leal y constante', 'Paciente y perseverante', 'Amante del placer', 'Pr\u00e1ctico y sensato', 'Terco y obstinado', 'Protector', 'Sensual', 'Confiabilidad absoluta']},
+{num:3,name:'G\u00e9minis',sym:'\u264A\uFE0E',dates:'21 May \u2013 20 Jun',elem:'Aire',planeta:'Mercurio',casa:'3\u00aa',colores:['#eab308','#9ca3af'],piedras:'\u00c1gata, Piedra Luna',piedrasDesc:'\xC1gata, Piedra Luna',img:'images/signos-0/geminis-0.jpg',cards:['Los Enamorados','8 de Espadas','9 de Espadas','10 de Espadas','Paje de Espadas','Caballero de Espadas'],rasgos:['Vers\u00e1til y curioso', 'Comunicador brillante', 'Adaptable a todo', 'Dual e inquieto', 'Inteligente y \u00e1gil', 'Sociable y carism\u00e1tico', 'Cambiante de humor', 'Amante del conocimiento']},
+{num:4,name:'C\u00e1ncer',sym:'\u264B\uFE0E',dates:'21 Jun \u2013 22 Jul',elem:'Agua',planeta:'Luna',casa:'4\u00aa',colores:['#e2e8f0','#94a3b8'],piedras:'Perla, Selenita',piedrasDesc:'Perla, Selenita',img:'images/signos-0/cancer-0.jpg',cards:['El Carro','La Sacerdotisa','As de Copas','2 de Copas','3 de Copas','Paje de Copas','Caballero de Copas'],rasgos:['Emp\u00e1tico y sensible', 'Intuitivo y protector', 'Apegado al hogar', 'Leal hasta el fin', 'Memoria emocional profunda', 'Cuidadoso y maternal', 'Imaginativo', 'Reservado al principio']},
+{num:5,name:'Leo',sym:'\u264C\uFE0E',dates:'23 Jul \u2013 22 Ago',elem:'Fuego',planeta:'Sol',casa:'5\u00aa',colores:['#fbbf24','#f97316'],piedras:'Topacio, Ojo de Tigre',piedrasDesc:'Topacio, Ojo de Tigre',img:'images/signos-0/leo-0.jpg',cards:['La Fuerza','5 de Bastos','6 de Bastos','7 de Bastos','Reina de Bastos','Rey de Bastos'],rasgos:['Carism\u00e1tico y magn\u00e9tico', 'Orgulloso y digno', 'Generoso y leal', 'Creativo y apasionado', 'L\u00edder por naturaleza', 'Dram\u00e1tico y teatral', 'Valiente y decidido', 'Coraz\u00f3n gigante']},
+{num:6,name:'Virgo',sym:'\u264D\uFE0E',dates:'23 Ago \u2013 22 Sep',elem:'Tierra',planeta:'Mercurio',casa:'6\u00aa',colores:['#a0522d','#eab308'],piedras:'Jaspe, Aguamarina',piedrasDesc:'Jaspe, Aguamarina',img:'images/signos-0/virgo-0.jpg',cards:['El Ermita\u00f1o','8 de Oros','9 de Oros','10 de Oros'],rasgos:['Anal\u00edtico y meticuloso', 'Perfeccionista exigente', 'Servicial y dedicado', 'Pr\u00e1ctico y ordenado', 'Inteligente y cr\u00edtico', 'Modesto y reservado', 'Saludable y disciplinado', 'Detallista obsesivo']},
+{num:7,name:'Libra',sym:'\u264E\uFE0E',dates:'23 Sep \u2013 22 Oct',elem:'Aire',planeta:'Venus',casa:'7\u00aa',colores:['#f472b6','#60a5fa'],piedras:'\u00d3palo, Lapisl\u00e1zuli',piedrasDesc:'\xD3palo, Lapisl\xE1zuli',img:'images/signos-0/libra-0.jpg',cards:['La Justicia','As de Espadas','2 de Espadas','3 de Espadas','4 de Espadas','Reina de Espadas'],rasgos:['Diplom\u00e1tico y equilibrado', 'Encantador y sociable', 'Justo e imparcial', 'Indeciso por naturaleza', 'Esteta y amante del arte', 'Armonioso y pac\u00edfico', 'Rom\u00e1ntico idealista', 'Cort\u00e9s y elegante']},
+{num:8,name:'Escorpio',sym:'\u264F\uFE0E',dates:'23 Oct \u2013 21 Nov',elem:'Agua',planeta:'Plut\u00f3n',casa:'8\u00aa',colores:['#4a0e0e','#0a0a0a'],piedras:'\u00d3nice, Granate',piedrasDesc:'\xD3nice, Granate',img:'images/signos-0/escorpio-0.jpg',cards:['La Muerte','4 de Copas','5 de Copas','6 de Copas','Rey de Copas'],rasgos:['Intenso y magn\u00e9tico', 'Apasionado y profundo', 'Leal inquebrantable', 'Misterioso y reservado', 'Determinado y poderoso', 'Celoso y posesivo', 'Transformador nato', 'Intuitivo y perceptivo']},
+{num:9,name:'Sagitario',sym:'\u2650\uFE0E',dates:'22 Nov \u2013 21 Dic',elem:'Fuego',planeta:'J\u00fapiter',casa:'9\u00aa',colores:['#7b2dbf','#3b82f6'],piedras:'Turquesa, Amatista',piedrasDesc:'Turquesa, Amatista',img:'images/signos-0/sagitario-0.jpg',cards:['La Templanza','Rueda de la Fortuna','8 de Bastos','9 de Bastos','10 de Bastos'],rasgos:['Optimista y aventurero', 'Amante de la libertad', 'Fil\u00f3sofo nato', 'Directo y sincero', 'Entusiasta incontenible', 'Viajero incansable', 'Independiente y salvaje', 'Buscador de verdad']},
+{num:10,name:'Capricornio',sym:'\u2651\uFE0E',dates:'22 Dic \u2013 19 Ene',elem:'Tierra',planeta:'Saturno',casa:'10\u00aa',colores:['#4a0e0e','#1a1a2e'],piedras:'Granate, Turmalina Negra',piedrasDesc:'Granate, Turmalina Negra',img:'images/signos-0/capricornio-0.jpg',cards:['El Diablo','3 de Oros','4 de Oros','Reina de Oros','Rey de Oros'],rasgos:['Ambicioso y disciplinado', 'Responsable y maduro', 'Pr\u00e1ctico y realista', 'Perseverante incansable', 'Reservado y serio', 'Estrat\u00e9gico nato', 'Leal y tradicional', 'Paciencia de acero']},
+{num:11,name:'Acuario',sym:'\u2652\uFE0E',dates:'20 Ene \u2013 18 Feb',elem:'Aire',planeta:'Urano',casa:'11\u00aa',colores:['#3b82f6','#60a5fa'],piedras:'Zafiro, Azurita',piedrasDesc:'Zafiro, Azurita',img:'images/signos-0/acuario-0.jpg',cards:['La Estrella','El Loco','5 de Espadas','6 de Espadas','7 de Espadas','Rey de Espadas'],rasgos:['Original e innovador', 'Independiente y libre', 'Humanitario y solidario', 'Exc\u00e9ntrico y \u00fanico', 'Intelectual rebelde', 'Impredecible y genial', 'Visionario adelantado', 'Amigo leal y fraterno']},
+{num:12,name:'Piscis',sym:'\u2653\uFE0E',dates:'19 Feb \u2013 20 Mar',elem:'Agua',planeta:'Neptuno',casa:'12\u00aa',colores:['#22d3ee','#c084fc'],piedras:'Amatista, Aguamarina',piedrasDesc:'Amatista, Aguamarina',img:'images/signos-0/piscis-0.jpg',cards:['El Colgado','La Luna','7 de Copas','8 de Copas','9 de Copas','10 de Copas'],rasgos:['So\u00f1ador y espiritual', 'Emp\u00e1tico y compasivo', 'Artista e imaginativo', 'Intuitivo y m\u00edstico', 'Sensible y vulnerable', 'Evasivo y escapista', 'Conexi\u00f3n divina', 'Amor incondicional']},
         ];
 
         function renderZodiac() {
@@ -1195,23 +1451,38 @@
                 z.cards.forEach(function(cn) {
                     cardsHtml += '<a href="#cards">' + cn + '</a>';
                 });
-                html += '<div class="zodiac-card">' +
-                    '<div class="zodiac-header">' +
-                        '<div class="zodiac-symbol">' + z.sym + '</div>' +
-                        '<div class="zodiac-name">' + z.name + '<small>' + z.dates + '</small></div>' +
+                var rasgosHtml = '';
+                z.rasgos.forEach(function(r) {
+                    rasgosHtml += '<li>' + r + '</li>';
+                });
+                html += '<div class="zodiac-card" data-sign="' + z.name + '">' +
+                    '<div class="zodiac-inner">' +
+                    '<div class="zodiac-front">' +
+                        '<div class="zodiac-header">' +
+                            '<div class="zodiac-symbol">' + z.sym + '</div>' +
+                            '<div class="zodiac-name">' + z.name + '<small>' + z.dates + '</small></div>' +
+                        '</div>' +
+                        '<div class="zodiac-img-label">Constelaci\u00f3n</div>' +
+                        '<div class="zodiac-img-wrapper"><img src="' + z.img + '" alt="' + z.name + '" loading="lazy"></div>' +
+                        '<div class="zodiac-details">' +
+                            '<div class="zodiac-detail elem-' + z.elem.toLowerCase() + '"><span class="label">Elemento</span><span class="value">' + z.elem + '</span></div>' +
+                            '<div class="zodiac-detail"><span class="label">Planeta</span><span class="value">' + z.planeta + '</span></div>' +
+                            '<div class="zodiac-detail"><span class="label">Casa</span><span class="value">' + z.casa + '</span></div>' +
+                            '<div class="zodiac-detail"><span class="label">Colores</span><span class="value">' + colorsHtml + '</span></div>' +
+                            '<div class="zodiac-detail" style="grid-column: 1 / -1"><span class="label">Piedras</span><span class="value">' + z.piedras + '</span></div>' +
+                        '</div>' +
+                        '<div class="zodiac-cards">' +
+                            '<div class="label">Cartas asociadas</div>' +
+                            '<div class="zodiac-cards-list">' + cardsHtml + '</div>' +
+                        '</div>' +
                     '</div>' +
-                    '<div class="zodiac-img-label">Constelaci\u00f3n</div>' +
-                    '<div class="zodiac-img-wrapper"><img src="' + z.img + '" alt="' + z.name + '" loading="lazy"></div>' +
-                    '<div class="zodiac-details">' +
-                        '<div class="zodiac-detail"><span class="label">Elemento</span><span class="value">' + z.elem + '</span></div>' +
-                        '<div class="zodiac-detail"><span class="label">Planeta</span><span class="value">' + z.planeta + '</span></div>' +
-                        '<div class="zodiac-detail"><span class="label">Casa</span><span class="value">' + z.casa + '</span></div>' +
-                        '<div class="zodiac-detail"><span class="label">Colores</span><span class="value">' + colorsHtml + '</span></div>' +
-                        '<div class="zodiac-detail" style="grid-column: 1 / -1"><span class="label">Piedras</span><span class="value">' + z.piedras + '</span></div>' +
+                    '<div class="zodiac-back">' +
+                        '<div class="zodiac-back-header">' +
+                            '<div class="zodiac-symbol">' + z.sym + '</div>' +
+                            '<div class="zodiac-name">' + z.name + '<small>Rasgos de personalidad</small></div>' +
+                        '</div>' +
+                        '<ul class="zodiac-rasgos">' + rasgosHtml + '</ul>' +
                     '</div>' +
-                    '<div class="zodiac-cards">' +
-                        '<div class="label">Cartas asociadas</div>' +
-                        '<div class="zodiac-cards-list">' + cardsHtml + '</div>' +
                     '</div>' +
                 '</div>';
             });
@@ -1280,6 +1551,9 @@
                     elementsSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     elementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'signal') {
+                    document.getElementById('navLinks').classList.remove('open');
+                    document.getElementById('signal').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -1319,6 +1593,168 @@
             });
         }, { threshold: 0.1 });
         document.querySelectorAll('.fade-section').forEach(function(el) { observer.observe(el); });
+
+        // === TRACKING: user affinity ===
+        var affinity = { major:0, wands:0, cups:0, swords:0, pentacles:0, signs:{} };
+        // Track sub-nav clicks
+        document.querySelectorAll('.nav-section').forEach(function(a) {
+            a.addEventListener('click', function() {
+                var key = this.getAttribute('href').replace('#','');
+                if (affinity[key] !== undefined) affinity[key]++;
+            });
+        });
+        // Map sign to its elemental suit
+        var signSuitMap = {
+            'Aries':'wands','Leo':'wands','Sagitario':'wands',
+            'Tauro':'pentacles','Virgo':'pentacles','Capricornio':'pentacles',
+            'G\u00e9minis':'swords','Libra':'swords','Acuario':'swords',
+            'C\u00e1ncer':'cups','Escorpio':'cups','Piscis':'cups'
+        };
+        // Track sign card clicks
+        var zodiacObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(e) {
+                if (e.isIntersecting) {
+                    var name = e.target.getAttribute('data-sign');
+                    if (name) {
+                        affinity.signs[name] = (affinity.signs[name] || 0) + 1;
+                        var suit = signSuitMap[name];
+                        if (suit) affinity[suit] = (affinity[suit] || 0) + 0.5;
+                    }
+                }
+            });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('.zodiac-card').forEach(function(card) {
+            zodiacObserver.observe(card);
+            card.addEventListener('click', function() {
+                var name = this.getAttribute('data-sign') || 'unknown';
+                affinity.signs[name] = (affinity.signs[name] || 0) + 2;
+                var suit = signSuitMap[name];
+                if (suit) affinity[suit] = (affinity[suit] || 0) + 1;
+            });
+        });
+
+        // === FLAT CARD LIST ===
+        function allCards() {
+            var out = [];
+            ['major','wands','cups','swords','pentacles'].forEach(function(suit) {
+                cardData[suit].forEach(function(c) { out.push(c); });
+            });
+            return out;
+        }
+
+        // === SIGNAL LOGIC ===
+        var pullCount = 0;
+        var firstCard = null;
+
+        function pickCard() {
+            var deck = allCards();
+            // Bias toward most-clicked sign's suit
+            var bestSuit = 'major', bestVal = 0;
+            ['major','wands','cups','swords','pentacles'].forEach(function(s) {
+                if (affinity[s] > bestVal) { bestVal = affinity[s]; bestSuit = s; }
+            });
+            var pool = bestVal > 0 && Math.random() < 0.5
+                ? cardData[bestSuit].slice()
+                : deck;
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        // === SIGNAL UI ===
+        var oraculo = [
+            'Confía en el ritmo del universo.',
+            'Tu intuición es tu brújula más fiel.',
+            'Lo que buscas también te está buscando.',
+            'El silencio guarda las respuestas que tu alma necesita.',
+            'No fuerces lo que debe llegar en su tiempo.',
+            'Mira hacia adentro, ahí está tu verdad.',
+            'Cada final es una puerta que no habías visto.',
+            'La paciencia es la llave que abre los sellos del destino.',
+            'Tu luz es más poderosa de lo que crees.',
+            'Escuchá el susurro de las estrellas.',
+            'Soltar no es perder, es hacer espacio.',
+            'El cosmos te sostiene aunque no lo sientas.',
+            'Todo lo que llega a tu vida viene para enseñarte.',
+            'Tu corazón ya sabe el camino, solo debés seguirle.',
+            'Las coincidencias no existen, son señales.',
+            'La tormenta también trae semillas de renovación.',
+            'Honrá tu propio proceso, no hay prisas.',
+            'Lo inesperado trae el regalo que más necesitás.',
+            'Tu alma eligió esta experiencia para crecer.',
+            'El cambio no es tu enemigo, es tu guía.',
+            'Respirá profundo: el universo está de tu lado.',
+            'No hay errores, solo lecciones disfrazadas.',
+            'La respuesta está más cerca de lo que imaginás.',
+            'Permitite recibir lo que el universo tiene para darte.',
+            'Tu poder nace de tu autenticidad.',
+        ];
+        var signalBtn = document.getElementById('signalBtn');
+        var signalPlaceholder = document.getElementById('signalPlaceholder');
+        var signalResult = document.getElementById('signalResult');
+        var signalImg = document.getElementById('signalImg');
+        var signalName = document.getElementById('signalName');
+        var signalNumber = document.getElementById('signalNumber');
+        var signalDesc = document.getElementById('signalDesc');
+        var signalDetails = document.getElementById('signalDetails');
+        var signalAdvice = document.getElementById('signalAdvice');
+
+        signalBtn.addEventListener('click', function() {
+            pullCount++;
+            var card;
+            if (pullCount === 1) {
+                card = pickCard();
+                firstCard = card;
+            } else if (pullCount % 3 === 0 && firstCard) {
+                card = firstCard;
+            } else {
+                card = pickCard();
+            }
+            // Build image path
+            var suitIdx = {major:0, wands:1, cups:2, swords:3, pentacles:4};
+            var cardIdx = 0;
+            var found = false;
+            var suits = ['major','wands','cups','swords','pentacles'];
+            for (var si = 0; si < suits.length; si++) {
+                var list = cardData[suits[si]];
+                for (var ci = 0; ci < list.length; ci++) {
+                    if (list[ci] === card) { cardIdx = card.num !== undefined ? parseInt(card.num) : ci; found = true; break; }
+                }
+                if (found) break;
+            }
+            // Simple index: find position in flat deck
+            var flat = allCards();
+            var pos = 0;
+            for (var i = 0; i < flat.length; i++) {
+                if (flat[i] === card) { pos = i; break; }
+            }
+            signalImg.src = 'images/cards/card_' + String(pos).padStart(3,'0') + '.png';
+            signalName.textContent = card.name;
+            // Determine suit name for display
+            var suitName = '';
+            var suitsList = ['major','wands','cups','swords','pentacles'];
+            var suitLabels = ['Arcano Mayor','Bastos','Copas','Espadas','Oros'];
+            for (var si2 = 0; si2 < suitsList.length; si2++) {
+                if (cardData[suitsList[si2]].indexOf(card) !== -1) { suitName = suitLabels[si2]; break; }
+            }
+            var numLabel = suitName === 'Arcano Mayor' ? 'Arcano Mayor Nº ' + card.num : suitName;
+            signalNumber.textContent = numLabel;
+            signalDesc.textContent = card.desc || 'Confía en tu intuición.';
+            var dets = [];
+            if (card.sig) dets.push('♄ ' + card.sig);
+            if (card.sigL) dets.push('☉ ' + card.sigL);
+            if (card.casa) dets.push('☽ Casa ' + card.casa);
+            signalDetails.innerHTML = dets.map(function(d) { return '<span>' + d + '</span>'; }).join('');
+            signalAdvice.textContent = oraculo[Math.floor(Math.random() * oraculo.length)];
+            signalPlaceholder.style.display = 'none';
+            signalResult.classList.add('show');
+            // Animate
+            signalResult.style.opacity = '0';
+            signalResult.style.transform = 'scale(0.8)';
+            setTimeout(function() {
+                signalResult.style.transition = 'all 0.5s ease';
+                signalResult.style.opacity = '1';
+                signalResult.style.transform = 'scale(1)';
+            }, 50);
+        });
     </script>
 </body>
 </html>
