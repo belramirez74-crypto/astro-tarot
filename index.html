@@ -132,7 +132,8 @@
             100% { transform: rotate(360deg); }
         }
         .hero-symbol { margin-bottom: 0.5rem; min-height: 40px; display: flex; align-items: center; justify-content: center; }
-        .hero-img { width: 70px; height: auto; filter: drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); animation: float 4s ease-in-out infinite; }
+        img[src*="bola-de-cristal"] { filter: brightness(0) invert(1) drop-shadow(0 0 40px rgba(160, 90, 210, 0.4)); }
+        .hero-img { width: 70px; height: auto; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
         .hero h1 {
             font-family: 'Cinzel', serif;
@@ -523,22 +524,13 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 30px rgba(160, 90, 210, 0.35);
         }
-        @keyframes rainbowGlow {
-            0% { filter: brightness(1.4) drop-shadow(0 0 40px rgba(255,100,100,0.8)) hue-rotate(0deg); }
-            20% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(255,200,50,0.8)) hue-rotate(72deg); }
-            40% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(100,255,100,0.8)) hue-rotate(144deg); }
-            60% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(50,200,255,0.8)) hue-rotate(216deg); }
-            80% { filter: brightness(1.4) drop-shadow(0 0 50px rgba(150,100,255,0.8)) hue-rotate(288deg); }
-            100% { filter: brightness(1.4) drop-shadow(0 0 40px rgba(255,100,255,0.8)) hue-rotate(360deg); }
-        }
         .crystal-symbol {
             position: relative; vertical-align: middle; display: inline-block;
         }
         .crystal-symbol img { display: block; object-fit: contain; }
         .crystal-symbol.lg img { width: 100px; height: 120px; }
         .signal-icon .crystal-symbol.lg img {
-            animation: rainbowGlow 4s ease-in-out infinite alternate;
-            filter: brightness(1.2) drop-shadow(0 0 20px rgba(255,255,255,0.3));
+            animation: float 3s ease-in-out infinite;
         }
         .crystal-symbol.xs img { width: 18px; height: 22px; }
         .crystal-symbol.sm img { width: 20px; height: 24px; margin-right: 4px; }
