@@ -52,12 +52,13 @@
     opacity: 1; transform: translateY(0);
 }
         .section-divider {
-            width: 100%; height: 80px; position: relative; z-index: 1;
+            width: 100%; height: 50px; position: relative; z-index: 1;
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
+            margin: 2rem 0 0.3rem;
         }
         .section-divider::before {
-            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+            content: ''; position: absolute; top: 30%; left: 10%; right: 10%; height: 1px;
             background: linear-gradient(90deg, transparent, var(--violeta-claro), var(--violeta-brillante), var(--violeta-claro), transparent);
             opacity: 0.3;
         }
@@ -73,7 +74,7 @@
         .hero {
             display: flex; flex-direction: column;
             align-items: center; text-align: center;
-            padding: 3rem 2rem 0.5rem;
+            padding: 5rem 2rem 5rem;
             position: relative; overflow: hidden;
         }
         .hero::before {
@@ -161,7 +162,7 @@
         .intro {
             max-width: 900px; margin: 0 auto; padding: 3rem 2rem; text-align: center;
         }
-        #intro-astrologia { padding-top: 8rem; }
+        #intro-astrologia { padding-top: 12rem; }
         .intro h2 {
             font-family: 'Cinzel', serif; font-size: 2.5rem;
             margin-bottom: 1.5rem; color: #c8b0e0;
@@ -604,23 +605,68 @@
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
         }
-        /* User Profile */
-        .user-profile {
-            max-width: 320px; margin: -0.5rem auto 1rem; text-align: center;
-            opacity: 0; transition: opacity 0.6s ease; pointer-events: none;
+        /* Nav Profile */
+        .nav-profile {
+            display: none; align-items: center; gap: 0.7rem;
+            margin: 0 0 0 auto;
+            padding: 0.25rem 0.7rem 0.25rem 0.25rem;
+            border-radius: 24px;
+            background: rgba(168,85,247,0.06);
+            border: 1px solid rgba(168,85,247,0.12);
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
         }
-        .user-profile.show { opacity: 1; pointer-events: auto; }
-        .profile-content {
-            display: inline-flex; align-items: center; gap: 0.8rem;
-            background: rgba(168, 85, 247, 0.08);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-            border-radius: 12px; padding: 0.5rem 1.2rem;
+        .nav-profile:hover {
+            background: rgba(168,85,247,0.1);
+            border-color: rgba(168,85,247,0.2);
         }
-        .profile-sym { font-size: 2rem; line-height: 1; }
-        .profile-info { text-align: left; }
-        .profile-label { font-size: 0.65rem; color: var(--gris); display: block; text-transform: uppercase; letter-spacing: 1.5px; }
-        .profile-sign { font-size: 1.1rem; color: var(--blanco); font-weight: 600; display: block; }
-        .profile-element { font-size: 0.85rem; color: var(--violeta-brillante); display: block; }
+        .nav-profile.show { display: flex; }
+        .nav-profile-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(168,85,247,0.15);
+            border: 2px solid rgba(168,85,247,0.25);
+            flex-shrink: 0;
+            overflow: hidden; position: relative;
+            transition: all 0.3s;
+        }
+        .nav-profile-avatar:hover .avatar-overlay { opacity: 1; }
+        .avatar-overlay {
+            position: absolute; inset: 0; display: flex;
+            align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.55); color: var(--blanco);
+            font-size: 1.1rem; font-weight: 700; opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .nav-avatar-img {
+            width: 22px; height: auto; opacity: 0.8;
+            filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(168,85,247,0.3));
+            transition: all 0.3s;
+        }
+        .nav-avatar-img.uploaded {
+            width: 100%; height: 100%; object-fit: cover; opacity: 1;
+            filter: none; border-radius: 50%;
+        }
+        .nav-profile-info {
+            display: flex; flex-direction: column; line-height: 1.15;
+            min-width: 0;
+        }
+        .nav-profile-name {
+            font-family: 'Cinzel', serif; font-size: 0.85rem;
+            color: var(--violeta-brillante); white-space: nowrap;
+            letter-spacing: 0.03em;
+        }
+        .nav-profile-detail {
+            font-size: 0.65rem; color: var(--gris); white-space: nowrap;
+        }
+        .nav-profile-btn {
+            background: none; border: none; color: rgba(160,120,200,0.3);
+            font-size: 0.85rem; cursor: pointer; padding: 0 0.1rem 0 0.2rem;
+            line-height: 1; transition: color 0.2s;
+            font-family: 'Inter', sans-serif; opacity: 0.6;
+        }
+        .nav-profile-btn:hover { color: var(--violeta-claro); opacity: 1; }
 
         /* Transits Section */
         .transits-section {
@@ -819,9 +865,9 @@
             background: linear-gradient(145deg, #0d0d14, #120a1a);
             border: 1px solid rgba(160, 120, 200, 0.15);
             border-radius: 12px; padding: 1rem;
-            position: relative; overflow: hidden;
+            position: relative;
             perspective: 1000px;
-            cursor: default;
+            cursor: pointer;
         }
         .zodiac-img-wrapper {
             width: 100%; margin-bottom: 0.8rem; border-radius: 8px;
@@ -847,7 +893,7 @@
             pointer-events: none;
         }
         .zodiac-card::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 30% 30%, rgba(160, 90, 210, 0.04), transparent 60%);
             pointer-events: none;
         }
@@ -861,9 +907,6 @@
             transform-style: preserve-3d;
             transition: transform 0.6s ease;
         }
-        .zodiac-card:hover .zodiac-inner {
-            transform: rotateY(180deg);
-        }
         .zodiac-front, .zodiac-back {
             backface-visibility: hidden;
         }
@@ -875,9 +918,10 @@
             transform: rotateY(180deg);
             display: flex; flex-direction: column;
             overflow-y: auto;
+            padding: 0.8rem;
         }
         .zodiac-back-header {
-            display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;
         }
         .zodiac-rasgos {
             list-style: none; padding: 0; margin: 0;
@@ -965,11 +1009,15 @@
         .navbar {
             position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0.6rem 1.8rem;
+            padding: 0.5rem 1.8rem;
             background: rgba(10, 14, 26, 0.85);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(160, 120, 200, 0.12);
             transition: all 0.3s;
+        }
+        .navbar-left {
+            display: flex; align-items: center; gap: 0.5rem;
+            flex: 1; min-width: 0;
         }
         .navbar .brand {
             font-family: 'Cinzel', serif; font-size: 1.15rem;
@@ -978,24 +1026,41 @@
             white-space: nowrap;
         }
         .navbar .nav-links {
-            display: flex; gap: 0.15rem; list-style: none; align-items: center;
+            display: none; list-style: none;
+            position: absolute; top: 100%; left: 0;
+            flex-direction: column;
+            background: rgba(10, 14, 26, 0.97);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 0.5rem 1rem 0.7rem;
+            border-bottom: 1px solid rgba(160, 120, 200, 0.12);
+            width: auto; min-width: 220px;
+            gap: 0.85rem;
         }
+        .navbar .nav-links.open { display: flex; }
         .navbar .nav-links a {
-            padding: 0.35rem 0.7rem; border-radius: 18px;
-            color: #a898c0; text-decoration: none; font-size: 0.82rem;
+            padding: 0.5rem 0.8rem; border-radius: 8px;
+            color: #a898c0; text-decoration: none; font-size: 0.85rem;
             font-family: 'Inter', sans-serif;
-            transition: all 0.25s; border: 1px solid transparent;
+            transition: all 0.3s; border: 1px solid transparent;
+            width: 100%; text-align: left;
+            position: relative; overflow: hidden;
+        }
+        .navbar .nav-links a::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(160, 90, 210, 0.25), transparent);
+            transition: left 0.5s ease; pointer-events: none;
+        }
+        .navbar .nav-links a:hover::before {
+            left: 100%;
         }
         .navbar .nav-links a:hover,
         .navbar .nav-links a.active {
-            background: rgba(80, 40, 120, 0.18);
-            border-color: rgba(160, 120, 200, 0.25);
-            color: #d0c0e8;
+            color: #e0d0f0;
         }
         .nav-toggle {
-            display: none; background: none; border: none; cursor: pointer;
+            display: flex; background: none; border: none; cursor: pointer;
             padding: 0.4rem; color: var(--violeta-brillante); font-size: 1.5rem;
-            line-height: 1;
+            line-height: 1; align-items: center; justify-content: center;
         }
         .view-hidden { display: none !important; }
         @media (max-width: 768px) {
@@ -1037,17 +1102,13 @@
             .planet-sign { margin-left: 0; }
             .transits-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; }
             .recommendations-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-            .navbar .nav-links {
-                display: none; position: absolute; top: 100%; left: 0; right: 0;
-                flex-direction: column; gap: 0.2rem;
-                background: rgba(10, 14, 26, 0.95);
-                backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-                padding: 0.8rem 1rem;
-                border-bottom: 1px solid rgba(160, 120, 200, 0.12);
-            }
-            .navbar .nav-links.open { display: flex; }
-            .navbar .nav-links a { width: 100%; text-align: center; }
-            .nav-toggle { display: block; }
+            .navbar-left .nav-links { padding: 0.15rem 0.8rem; }
+            .nav-profile { padding: 0.2rem 0.5rem 0.2rem 0.2rem; gap: 0.4rem; }
+            .nav-profile-avatar { width: 32px; height: 32px; }
+            .nav-avatar-img { width: 18px; }
+            .nav-avatar-img.uploaded { width: 100%; height: 100%; }
+            .nav-profile-name { font-size: 0.78rem; }
+            .nav-profile-detail { font-size: 0.6rem; }
         }
         @media (max-width: 480px) {
             .cards-grid { grid-template-columns: 1fr; }
@@ -1094,6 +1155,169 @@
         @media (max-width: 380px) {
             .transits-grid { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* ===== MOBILE RESPONSIVENESS FIXES ===== */
+
+        /* Cards Grid */
+        @media (max-width: 480px) {
+            .card-tarot { padding: 1rem 0.8rem 0.8rem; }
+            .card-img-wrapper img { width: 72px; }
+            .card-name { font-size: 0.85rem; }
+            .card-desc { font-size: 0.72rem; }
+            .card-details { gap: 0.2rem; }
+            .card-detail-item .value { font-size: 0.68rem; }
+        }
+        @media (max-width: 380px) {
+            .card-img-wrapper img { width: 60px; }
+            .card-name { font-size: 0.78rem; }
+            .card-details { grid-template-columns: 1fr; }
+        }
+
+        /* Zodiac Cards (flip and sizing) */
+        @media (hover: hover) {
+            .zodiac-card:hover .zodiac-inner { transform: rotateY(180deg); }
+        }
+        .zodiac-card.flipped .zodiac-inner { transform: rotateY(180deg); }
+        @media (max-width: 640px) {
+            .zodiac-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+            .zodiac-card { padding: 0.7rem; }
+            .zodiac-back { padding: 0.6rem; }
+            .zodiac-img-wrapper { width: 80px; margin-bottom: 0.5rem; }
+            .zodiac-header { gap: 0.5rem; margin-bottom: 0.5rem; }
+            .zodiac-symbol { width: 34px; height: 34px; font-size: 1.4rem; }
+            .zodiac-name { font-size: 0.85rem; }
+            .zodiac-name small { font-size: 0.6rem; }
+            .zodiac-dates { font-size: 0.65rem; }
+            .zodiac-details { grid-template-columns: 1fr 1fr; gap: 0.3rem; margin: 0.5rem 0; }
+            .zodiac-detail { padding: 0.25rem 0.4rem; }
+            .zodiac-detail .value { font-size: 0.72rem; }
+            .zodiac-cards-list a { font-size: 0.65rem; padding: 0.1rem 0.35rem; }
+            .zodiac-rasgos li { font-size: 0.72rem; padding: 0.25rem 0.4rem; }
+            .zodiac-back-header { gap: 0.4rem; margin-bottom: 0.4rem; }
+            .zodiac-back-header .zodiac-name { font-size: 0.78rem; }
+        }
+        @media (max-width: 480px) {
+            .zodiac-grid { gap: 0.6rem; }
+            .zodiac-card { padding: 0.55rem; }
+            .zodiac-back { padding: 0.5rem; }
+            .zodiac-img-wrapper { width: 65px; }
+            .zodiac-symbol { width: 28px; height: 28px; font-size: 1.1rem; }
+            .zodiac-name { font-size: 0.78rem; }
+            .zodiac-name small { font-size: 0.55rem; }
+        }
+        @media (max-width: 380px) {
+            .zodiac-grid { gap: 0.5rem; }
+            .zodiac-card { padding: 0.45rem; }
+            .zodiac-back { padding: 0.4rem; }
+            .zodiac-img-wrapper { width: 55px; }
+            .zodiac-symbol { width: 24px; height: 24px; font-size: 0.95rem; }
+            .zodiac-name { font-size: 0.72rem; }
+        }
+
+        /* Houses */
+        @media (max-width: 480px) {
+            .house-card { padding: 0.8rem 1rem; }
+            .house-num { width: 30px; height: 30px; font-size: 1rem; }
+            .house-name { font-size: 0.9rem; }
+            .house-desc { font-size: 0.8rem; line-height: 1.6; }
+            .house-header { gap: 0.4rem; }
+        }
+
+        /* Planets */
+        @media (max-width: 480px) {
+            .planet-card { padding: 1rem 0.8rem; gap: 0.5rem; }
+            .planet-sym { width: 50px; height: 50px; font-size: 1.8rem; }
+            .planet-name { font-size: 1.05rem; }
+            .planet-sign { font-size: 0.75rem; white-space: normal; }
+            .planet-desc { font-size: 0.82rem; text-align: left; line-height: 1.6; }
+        }
+        @media (max-width: 380px) {
+            .planet-sym { width: 42px; height: 42px; font-size: 1.5rem; }
+        }
+
+        /* Elements */
+        @media (max-width: 380px) {
+            .element-card { padding: 0.8rem; }
+            .element-sym { width: 38px; height: 38px; font-size: 1.5rem; }
+            .element-name { font-size: 1rem; }
+            .element-desc { font-size: 0.8rem; }
+            .element-signs span { font-size: 0.7rem; padding: 0.15rem 0.5rem; }
+        }
+
+        /* Signal */
+        @media (max-width: 480px) {
+            .signal-img-wrapper { width: 100px; }
+            .signal-desc { font-size: 0.85rem; }
+            .signal-advice { font-size: 0.8rem; padding: 0.5rem 0.8rem; }
+        }
+        @media (max-width: 380px) {
+            .signal-card { padding: 1.2rem 0.8rem; }
+            .signal-img-wrapper { width: 80px; }
+            .signal-name { font-size: 1rem; }
+            .signal-details span { font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+        }
+
+        /* Transits */
+        @media (max-width: 380px) {
+            .transit-card { padding: 0.5rem 0.3rem; }
+            .transit-card .planet-symbol { font-size: 1.2rem; }
+            .transit-card .planet-name { font-size: 0.7rem; }
+            .transit-card .planet-sign { font-size: 0.85rem; }
+            .transit-card .planet-degree { font-size: 0.65rem; }
+        }
+
+        /* Recommendations */
+        @media (max-width: 480px) {
+            .rec-card { padding: 1rem; }
+            .rec-card h3 { font-size: 0.9rem; }
+            .rec-card li { font-size: 0.78rem; padding: 0.3rem 0; }
+        }
+
+        /* Navbar + Profile */
+        @media (max-width: 480px) {
+            .navbar { padding: 0.4rem 0.8rem; }
+            .navbar .brand { font-size: 1rem; }
+            .nav-profile {
+                padding: 0.15rem 0.3rem 0.15rem 0.15rem;
+                gap: 0.25rem;
+                max-width: 45vw;
+            }
+            .nav-profile-avatar { width: 28px; height: 28px; }
+            .nav-avatar-img { width: 16px; }
+            .nav-avatar-img.uploaded { width: 100%; height: 100%; }
+            .nav-profile-name {
+                font-size: 0.7rem; white-space: normal;
+                overflow: hidden; text-overflow: ellipsis;
+                max-width: 28vw;
+            }
+            .nav-profile-detail {
+                font-size: 0.55rem; white-space: normal;
+                overflow: hidden; text-overflow: ellipsis;
+                max-width: 28vw;
+            }
+            .nav-profile-btn { font-size: 0.7rem; padding: 0; }
+            .nav-toggle { font-size: 1.3rem; padding: 0.2rem; }
+        }
+        @media (max-width: 380px) {
+            .navbar .brand { font-size: 0.9rem; }
+            .nav-profile { max-width: 40vw; }
+            .nav-profile-name { max-width: 22vw; font-size: 0.65rem; }
+            .nav-profile-detail { max-width: 22vw; font-size: 0.5rem; }
+        }
+
+        /* Hero */
+        @media (max-width: 480px) {
+            .hero { padding: 2.5rem 1.2rem 2rem; }
+            .hero h1 { font-size: 1.8rem !important; }
+            .hero p { font-size: 0.88rem; max-width: 100%; }
+            .hero-img { width: 55px; }
+            .btn-scroll { padding: 0.7rem 1.8rem; font-size: 0.95rem; }
+        }
+        @media (max-width: 380px) {
+            .hero { padding: 1.5rem 1rem 1.2rem; }
+            .hero h1 { font-size: 1.5rem; }
+            .hero p { font-size: 0.82rem; line-height: 1.5; }
+        }
     </style>
 </head>
 <body>
@@ -1109,17 +1333,31 @@
     </div>
     <canvas id="stars-canvas"></canvas>
     <nav class="navbar" id="navbar">
-        <a href="#" class="brand">Astro Tarot</a>
-        <button class="nav-toggle" id="navToggle" aria-label="Menu">&#x2630;</button>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#" data-view="all" class="active">Inicio</a></li>
-            <li><a href="#" data-view="signal">Se&ntilde;al</a></li>
-            <li><a href="#" data-view="cards">Cartas</a></li>
-            <li><a href="#" data-view="zodiac">Zodiaco</a></li>
-            <li><a href="#" data-view="houses">Casas</a></li>
-            <li><a href="#" data-view="planets">Planetas</a></li>
-            <li><a href="#" data-view="elements">Elementos</a></li>
-        </ul>
+        <div class="navbar-left">
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">&#x2630;</button>
+            <a href="#" class="brand">Astro Tarot</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#" data-view="all" class="active">Inicio</a></li>
+                <li><a href="#" data-view="signal">Se&ntilde;al</a></li>
+                <li><a href="#" data-view="cards">Cartas</a></li>
+                <li><a href="#" data-view="zodiac">Zodiaco</a></li>
+                <li><a href="#" data-view="houses">Casas</a></li>
+                <li><a href="#" data-view="planets">Planetas</a></li>
+                <li><a href="#" data-view="elements">Elementos</a></li>
+            </ul>
+        </div>
+        <div class="nav-profile" id="navProfile">
+            <div class="nav-profile-avatar" id="navProfileAvatar" title="Cambiar foto de perfil">
+                <img src="images/bola-de-cristal.png" alt="" class="nav-avatar-img" id="navAvatarImg">
+                <div class="avatar-overlay">+</div>
+                <input type="file" id="avatarUpload" accept="image/*" style="display:none">
+            </div>
+            <div class="nav-profile-info">
+                <span class="nav-profile-name" id="navProfileName">Iniciar viaje</span>
+                <span class="nav-profile-detail" id="navProfileDetail">Ingres&aacute; tu fecha</span>
+            </div>
+            <button class="nav-profile-btn" id="navProfileBtn" title="Cambiar fecha de nacimiento">&#x270E;</button>
+        </div>
     </nav>
     <div class="content">
         <section class="hero">
@@ -1150,16 +1388,7 @@
                 <span class="arrow">&#x25BC;</span>
             </div>
         </section>
-        <div class="user-profile" id="userProfile">
-            <div class="profile-content">
-                <span class="profile-sym" id="profileSym"></span>
-                <div class="profile-info">
-                    <span class="profile-label">Tu signo</span>
-                    <span class="profile-sign" id="profileSign"></span>
-                    <span class="profile-element" id="profileElement"></span>
-                </div>
-            </div>
-        </div>
+
         <section class="intro fade-section" id="intro-astrologia">
             <h2>&#x2606; Astrolog&iacute;a &#x2606;</h2>
             <p>La astrolog&iacute;a es un lenguaje simb&oacute;lico que estudia la relaci&oacute;n entre los movimientos celestes y la experiencia humana. A trav&eacute;s de los <span class="highlight">12 signos</span>, <span class="highlight">10 planetas</span> y <span class="highlight">12 casas</span>, revela patrones de personalidad, ciclos de vida y el prop&oacute;sito del alma en su viaje de evoluci&oacute;n. Cada planeta rige una esencia distinta: Mercurio la comunicaci&oacute;n, Venus el amor, Marte la acci&oacute;n. Cada signo representa una forma &uacute;nica de vibrar con el cosmos, una puerta de entrada a una comprensi&oacute;n m&aacute;s profunda de qui&eacute;nes somos y hacia d&oacute;nde nos dirigimos.</p>
@@ -1726,6 +1955,15 @@
         document.getElementById('navToggle').addEventListener('click', function() {
             document.getElementById('navLinks').classList.toggle('open');
         });
+        // Show nav on hover over hamburger area, hide on leave
+        var navToggle = document.getElementById('navToggle');
+        var navLinks = document.getElementById('navLinks');
+        navToggle.addEventListener('mouseenter', function() {
+            navLinks.classList.add('open');
+        });
+        navLinks.addEventListener('mouseleave', function() {
+            navLinks.classList.remove('open');
+        });
         document.querySelector('.navbar .brand').addEventListener('click', function(e) {
             e.preventDefault();
             document.querySelector('[data-view="all"]').click();
@@ -1865,11 +2103,12 @@
         }, { threshold: 0.3 });
         document.querySelectorAll('.zodiac-card').forEach(function(card) {
             zodiacObserver.observe(card);
-            card.addEventListener('click', function() {
+            card.addEventListener('click', function(e) {
                 var name = this.getAttribute('data-sign') || 'unknown';
                 affinity.signs[name] = (affinity.signs[name] || 0) + 2;
                 var suit = signSuitMap[name];
                 if (suit) affinity[suit] = (affinity[suit] || 0) + 1;
+                this.classList.toggle('flipped');
             });
         });
 
@@ -1997,6 +2236,13 @@
         });
 
         // === Birthday Modal ===
+        function openBirthdayModal() {
+            var modal = document.getElementById('birthdayModal');
+            var input = document.getElementById('birthdayInput');
+            modal.style.display = 'flex';
+            input.value = '';
+            input.focus();
+        }
         (function() {
             var modal = document.getElementById('birthdayModal');
             var form = document.getElementById('birthdayForm');
@@ -2013,17 +2259,78 @@
                     showUserProfile(val);
                 }
             });
+            document.getElementById('navProfileBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                localStorage.removeItem('astroBirthday');
+                document.getElementById('navProfile').classList.remove('show');
+                openBirthdayModal();
+            });
         })();
 
         function showUserProfile(dateStr) {
             var parts = dateStr.split('-');
             var sign = getZodiacSign(parseInt(parts[2]), parseInt(parts[1]));
-            var profile = document.getElementById('userProfile');
-            document.getElementById('profileSym').textContent = sign.sym;
-            document.getElementById('profileSign').textContent = sign.name;
-            document.getElementById('profileElement').textContent = sign.element;
-            profile.classList.add('show');
+            var userNames = {
+                'Aries':'Alma de Aries','Tauro':'Corazón de Tauro','Géminis':'Mente de Géminis',
+                'Cáncer':'Espíritu de Cáncer','Leo':'Fuego de Leo','Virgo':'Sabiduría de Virgo',
+                'Libra':'Armonía de Libra','Escorpio':'Misterio de Escorpio','Sagitario':'Flecha de Sagitario',
+                'Capricornio':'Monte de Capricornio','Acuario':'Estrella de Acuario','Piscis':'Océano de Piscis'
+            };
+            var userName = userNames[sign.name] || 'Alma de ' + sign.name;
+            var detail = sign.sym + ' ' + sign.name + ' \u00B7 ' + sign.element;
+            document.getElementById('navProfileName').textContent = userName;
+            document.getElementById('navProfileDetail').textContent = detail;
+            // Avatar: element-based colors
+            var avatar = document.getElementById('navProfileAvatar');
+            var avatarColors = {
+                'Fuego': 'rgba(220,38,38,0.15)',
+                'Tierra': 'rgba(34,197,94,0.15)',
+                'Aire': 'rgba(96,165,250,0.15)',
+                'Agua': 'rgba(34,211,238,0.15)'
+            };
+            var avatarBorders = {
+                'Fuego': 'rgba(220,38,38,0.3)',
+                'Tierra': 'rgba(34,197,94,0.3)',
+                'Aire': 'rgba(96,165,250,0.3)',
+                'Agua': 'rgba(34,211,238,0.3)'
+            };
+            avatar.style.background = avatarColors[sign.element] || '';
+            avatar.style.borderColor = avatarBorders[sign.element] || '';
+            document.getElementById('navProfile').classList.add('show');
+            // Restore uploaded photo if exists
+            var savedPhoto = localStorage.getItem('astroAvatar');
+            if (savedPhoto) {
+                var img = document.getElementById('navAvatarImg');
+                img.src = savedPhoto;
+                img.classList.add('uploaded');
+            }
         }
+
+        // === Avatar Upload ===
+        (function() {
+            var avatar = document.getElementById('navProfileAvatar');
+            var upload = document.getElementById('avatarUpload');
+            avatar.addEventListener('click', function(e) {
+                if (e.target === document.getElementById('navProfileBtn') || e.target.closest('.nav-profile-btn')) return;
+                if (!document.getElementById('navProfile').classList.contains('show')) return;
+                upload.click();
+            });
+            upload.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    var dataUrl = ev.target.result;
+                    var img = document.getElementById('navAvatarImg');
+                    img.src = dataUrl;
+                    img.classList.add('uploaded');
+                    localStorage.setItem('astroAvatar', dataUrl);
+                };
+                reader.readAsDataURL(file);
+                upload.value = '';
+            });
+        })();
 
         // Restore profile on page load if birthday exists
         (function() {
@@ -2033,18 +2340,18 @@
 
         function getZodiacSign(day, month) {
             var signs = [
-                { name: 'Capricornio', sym: '♑', element: 'Tierra', startM: 12, startD: 22, endM: 1, endD: 19 },
-                { name: 'Acuario', sym: '♒', element: 'Aire', startM: 1, startD: 20, endM: 2, endD: 18 },
-                { name: 'Piscis', sym: '♓', element: 'Agua', startM: 2, startD: 19, endM: 3, endD: 20 },
-                { name: 'Aries', sym: '♈', element: 'Fuego', startM: 3, startD: 21, endM: 4, endD: 19 },
-                { name: 'Tauro', sym: '♉', element: 'Tierra', startM: 4, startD: 20, endM: 5, endD: 20 },
-                { name: 'Géminis', sym: '♊', element: 'Aire', startM: 5, startD: 21, endM: 6, endD: 20 },
-                { name: 'Cáncer', sym: '♋', element: 'Agua', startM: 6, startD: 21, endM: 7, endD: 22 },
-                { name: 'Leo', sym: '♌', element: 'Fuego', startM: 7, startD: 23, endM: 8, endD: 22 },
-                { name: 'Virgo', sym: '♍', element: 'Tierra', startM: 8, startD: 23, endM: 9, endD: 22 },
-                { name: 'Libra', sym: '♎', element: 'Aire', startM: 9, startD: 23, endM: 10, endD: 22 },
-                { name: 'Escorpio', sym: '♏', element: 'Agua', startM: 10, startD: 23, endM: 11, endD: 21 },
-                { name: 'Sagitario', sym: '♐', element: 'Fuego', startM: 11, startD: 22, endM: 12, endD: 21 }
+                { name: 'Capricornio', sym: '♑', element: 'Tierra', planeta: 'Saturno', casa: '10ª', startM: 12, startD: 22, endM: 1, endD: 19 },
+                { name: 'Acuario', sym: '♒', element: 'Aire', planeta: 'Urano', casa: '11ª', startM: 1, startD: 20, endM: 2, endD: 18 },
+                { name: 'Piscis', sym: '♓', element: 'Agua', planeta: 'Neptuno', casa: '12ª', startM: 2, startD: 19, endM: 3, endD: 20 },
+                { name: 'Aries', sym: '♈', element: 'Fuego', planeta: 'Marte', casa: '1ª', startM: 3, startD: 21, endM: 4, endD: 19 },
+                { name: 'Tauro', sym: '♉', element: 'Tierra', planeta: 'Venus', casa: '2ª', startM: 4, startD: 20, endM: 5, endD: 20 },
+                { name: 'Géminis', sym: '♊', element: 'Aire', planeta: 'Mercurio', casa: '3ª', startM: 5, startD: 21, endM: 6, endD: 20 },
+                { name: 'Cáncer', sym: '♋', element: 'Agua', planeta: 'Luna', casa: '4ª', startM: 6, startD: 21, endM: 7, endD: 22 },
+                { name: 'Leo', sym: '♌', element: 'Fuego', planeta: 'Sol', casa: '5ª', startM: 7, startD: 23, endM: 8, endD: 22 },
+                { name: 'Virgo', sym: '♍', element: 'Tierra', planeta: 'Mercurio', casa: '6ª', startM: 8, startD: 23, endM: 9, endD: 22 },
+                { name: 'Libra', sym: '♎', element: 'Aire', planeta: 'Venus', casa: '7ª', startM: 9, startD: 23, endM: 10, endD: 22 },
+                { name: 'Escorpio', sym: '♏', element: 'Agua', planeta: 'Plutón', casa: '8ª', startM: 10, startD: 23, endM: 11, endD: 21 },
+                { name: 'Sagitario', sym: '♐', element: 'Fuego', planeta: 'Júpiter', casa: '9ª', startM: 11, startD: 22, endM: 12, endD: 21 }
             ];
             var d = day, m = month;
             var dateNum = m * 100 + d;
