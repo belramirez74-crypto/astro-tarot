@@ -438,6 +438,64 @@
             font-size: 0.9rem; line-height: 1.7; color: var(--gris);
         }
         .elements-section .section-divider { margin-top: 2rem; }
+        .modalidades-section {
+            max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .modalidades-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .modalidades-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.1rem;
+        }
+        .modalidades-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+        }
+        .modalidad-card {
+            border-radius: 14px; padding: 1.8rem;
+            position: relative; overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(145deg, #0d0d14, #120a1a);
+        }
+        .modalidad-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            border-color: rgba(160, 120, 200, 0.3);
+        }
+        .modalidad-card .modalidad-icon {
+            font-size: 2.2rem; width: 2.8rem; height: 2.8rem;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 0.8rem;
+        }
+        .modalidad-card h3 {
+            font-family: 'Cinzel', serif; font-size: 1.4rem;
+            color: var(--violeta-brillante); margin-bottom: 0.3rem;
+        }
+        }
+        .modalidad-card .modalidad-sub {
+            font-size: 0.8rem; color: var(--gris); margin-bottom: 1rem;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .modalidad-card .modalidad-signos {
+            font-size: 0.95rem; color: var(--blanco); margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+        .modalidad-card .modalidad-desc {
+            font-size: 0.88rem; color: var(--gris); line-height: 1.7;
+        }
+        .modalidad-card:nth-child(1) { border-left: 3px solid #a78bfa; }
+        .modalidad-card:nth-child(2) { border-left: 3px solid #f472b6; }
+        .modalidad-card:nth-child(3) { border-left: 3px solid #34d399; }
+        .modalidad-card:nth-child(1) .modalidad-icon { font-size: 1.8rem; }
+        .modalidad-card:nth-child(2) .modalidad-icon { font-size: 2.2rem; }
+        .modalidad-card:nth-child(3) .modalidad-icon { font-size: 3rem; }
+        .modalidades-section .section-divider { margin-top: 2rem; }
+        .fade-section.visible .modalidad-card { opacity: 1; transform: translateY(0); }
+        .modalidad-card { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .fade-section.visible .modalidad-card:nth-child(1) { transition-delay: 0.05s; }
+        .fade-section.visible .modalidad-card:nth-child(2) { transition-delay: 0.15s; }
+        .fade-section.visible .modalidad-card:nth-child(3) { transition-delay: 0.25s; }
         .signal-section {
             max-width: 700px; margin: 0 auto; padding: 5rem 2rem 2rem;
             text-align: center;
@@ -609,12 +667,94 @@
             transform: scale(1.05);
             box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
         }
+        /* Profile Modal */
+        .profile-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 14, 26, 0.92);
+            display: none; align-items: center; justify-content: center;
+            z-index: 9998;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+        .profile-modal.open { display: flex; }
+        .profile-modal-content {
+            background: linear-gradient(145deg, #1a0f2a, #0f0a1e, #1a0a20);
+            border: 1px solid rgba(180, 140, 220, 0.2);
+            border-radius: 20px; padding: 2rem 2rem 1.5rem;
+            max-width: 520px; width: 92%; max-height: 85vh; overflow-y: auto;
+            animation: modalFadeIn 0.5s ease;
+            position: relative;
+            box-shadow: 0 0 60px rgba(168,85,247,0.08), 0 0 120px rgba(168,85,247,0.04);
+        }
+        .profile-modal-close {
+            position: absolute; top: 0.8rem; right: 1.2rem;
+            background: rgba(255,255,255,0.03); border: none;
+            color: var(--gris); font-size: 1.4rem; cursor: pointer; line-height: 1;
+            transition: all 0.2s; font-family: 'Inter', sans-serif;
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .profile-modal-close:hover {
+            color: var(--blanco); background: rgba(255,255,255,0.08);
+        }
+        .profile-modal-header {
+            display: flex; align-items: center; gap: 1.2rem;
+            margin-bottom: 1.5rem; padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(160,120,200,0.12);
+        }
+        .profile-modal-avatar {
+            width: 72px; height: 72px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(168,85,247,0.15);
+            border: 2px solid rgba(168,85,247,0.3);
+            flex-shrink: 0; overflow: hidden;
+            box-shadow: 0 0 20px rgba(168,85,247,0.15);
+        }
+        .profile-modal-avatar-img {
+            width: 38px; height: auto; opacity: 0.9;
+            filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(168,85,247,0.4));
+        }
+        .profile-modal-avatar-img.uploaded {
+            width: 100%; height: 100%; object-fit: cover; opacity: 1;
+            filter: none; border-radius: 50%;
+        }
+        .profile-modal-title { display: flex; flex-direction: column; gap: 0.2rem; }
+        .profile-modal-name {
+            font-family: 'Cinzel', serif; font-size: 1.3rem;
+            color: #d4b8f0; letter-spacing: 0.03em;
+        }
+        .profile-modal-sign {
+            font-size: 0.9rem; color: #a890c0;
+        }
+        .profile-modal-body { display: flex; flex-direction: column; gap: 1rem; }
+        .profile-modal-section {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px; padding: 1rem 1.2rem;
+            border-left: 3px solid rgba(160,120,200,0.25);
+            transition: all 0.2s;
+        }
+        .profile-modal-section:hover {
+            background: rgba(255,255,255,0.04);
+            border-left-color: rgba(160,120,200,0.45);
+        }
+        .profile-modal-section:nth-child(1) { border-left-color: #a78bfa; }
+        .profile-modal-section:nth-child(2) { border-left-color: #f472b6; }
+        .profile-modal-section:nth-child(3) { border-left-color: #34d399; }
+        .profile-modal-section:nth-child(4) { border-left-color: #fbbf24; }
+        .profile-modal-section h3 {
+            font-family: 'Cinzel', serif; font-size: 0.8rem;
+            color: #c8b0e0; margin-bottom: 0.35rem;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .profile-modal-section p {
+            font-size: 0.85rem; color: #b8a8c8; line-height: 1.7;
+            margin: 0;
+        }
         /* Nav Profile */
         .nav-profile {
-            display: none; align-items: center; gap: 0.7rem;
+            display: none; align-items: center; gap: 1rem;
             margin: 0 0 0 auto;
-            padding: 0.25rem 0.7rem 0.25rem 0.25rem;
-            border-radius: 24px;
+            padding: 0.5rem 1.2rem 0.5rem 0.5rem;
+            border-radius: 32px;
             background: rgba(168,85,247,0.06);
             border: 1px solid rgba(168,85,247,0.12);
             cursor: pointer;
@@ -627,7 +767,7 @@
         }
         .nav-profile.show { display: flex; }
         .nav-profile-avatar {
-            width: 38px; height: 38px; border-radius: 50%;
+            width: 52px; height: 52px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             background: rgba(168,85,247,0.15);
             border: 2px solid rgba(168,85,247,0.25);
@@ -640,11 +780,11 @@
             position: absolute; inset: 0; display: flex;
             align-items: center; justify-content: center;
             background: rgba(0,0,0,0.55); color: var(--blanco);
-            font-size: 1.1rem; font-weight: 700; opacity: 0;
+            font-size: 1.4rem; font-weight: 700; opacity: 0;
             transition: opacity 0.2s;
         }
         .nav-avatar-img {
-            width: 22px; height: auto; opacity: 0.8;
+            width: 30px; height: auto; opacity: 0.8;
             filter: brightness(0) invert(1) drop-shadow(0 0 6px rgba(168,85,247,0.3));
             transition: all 0.3s;
         }
@@ -653,20 +793,20 @@
             filter: none; border-radius: 50%;
         }
         .nav-profile-info {
-            display: flex; flex-direction: column; line-height: 1.15;
+            display: flex; flex-direction: column; line-height: 1.3;
             min-width: 0;
         }
         .nav-profile-name {
-            font-family: 'Cinzel', serif; font-size: 0.85rem;
+            font-family: 'Cinzel', serif; font-size: 1.05rem;
             color: var(--violeta-brillante); white-space: nowrap;
             letter-spacing: 0.03em;
         }
         .nav-profile-detail {
-            font-size: 0.65rem; color: var(--gris); white-space: nowrap;
+            font-size: 0.78rem; color: var(--gris); white-space: nowrap;
         }
         .nav-profile-btn {
             background: none; border: none; color: rgba(160,120,200,0.3);
-            font-size: 0.85rem; cursor: pointer; padding: 0 0.1rem 0 0.2rem;
+            font-size: 1rem; cursor: pointer; padding: 0 0.1rem 0 0.4rem;
             line-height: 1; transition: color 0.2s;
             font-family: 'Inter', sans-serif; opacity: 0.6;
         }
@@ -1073,12 +1213,14 @@
             .hero h1 { font-size: 2.2rem; }
             .hero-img { width: 70px; }
             .zodiac-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .modalidades-grid { grid-template-columns: repeat(2, 1fr); }
             .section-label { font-size: 1.5rem; }
             .cards-section h2 { font-size: 2rem; }
             .zodiac-section h2 { font-size: 2rem; }
             .houses-section h2 { font-size: 2rem; }
             .planets-section h2 { font-size: 2rem; }
             .elements-section h2 { font-size: 2rem; }
+            .modalidades-section h2 { font-size: 2rem; }
             .signal-section h2 { font-size: 1.8rem; }
             .transits-section h2 { font-size: 1.8rem; }
             .recommendations-section h2 { font-size: 1.8rem; }
@@ -1088,6 +1230,7 @@
             .houses-section { padding: 3rem 1.5rem; }
             .planets-section { padding: 3rem 1.5rem; }
             .elements-section { padding: 3rem 1.5rem; }
+            .modalidades-section { padding: 3rem 1.5rem; }
             .signal-section { padding: 3rem 1.5rem; }
             .transits-section { padding: 3rem 1.5rem; }
             .recommendations-section { padding: 3rem 1.5rem; }
@@ -1107,12 +1250,12 @@
             .transits-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.8rem; }
             .recommendations-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
             .navbar-left .nav-links { padding: 0.15rem 0.8rem; }
-            .nav-profile { padding: 0.2rem 0.5rem 0.2rem 0.2rem; gap: 0.4rem; }
-            .nav-profile-avatar { width: 32px; height: 32px; }
-            .nav-avatar-img { width: 18px; }
+            .nav-profile { padding: 0.35rem 0.8rem 0.35rem 0.35rem; gap: 0.6rem; }
+            .nav-profile-avatar { width: 40px; height: 40px; }
+            .nav-avatar-img { width: 22px; }
             .nav-avatar-img.uploaded { width: 100%; height: 100%; }
-            .nav-profile-name { font-size: 0.78rem; }
-            .nav-profile-detail { font-size: 0.6rem; }
+            .nav-profile-name { font-size: 0.85rem; }
+            .nav-profile-detail { font-size: 0.68rem; }
         }
         @media (max-width: 480px) {
             .cards-grid { grid-template-columns: 1fr; }
@@ -1127,6 +1270,7 @@
             .houses-section h2 { font-size: 1.5rem; }
             .planets-section h2 { font-size: 1.5rem; }
             .elements-section h2 { font-size: 1.5rem; }
+            .modalidades-section h2 { font-size: 1.5rem; }
             .signal-section h2 { font-size: 1.5rem; }
             .intro h2 { font-size: 1.5rem; }
             .history-section h2 { font-size: 1.5rem; }
@@ -1134,6 +1278,7 @@
             .houses-section { padding: 2rem 1.2rem; }
             .planets-section { padding: 2rem 1.2rem; }
             .elements-section { padding: 2rem 1.2rem; }
+            .modalidades-section { padding: 2rem 1.2rem; }
             .signal-section { padding: 2rem 1.2rem 1.5rem; }
             .cards-section { padding: 2rem 1.2rem 3rem; }
             .intro { padding: 2rem 1.2rem; }
@@ -1143,6 +1288,10 @@
             .signal-details { gap: 0.8rem; }
             .planet-sym { width: 60px; height: 60px; font-size: 2.3rem; }
             .element-card { padding: 1rem; }
+            .modalidades-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .modalidad-card { padding: 1.2rem; }
+            .modalidad-card h3 { font-size: 1.2rem; }
+            .modalidad-card .modalidad-desc { font-size: 0.82rem; }
             .element-sym { font-size: 1.8rem; width: 44px; height: 44px; }
             .element-name { font-size: 1.15rem; }
             .element-desc { font-size: 0.85rem; }
@@ -1282,31 +1431,27 @@
             .navbar { padding: 0.4rem 0.8rem; }
             .navbar .brand { font-size: 1rem; }
             .nav-profile {
-                padding: 0.15rem 0.3rem 0.15rem 0.15rem;
-                gap: 0.25rem;
-                max-width: 45vw;
+                padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+                gap: 0.4rem;
+                max-width: 55vw;
             }
-            .nav-profile-avatar { width: 28px; height: 28px; }
-            .nav-avatar-img { width: 16px; }
+            .nav-profile-avatar { width: 36px; height: 36px; }
+            .nav-avatar-img { width: 20px; }
             .nav-avatar-img.uploaded { width: 100%; height: 100%; }
             .nav-profile-name {
-                font-size: 0.7rem; white-space: normal;
+                font-size: 0.8rem; white-space: normal;
                 overflow: hidden; text-overflow: ellipsis;
-                max-width: 28vw;
+                max-width: 35vw;
             }
             .nav-profile-detail {
-                font-size: 0.55rem; white-space: normal;
+                font-size: 0.65rem; white-space: normal;
                 overflow: hidden; text-overflow: ellipsis;
-                max-width: 28vw;
+                max-width: 35vw;
             }
-            .nav-profile-btn { font-size: 0.7rem; padding: 0; }
-            .nav-toggle { font-size: 1.3rem; padding: 0.2rem; }
-        }
-        @media (max-width: 380px) {
-            .navbar .brand { font-size: 0.9rem; }
-            .nav-profile { max-width: 40vw; }
-            .nav-profile-name { max-width: 22vw; font-size: 0.65rem; }
-            .nav-profile-detail { max-width: 22vw; font-size: 0.5rem; }
+            .nav-profile-btn { font-size: 0.8rem; padding: 0; }
+            .nav-profile { max-width: 50vw; }
+            .nav-profile-name { max-width: 30vw; font-size: 0.75rem; }
+            .nav-profile-detail { max-width: 30vw; font-size: 0.6rem; }
         }
 
         /* Hero */
@@ -1335,6 +1480,38 @@
             </form>
         </div>
     </div>
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-modal-content">
+            <button class="profile-modal-close" id="profileModalClose">&times;</button>
+            <div class="profile-modal-header" id="profileModalHeader">
+                <div class="profile-modal-avatar" id="profileModalAvatar">
+                    <img src="images/bola-de-cristal.png" alt="" class="profile-modal-avatar-img" id="profileModalAvatarImg">
+                </div>
+                <div class="profile-modal-title">
+                    <span class="profile-modal-name" id="profileModalName"></span>
+                    <span class="profile-modal-sign" id="profileModalSign"></span>
+                </div>
+            </div>
+            <div class="profile-modal-body">
+                <div class="profile-modal-section">
+                    <h3>&#x2726; Modalidad</h3>
+                    <p id="profileModalModo"></p>
+                </div>
+                <div class="profile-modal-section">
+                    <h3>&#x2726; Rasgos Generales</h3>
+                    <p id="profileModalRasgos"></p>
+                </div>
+                <div class="profile-modal-section">
+                    <h3>&#x2726; Compatibilidades</h3>
+                    <p id="profileModalCompat"></p>
+                </div>
+                <div class="profile-modal-section">
+                    <h3>&#x2726; Ciclo Solar</h3>
+                    <p id="profileModalCiclo"></p>
+                </div>
+            </div>
+        </div>
+    </div>
     <canvas id="stars-canvas"></canvas>
     <nav class="navbar" id="navbar">
         <div class="navbar-left">
@@ -1348,6 +1525,7 @@
                 <li><a href="#" data-view="houses">Casas</a></li>
                 <li><a href="#" data-view="planets">Planetas</a></li>
                 <li><a href="#" data-view="elements">Elementos</a></li>
+                <li><a href="#" data-view="modalidades">Modalidades</a></li>
             </ul>
         </div>
         <div class="nav-profile" id="navProfile">
@@ -1450,6 +1628,34 @@
             <h2>&#x2726; Los 4 Elementos Astrol&oacute;gicos &#x2726;</h2>
             <p class="subtitle">Los elementos representan las energ&iacute;as fundamentales que componen el zod&iacute;aco: cada signo pertenece a un elemento que define su esencia y su forma de interactuar con el mundo</p>
             <div class="elements-grid" id="grid-elements"></div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="modalidades-section fade-section" id="modalidades">
+            <h2>&#x2726; Las 3 Modalidades &#x2726;</h2>
+            <p class="subtitle">Las modalidades (cardinal, fija y mutable) describen c&oacute;mo cada signo canaliza su energ&iacute;a: iniciar, mantener o adaptarse. Cada elemento se manifiesta a trav&eacute;s de una modalidad distinta</p>
+            <div class="modalidades-grid">
+                <div class="modalidad-card">
+                    <div class="modalidad-icon">&#x25B6;</div>
+                    <h3>Cardinal</h3>
+                    <div class="modalidad-sub">Iniciar &middot; Liderar &middot; Impulsar</div>
+                    <div class="modalidad-signos"><strong>Signos:</strong> Aries &#x2648;, C&aacute;ncer &#x264B;, Libra &#x264E;, Capricornio &#x2651;</div>
+                    <div class="modalidad-desc">Los signos cardinales son pioneros naturales. Poseen la energ&iacute;a para iniciar proyectos, liderar equipos y marcar el comienzo de nuevos ciclos. Son ambiciosos, proactivos y les gusta estar al mando.</div>
+                </div>
+                <div class="modalidad-card">
+                    <div class="modalidad-icon">&#x25C6;</div>
+                    <h3>Fija</h3>
+                    <div class="modalidad-sub">Estabilizar &middot; Persistir &middot; Consolidar</div>
+                    <div class="modalidad-signos"><strong>Signos:</strong> Tauro &#x2649;, Leo &#x264C;, Escorpio &#x264F;, Acuario &#x2652;</div>
+                    <div class="modalidad-desc">Los signos fijos son la roca del zod&iacute;aco. Su fortaleza reside en la perseverancia, la lealtad y la capacidad de mantener el rumbo. Son determinados, resistentes al cambio y profundamente estables.</div>
+                </div>
+                <div class="modalidad-card">
+                    <div class="modalidad-icon">&#x25CB;</div>
+                    <h3>Mutable</h3>
+                    <div class="modalidad-sub">Adaptar &middot; Fluir &middot; Transformar</div>
+                    <div class="modalidad-signos"><strong>Signos:</strong> G&eacute;minis &#x264A;, Virgo &#x264D;, Sagitario &#x2650;, Piscis &#x2653;</div>
+                    <div class="modalidad-desc">Los signos mutables son los adaptables del zod&iacute;aco. Su don es la flexibilidad, la comunicaci&oacute;n y la capacidad de transformarse seg&uacute;n las circunstancias. Son vers&aacute;tiles, curiosos y facilitan la transici&oacute;n.</div>
+                </div>
+            </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
         <section class="transits-section fade-section" id="transits">
@@ -1984,6 +2190,7 @@
         var housesSection = document.querySelector('.houses-section');
         var planetsSection = document.querySelector('.planets-section');
         var elementsSection = document.querySelector('.elements-section');
+        var modalidadesSection = document.querySelector('.modalidades-section');
         var transitsSection = document.querySelector('.transits-section');
         var recsSection = document.querySelector('.recommendations-section');
         var intro = document.getElementById('intro');
@@ -1994,6 +2201,7 @@
         housesSection.classList.add('view-hidden');
         planetsSection.classList.add('view-hidden');
         elementsSection.classList.add('view-hidden');
+        modalidadesSection.classList.add('view-hidden');
 
         var viewLinks = document.querySelectorAll('.nav-links a[data-view]');
         viewLinks.forEach(function(link) {
@@ -2007,6 +2215,7 @@
                 housesSection.classList.add('view-hidden');
                 planetsSection.classList.add('view-hidden');
                 elementsSection.classList.add('view-hidden');
+                modalidadesSection.classList.add('view-hidden');
                 transitsSection.classList.add('view-hidden');
                 recsSection.classList.add('view-hidden');
                 if (view === 'cards') {
@@ -2029,6 +2238,10 @@
                     elementsSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     elementsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'modalidades') {
+                    modalidadesSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    modalidadesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (view === 'signal') {
                     transitsSection.classList.remove('view-hidden');
                     recsSection.classList.remove('view-hidden');
@@ -2275,6 +2488,8 @@
         function showUserProfile(dateStr) {
             var parts = dateStr.split('-');
             var sign = getZodiacSign(parseInt(parts[2]), parseInt(parts[1]));
+            window.lastProfileSign = sign;
+            window.lastProfileDate = dateStr;
             var userNames = {
                 'Aries':'Alma de Aries','Tauro':'Corazón de Tauro','Géminis':'Mente de Géminis',
                 'Cáncer':'Espíritu de Cáncer','Leo':'Fuego de Leo','Virgo':'Sabiduría de Virgo',
@@ -2336,6 +2551,85 @@
             });
         })();
 
+        // === Profile Modal ===
+        var signTraits = {
+            'Aries':'Valiente, en&eacute;rgico, impulsivo y l&iacute;der natural. Los arianos son pioneros que siempre est&aacute;n listos para iniciar nuevos proyectos con entusiasmo y determinaci&oacute;n.',
+            'Tauro':'Paciente, leal, sensual y persistente. Los taurinos valoran la estabilidad, el confort y los placeres de la vida, construyendo su seguridad con paso firme.',
+            'G&eacute;minis':'Vers&aacute;til, curioso, comunicativo e ingenioso. Los geminianos tienen mentes inquietas que buscan constantemente nuevo conocimiento y est&iacute;mulo intelectual.',
+            'C&aacute;ncer':'Emocional, intuitivo, protector y hogare&ntilde;o. Los cancerianos son profundamente sensibles y leales a sus seres queridos, guiados por su coraz&oacute;n.',
+            'Leo':'Creativo, generoso, dram&aacute;tico y apasionado. Los leoninos irradian confianza y carisma natural, brillando en todo lo que hacen.',
+            'Virgo':'Anal&iacute;tico, meticuloso, pr&aacute;ctico y servicial. Los virginianos poseen una atenci&oacute;n al detalle excepcional y un deseo innato de ser &uacute;tiles.',
+            'Libra':'Diplom&aacute;tico, encantador, justo y sociable. Los librianos buscan el equilibrio y la armon&iacute;a en todo, con un refinado sentido est&eacute;tico.',
+            'Escorpio':'Intenso, misterioso, apasionado y transformador. Los escorpianos poseen una profundidad emocional incomparable y una fuerza de voluntad inquebrantable.',
+            'Sagitario':'Aventurero, optimista, fil&oacute;sofo y expansivo. Los sagitarianos son buscadores de la verdad y el significado, siempre mirando hacia nuevos horizontes.',
+            'Capricornio':'Ambicioso, disciplinado, responsable y perseverante. Los capricornianos construyen su &eacute;xito con paciencia y una &eacute;tica de trabajo inquebrantable.',
+            'Acuario':'Innovador, humanitario, independiente y visionario. Los acuarianos piensan en el futuro y en el bien colectivo, con ideas originales y progresistas.',
+            'Piscis':'So&ntilde;ador, compasivo, art&iacute;stico y espiritual. Los piscianos tienen una conexi&oacute;n profunda con el mundo intangible y una sensibilidad extraordinaria.'
+        };
+        var signCompat = {
+            'Aries':'&bull; Leo &bull; Sagitario &bull; G&eacute;minis &bull; Acuario',
+            'Tauro':'&bull; Virgo &bull; Capricornio &bull; C&aacute;ncer &bull; Piscis',
+            'G&eacute;minis':'&bull; Libra &bull; Acuario &bull; Aries &bull; Leo',
+            'C&aacute;ncer':'&bull; Escorpio &bull; Piscis &bull; Tauro &bull; Virgo',
+            'Leo':'&bull; Aries &bull; Sagitario &bull; G&eacute;minis &bull; Libra',
+            'Virgo':'&bull; Tauro &bull; Capricornio &bull; C&aacute;ncer &bull; Escorpio',
+            'Libra':'&bull; G&eacute;minis &bull; Acuario &bull; Leo &bull; Sagitario',
+            'Escorpio':'&bull; C&aacute;ncer &bull; Piscis &bull; Virgo &bull; Capricornio',
+            'Sagitario':'&bull; Aries &bull; Leo &bull; Libra &bull; Acuario',
+            'Capricornio':'&bull; Tauro &bull; Virgo &bull; Escorpio &bull; Piscis',
+            'Acuario':'&bull; G&eacute;minis &bull; Libra &bull; Aries &bull; Sagitario',
+            'Piscis':'&bull; C&aacute;ncer &bull; Escorpio &bull; Tauro &bull; Capricornio'
+        };
+        var modoDesc = {
+            'Cardinal':'Tu signo es de modalidad Cardinal. Los signos cardinales (Aries, C&aacute;ncer, Libra, Capricornio) son pioneros naturales: inician ciclos, lideran con energ&iacute;a y tienen un esp&iacute;ritu emprendedor. Tu fortaleza es la capacidad de tomar la iniciativa y moverte con determinaci&oacute;n.',
+            'Fijo':'Tu signo es de modalidad Fija. Los signos fijos (Tauro, Leo, Escorpio, Acuario) son la roca del zod&iacute;aco: perseverantes, leales y estables. Tu fortaleza es la resistencia, la constancia y la capacidad de mantener el rumbo frente a cualquier obst&aacute;culo.',
+            'Mutable':'Tu signo es de modalidad Mutable. Los signos mutables (G&eacute;minis, Virgo, Sagitario, Piscis) son flexibles y adaptables: fluyen con el cambio, comunican y transforman. Tu fortaleza es la versatilidad, la curiosidad y la capacidad de encontrar soluciones creativas.'
+        };
+        var solDesc = 'Tu Retorno Solar ocurre cada a&ntilde;o cerca de tu cumplea&ntilde;os, cuando el Sol regresa a la posici&oacute;n exacta que ocupaba en el momento de tu nacimiento. Este ciclo marca un a&ntilde;o astrol&oacute;gico personal: los temas que se activan en tu carta durante ese per&iacute;odo revelan las &aacute;reas de enfoque, crecimiento y desaf&iacute;o para el a&ntilde;o entrante. Es un momento ideal para reflexionar, establecer intenciones y alinearte con tu prop&oacute;sito.';
+        function openProfileModal() {
+            var sign = window.lastProfileSign;
+            if (!sign) return;
+            document.getElementById('profileModalName').textContent = document.getElementById('navProfileName').textContent;
+            document.getElementById('profileModalSign').textContent = sign.sym + ' ' + sign.name + ' \u00B7 ' + sign.element + ' \u00B7 ' + sign.modo;
+            document.getElementById('profileModalModo').innerHTML = modoDesc[sign.modo] || '';
+            document.getElementById('profileModalRasgos').innerHTML = signTraits[sign.name] || '';
+            document.getElementById('profileModalCompat').innerHTML = signCompat[sign.name] || '';
+            document.getElementById('profileModalCiclo').innerHTML = solDesc;
+            var savedPhoto = localStorage.getItem('astroAvatar');
+            var modalImg = document.getElementById('profileModalAvatarImg');
+            if (savedPhoto) {
+                modalImg.src = savedPhoto;
+                modalImg.classList.add('uploaded');
+            } else {
+                modalImg.src = 'images/bola-de-cristal.png';
+                modalImg.classList.remove('uploaded');
+            }
+            var avatar = document.getElementById('profileModalAvatar');
+            var ec = {
+                'Fuego':'rgba(220,38,38,0.15)','Tierra':'rgba(34,197,94,0.15)',
+                'Aire':'rgba(96,165,250,0.15)','Agua':'rgba(34,211,238,0.15)'
+            };
+            var eb = {
+                'Fuego':'rgba(220,38,38,0.3)','Tierra':'rgba(34,197,94,0.3)',
+                'Aire':'rgba(96,165,250,0.3)','Agua':'rgba(34,211,238,0.3)'
+            };
+            avatar.style.background = ec[sign.element] || '';
+            avatar.style.borderColor = eb[sign.element] || '';
+            document.getElementById('profileModal').classList.add('open');
+        }
+        document.getElementById('navProfile').addEventListener('click', function(e) {
+            if (e.target.closest('.nav-profile-btn')) return;
+            if (e.target.closest('.nav-profile-avatar')) return;
+            if (!document.getElementById('navProfile').classList.contains('show')) return;
+            openProfileModal();
+        });
+        document.getElementById('profileModalClose').addEventListener('click', function() {
+            document.getElementById('profileModal').classList.remove('open');
+        });
+        document.getElementById('profileModal').addEventListener('click', function(e) {
+            if (e.target === this) document.getElementById('profileModal').classList.remove('open');
+        });
+
         // Restore profile on page load if birthday exists
         (function() {
             var stored = localStorage.getItem('astroBirthday');
@@ -2344,18 +2638,18 @@
 
         function getZodiacSign(day, month) {
             var signs = [
-                { name: 'Capricornio', sym: '♑', element: 'Tierra', planeta: 'Saturno', casa: '10ª', startM: 12, startD: 22, endM: 1, endD: 19 },
-                { name: 'Acuario', sym: '♒', element: 'Aire', planeta: 'Urano', casa: '11ª', startM: 1, startD: 20, endM: 2, endD: 18 },
-                { name: 'Piscis', sym: '♓', element: 'Agua', planeta: 'Neptuno', casa: '12ª', startM: 2, startD: 19, endM: 3, endD: 20 },
-                { name: 'Aries', sym: '♈', element: 'Fuego', planeta: 'Marte', casa: '1ª', startM: 3, startD: 21, endM: 4, endD: 19 },
-                { name: 'Tauro', sym: '♉', element: 'Tierra', planeta: 'Venus', casa: '2ª', startM: 4, startD: 20, endM: 5, endD: 20 },
-                { name: 'Géminis', sym: '♊', element: 'Aire', planeta: 'Mercurio', casa: '3ª', startM: 5, startD: 21, endM: 6, endD: 20 },
-                { name: 'Cáncer', sym: '♋', element: 'Agua', planeta: 'Luna', casa: '4ª', startM: 6, startD: 21, endM: 7, endD: 22 },
-                { name: 'Leo', sym: '♌', element: 'Fuego', planeta: 'Sol', casa: '5ª', startM: 7, startD: 23, endM: 8, endD: 22 },
-                { name: 'Virgo', sym: '♍', element: 'Tierra', planeta: 'Mercurio', casa: '6ª', startM: 8, startD: 23, endM: 9, endD: 22 },
-                { name: 'Libra', sym: '♎', element: 'Aire', planeta: 'Venus', casa: '7ª', startM: 9, startD: 23, endM: 10, endD: 22 },
-                { name: 'Escorpio', sym: '♏', element: 'Agua', planeta: 'Plutón', casa: '8ª', startM: 10, startD: 23, endM: 11, endD: 21 },
-                { name: 'Sagitario', sym: '♐', element: 'Fuego', planeta: 'Júpiter', casa: '9ª', startM: 11, startD: 22, endM: 12, endD: 21 }
+                { name: 'Capricornio', sym: '♑', element: 'Tierra', modo: 'Cardinal', planeta: 'Saturno', casa: '10ª', startM: 12, startD: 22, endM: 1, endD: 19 },
+                { name: 'Acuario', sym: '♒', element: 'Aire', modo: 'Fijo', planeta: 'Urano', casa: '11ª', startM: 1, startD: 20, endM: 2, endD: 18 },
+                { name: 'Piscis', sym: '♓', element: 'Agua', modo: 'Mutable', planeta: 'Neptuno', casa: '12ª', startM: 2, startD: 19, endM: 3, endD: 20 },
+                { name: 'Aries', sym: '♈', element: 'Fuego', modo: 'Cardinal', planeta: 'Marte', casa: '1ª', startM: 3, startD: 21, endM: 4, endD: 19 },
+                { name: 'Tauro', sym: '♉', element: 'Tierra', modo: 'Fijo', planeta: 'Venus', casa: '2ª', startM: 4, startD: 20, endM: 5, endD: 20 },
+                { name: 'Géminis', sym: '♊', element: 'Aire', modo: 'Mutable', planeta: 'Mercurio', casa: '3ª', startM: 5, startD: 21, endM: 6, endD: 20 },
+                { name: 'Cáncer', sym: '♋', element: 'Agua', modo: 'Cardinal', planeta: 'Luna', casa: '4ª', startM: 6, startD: 21, endM: 7, endD: 22 },
+                { name: 'Leo', sym: '♌', element: 'Fuego', modo: 'Fijo', planeta: 'Sol', casa: '5ª', startM: 7, startD: 23, endM: 8, endD: 22 },
+                { name: 'Virgo', sym: '♍', element: 'Tierra', modo: 'Mutable', planeta: 'Mercurio', casa: '6ª', startM: 8, startD: 23, endM: 9, endD: 22 },
+                { name: 'Libra', sym: '♎', element: 'Aire', modo: 'Cardinal', planeta: 'Venus', casa: '7ª', startM: 9, startD: 23, endM: 10, endD: 22 },
+                { name: 'Escorpio', sym: '♏', element: 'Agua', modo: 'Fijo', planeta: 'Plutón', casa: '8ª', startM: 10, startD: 23, endM: 11, endD: 21 },
+                { name: 'Sagitario', sym: '♐', element: 'Fuego', modo: 'Mutable', planeta: 'Júpiter', casa: '9ª', startM: 11, startD: 22, endM: 12, endD: 21 }
             ];
             var d = day, m = month;
             var dateNum = m * 100 + d;
