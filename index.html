@@ -570,6 +570,10 @@
             font-size: 1.4rem; color: var(--violeta-brillante);
             margin-bottom: 0.8rem;
         }
+        .birthday-modal-content h2 .star-icon {
+            display: inline-block; vertical-align: middle;
+            font-size: 1.1rem; line-height: 1;
+        }
         .birthday-modal-content p {
             font-size: 0.9rem; color: var(--gris);
             margin-bottom: 1.5rem; line-height: 1.5;
@@ -1323,8 +1327,8 @@
 <body>
     <div class="birthday-modal" id="birthdayModal">
         <div class="birthday-modal-content">
-            <h2>&#x2726; Bienvenido a Astro Tarot &#x2726;</h2>
-            <p>Ingres&aacute; tu fecha de nacimiento para se&ntilde;ales m&aacute;s afines a vos.</p>
+            <h2><span class="star-icon">&#x2726;</span> Bienvenido a Astro Tarot<span class="star-icon">&#x2726;</span></h2>
+            <p>Ingres&aacute; tu fecha de nacimiento</p>
             <form id="birthdayForm">
                 <input type="date" id="birthdayInput" required>
                 <button type="submit">Comenzar viaje</button>
