@@ -1,0 +1,13 @@
+{
+  "name": "astro-tarot",
+  "version": "1.0.0",
+  "description": "Sitio estático de astrología y tarot",
+  "scripts": {
+    "start": "netlify dev",
+    "dev": "netlify dev"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.23.7",
+    "serve": "^14.2.1"
+  }
+}

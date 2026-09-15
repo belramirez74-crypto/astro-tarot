@@ -496,6 +496,154 @@
         .fade-section.visible .modalidad-card:nth-child(1) { transition-delay: 0.05s; }
         .fade-section.visible .modalidad-card:nth-child(2) { transition-delay: 0.15s; }
         .fade-section.visible .modalidad-card:nth-child(3) { transition-delay: 0.25s; }
+        .natal-section, .horoscope-section, .compatibility-section {
+            max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
+        }
+        .natal-section h2, .horoscope-section h2, .compatibility-section h2 {
+            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
+        }
+        .natal-section .subtitle, .horoscope-section .subtitle, .compatibility-section .subtitle {
+            text-align: center; color: var(--gris); margin-bottom: 3rem; font-size: 1.1rem;
+        }
+        .natal-section .section-divider, .horoscope-section .section-divider, .compatibility-section .section-divider {
+            margin-top: 2rem;
+        }
+        .astro-form-card {
+            background: linear-gradient(145deg, rgba(168,85,247,0.06), rgba(168,85,247,0.02));
+            border: 1px solid rgba(168,85,247,0.14);
+            border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+            display: flex; flex-direction: column; gap: 1.2rem;
+        }
+        .astro-form-row {
+            display: flex; gap: 1.2rem; align-items: flex-end; flex-wrap: wrap;
+        }
+        .astro-form-row label { flex: 1; min-width: 200px; }
+        .astro-form-card label {
+            display: flex; flex-direction: column; gap: 0.4rem;
+            font-size: 0.85rem; color: var(--gris);
+        }
+        .astro-form-card input[type="datetime-local"],
+        .astro-form-card input[type="text"],
+        .astro-form-card select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--violeta-claro);
+            border-radius: 8px; padding: 0.7rem 0.9rem;
+            color: var(--blanco);
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            width: 100%; box-sizing: border-box; outline: none;
+        }
+        .astro-form-card input:focus, .astro-form-card select:focus {
+            border-color: var(--violeta-brillante);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+        }
+        .astro-form-card select {
+            cursor: pointer; -webkit-appearance: none; appearance: none;
+        }
+        .astro-form-card select option { background: #120a1a; color: var(--blanco); }
+        .astro-check {
+            flex-direction: row !important; align-items: center; gap: 0.6rem !important;
+            font-size: 0.85rem !important; cursor: pointer;
+        }
+        .astro-check input { width: auto !important; cursor: pointer; }
+        .astro-btn {
+            background: linear-gradient(135deg, var(--violeta-claro), var(--violeta-brillante));
+            border: none; color: var(--blanco);
+            padding: 0.8rem 2.2rem; border-radius: 25px;
+            font-family: 'Cinzel', serif; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+        .astro-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4);
+        }
+        .astro-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .astro-loading {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.8rem; color: var(--violeta-brillante);
+            font-family: 'Cinzel', serif; font-size: 1rem;
+            padding: 2rem 0; margin: 0 auto; max-width: 90%;
+        }
+        .loading-spinner {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 2px solid rgba(168,85,247,0.2); border-top-color: var(--violeta-brillante);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .astro-error {
+            color: #f87171; background: rgba(248,113,113,0.08);
+            border: 1px solid rgba(248,113,113,0.2);
+            border-radius: 10px; padding: 0.9rem 1.1rem;
+            font-size: 0.9rem; margin-bottom: 1.2rem; text-align: center;
+        }
+        .natal-result, .compat-result {
+            display: flex; flex-direction: column; gap: 1.5rem; align-items: center;
+        }
+        .natal-chart, .compat-chart {
+            width: 100%; max-width: 560px; margin: 0 auto;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(168,85,247,0.12); border-radius: 14px;
+            padding: 1rem; overflow: hidden;
+        }
+        .natal-chart svg, .compat-chart svg { width: 100%; height: auto; display: block; }
+        .natal-planets { width: 100%; max-width: 560px; }
+        .natal-planets h3, .compat-result h3, .horo-subtitle {
+            text-align: center; font-family: 'Cinzel', serif;
+            color: var(--violeta-claro); font-size: 1.1rem; margin-bottom: 0.8rem;
+        }
+        .planet-table {
+            width: 100%; border-collapse: collapse; font-size: 0.85rem;
+        }
+        .planet-table th {
+            color: var(--violeta-brillante); font-weight: 600;
+            text-align: left; padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid rgba(168,85,247,0.2);
+            font-family: 'Cinzel', serif; font-size: 0.78rem;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .planet-table td {
+            padding: 0.55rem 0.8rem; color: var(--blanco);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .planet-table tr:hover td { background: rgba(168,85,247,0.05); }
+        .planet-table .retro { color: #f87171; }
+        .horo-result, .horo-love {
+            background: linear-gradient(145deg, rgba(168,85,247,0.06), rgba(168,85,247,0.02));
+            border: 1px solid rgba(168,85,247,0.14);
+            border-radius: 16px; padding: 1.6rem;
+            margin: 0 auto 1.5rem; max-width: 640px; text-align: center;
+        }
+        .horo-header, .horo-love-header {
+            font-family: 'Cinzel', serif; font-size: 1.1rem;
+            color: var(--violeta-brillante); margin-bottom: 0.5rem;
+        }
+        .horo-header #horoDate { color: var(--gris); font-size: 0.85rem; margin-left: 0.6rem; }
+        .horo-text { color: var(--blanco); font-size: 0.95rem; line-height: 1.8; margin: 0; }
+        .horo-subtitle { margin-top: 2.5rem; text-align: center; }
+        .compat-form .compat-person {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(168,85,247,0.1); border-radius: 12px;
+            padding: 1.2rem; display: flex; flex-direction: column; gap: 0.9rem;
+            flex: 1; min-width: 220px;
+        }
+        .compat-person h3 {
+            font-family: 'Cinzel', serif; color: var(--violeta-claro);
+            font-size: 0.95rem; margin: 0 0 0.2rem; text-align: center;
+        }
+        .compat-form .compat-person label { font-size: 0.8rem; }
+        .compat-form { flex-direction: row; flex-wrap: wrap; }
+        .compat-form .astro-btn { margin: 0 auto; }
+        @media (max-width: 768px) {
+            .natal-section h2, .horoscope-section h2, .compatibility-section h2 { font-size: 2rem; }
+            .natal-section, .horoscope-section, .compatibility-section { padding: 3rem 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .natal-section h2, .horoscope-section h2, .compatibility-section h2 { font-size: 1.5rem; }
+            .natal-section, .horoscope-section, .compatibility-section { padding: 2rem 1.2rem; }
+            .astro-form-row { flex-direction: column; }
+            .astro-form-card { padding: 1.2rem; }
+        }
         .signal-section {
             max-width: 700px; margin: 0 auto; padding: 5rem 2rem 2rem;
             text-align: center;
@@ -1526,6 +1674,9 @@
                 <li><a href="#" data-view="planets">Planetas</a></li>
                 <li><a href="#" data-view="elements">Elementos</a></li>
                 <li><a href="#" data-view="modalidades">Modalidades</a></li>
+                <li><a href="#" data-view="natal">Carta Natal</a></li>
+                <li><a href="#" data-view="horoscope">Hor&oacute;scopo</a></li>
+                <li><a href="#" data-view="compatibility">Compatibilidad</a></li>
             </ul>
         </div>
         <div class="nav-profile" id="navProfile">
@@ -1655,6 +1806,106 @@
                     <div class="modalidad-signos"><strong>Signos:</strong> G&eacute;minis &#x264A;, Virgo &#x264D;, Sagitario &#x2650;, Piscis &#x2653;</div>
                     <div class="modalidad-desc">Los signos mutables son los adaptables del zod&iacute;aco. Su don es la flexibilidad, la comunicaci&oacute;n y la capacidad de transformarse seg&uacute;n las circunstancias. Son vers&aacute;tiles, curiosos y facilitan la transici&oacute;n.</div>
                 </div>
+            </div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="natal-section fade-section" id="carta-natal">
+            <h2>&#x2726; Tu Carta Natal &#x2726;</h2>
+            <p class="subtitle">Gener&aacute; tu carta natal con las posiciones planetarias exactas del momento de tu nacimiento</p>
+            <div class="astro-form-card">
+                <div class="astro-form-row">
+                    <label>Fecha y hora de nacimiento
+                        <input type="datetime-local" id="natalDateTime">
+                    </label>
+                    <label>Ciudad de nacimiento
+                        <input type="text" id="natalPlace" placeholder="Ej: Buenos Aires, Argentina">
+                    </label>
+                </div>
+                <label class="astro-check"><input type="checkbox" id="natalUnknownTime"> No s&eacute; la hora exacta</label>
+                <button class="astro-btn" id="natalBtn">Generar Carta Natal</button>
+            </div>
+            <div class="astro-loading" id="natalLoading" style="display:none"><span class="loading-spinner"></span> Consultando las estrellas...</div>
+            <div class="astro-error" id="natalError" style="display:none"></div>
+            <div class="natal-result" id="natalResult" style="display:none">
+                <div class="natal-chart" id="natalChartSvg"></div>
+                <div class="natal-planets">
+                    <h3>&#x2726; Posiciones Planetarias &#x2726;</h3>
+                    <table class="planet-table">
+                        <thead><tr><th>Planeta</th><th>Signo</th><th>Grado</th><th>Casa</th><th>Retr&oacute;grado</th></tr></thead>
+                        <tbody id="natalTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="horoscope-section fade-section" id="horoscopo-dia">
+            <h2>&#x2726; Hor&oacute;scopo del D&iacute;a &#x2726;</h2>
+            <p class="subtitle">Predicci&oacute;n diaria para tu signo y compatibilidad de amor entre dos signos</p>
+            <div class="astro-form-card">
+                <div class="astro-form-row">
+                    <label>Tu signo
+                        <select id="horoSign"></select>
+                    </label>
+                    <button class="astro-btn" id="horoBtn">Ver Predicci&oacute;n</button>
+                </div>
+            </div>
+            <div class="astro-loading" id="horoLoading" style="display:none"><span class="loading-spinner"></span> Leyendo las estrellas...</div>
+            <div class="astro-error" id="horoError" style="display:none"></div>
+            <div class="horo-result" id="horoResult" style="display:none">
+                <div class="horo-header"><span id="horoSignName"></span><span id="horoDate"></span></div>
+                <p class="horo-text" id="horoText"></p>
+            </div>
+            <h3 class="horo-subtitle">&#x2726; Compatibilidad de Amor Diaria &#x2726;</h3>
+            <div class="astro-form-card">
+                <div class="astro-form-row">
+                    <label>Signo 1
+                        <select id="horoLove1"></select>
+                    </label>
+                    <label>Signo 2
+                        <select id="horoLove2"></select>
+                    </label>
+                    <button class="astro-btn" id="horoLoveBtn">Ver Compatibilidad</button>
+                </div>
+            </div>
+            <div class="astro-loading" id="horoLoveLoading" style="display:none"><span class="loading-spinner"></span> Analizando la conexi&oacute;n...</div>
+            <div class="astro-error" id="horoLoveError" style="display:none"></div>
+            <div class="horo-love" id="horoLoveResult" style="display:none">
+                <div class="horo-love-header" id="horoLoveHeader"></div>
+                <p class="horo-text" id="horoLoveText"></p>
+            </div>
+            <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
+        </section>
+        <section class="compatibility-section fade-section" id="compatibilidad">
+            <h2>&#x2726; Compatibilidad Astrol&oacute;gica &#x2726;</h2>
+            <p class="subtitle">Compar&aacute; dos cartas natales (sinastr&iacute;a) y descubre la conexi&oacute;n c&oacute;smica entre dos personas</p>
+            <div class="astro-form-card compat-form">
+                <div class="compat-person">
+                    <h3>Persona 1</h3>
+                    <label>Fecha y hora
+                        <input type="datetime-local" id="compatDT1">
+                    </label>
+                    <label>Ciudad
+                        <input type="text" id="compatPlace1" placeholder="Ej: Buenos Aires, Argentina">
+                    </label>
+                    <label class="astro-check"><input type="checkbox" id="compatUnknown1"> Hora desconocida</label>
+                </div>
+                <div class="compat-person">
+                    <h3>Persona 2</h3>
+                    <label>Fecha y hora
+                        <input type="datetime-local" id="compatDT2">
+                    </label>
+                    <label>Ciudad
+                        <input type="text" id="compatPlace2" placeholder="Ej: Buenos Aires, Argentina">
+                    </label>
+                    <label class="astro-check"><input type="checkbox" id="compatUnknown2"> Hora desconocida</label>
+                </div>
+                <button class="astro-btn" id="compatBtn">Calcular Compatibilidad</button>
+            </div>
+            <div class="astro-loading" id="compatLoading" style="display:none"><span class="loading-spinner"></span> Entrelazando las cartas...</div>
+            <div class="astro-error" id="compatError" style="display:none"></div>
+            <div class="compat-result" id="compatResult" style="display:none">
+                <h3>&#x2726; Carta de Sinastr&iacute;a &#x2726;</h3>
+                <div class="compat-chart" id="compatChartSvg"></div>
             </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
@@ -2191,6 +2442,9 @@
         var planetsSection = document.querySelector('.planets-section');
         var elementsSection = document.querySelector('.elements-section');
         var modalidadesSection = document.querySelector('.modalidades-section');
+        var natalSection = document.querySelector('.natal-section');
+        var horoscopeSection = document.querySelector('.horoscope-section');
+        var compatibilitySection = document.querySelector('.compatibility-section');
         var transitsSection = document.querySelector('.transits-section');
         var recsSection = document.querySelector('.recommendations-section');
         var intro = document.getElementById('intro');
@@ -2202,6 +2456,9 @@
         planetsSection.classList.add('view-hidden');
         elementsSection.classList.add('view-hidden');
         modalidadesSection.classList.add('view-hidden');
+        natalSection.classList.add('view-hidden');
+        horoscopeSection.classList.add('view-hidden');
+        compatibilitySection.classList.add('view-hidden');
 
         var viewLinks = document.querySelectorAll('.nav-links a[data-view]');
         viewLinks.forEach(function(link) {
@@ -2214,8 +2471,11 @@
                 zodiacSection.classList.add('view-hidden');
                 housesSection.classList.add('view-hidden');
                 planetsSection.classList.add('view-hidden');
-                elementsSection.classList.add('view-hidden');
+elementsSection.classList.add('view-hidden');
                 modalidadesSection.classList.add('view-hidden');
+                natalSection.classList.add('view-hidden');
+                horoscopeSection.classList.add('view-hidden');
+                compatibilitySection.classList.add('view-hidden');
                 transitsSection.classList.add('view-hidden');
                 recsSection.classList.add('view-hidden');
                 if (view === 'cards') {
@@ -2242,6 +2502,18 @@
                     modalidadesSection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     modalidadesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'natal') {
+                    natalSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    natalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'horoscope') {
+                    horoscopeSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    horoscopeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'compatibility') {
+                    compatibilitySection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    compatibilitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (view === 'signal') {
                     transitsSection.classList.remove('view-hidden');
                     recsSection.classList.remove('view-hidden');
@@ -2700,6 +2972,299 @@
                     '<span class="planet-sign">' + signSym[signIdx] + ' ' + signs[signIdx] + '</span>' +
                     '<span class="planet-degree">' + deg + '\u00b0 ' + min + "'</span>";
                 grid.appendChild(card);
+            }
+        })();
+
+        // === PROKERALA API INTEGRATION ===
+        (function() {
+            var SIGNS = [
+                { slug: 'aries', label: 'Aries' },
+                { slug: 'taurus', label: 'Tauro' },
+                { slug: 'gemini', label: 'G\u00e9minis' },
+                { slug: 'cancer', label: 'C\u00e1ncer' },
+                { slug: 'leo', label: 'Leo' },
+                { slug: 'virgo', label: 'Virgo' },
+                { slug: 'libra', label: 'Libra' },
+                { slug: 'scorpio', label: 'Escorpio' },
+                { slug: 'sagittarius', label: 'Sagitario' },
+                { slug: 'capricorn', label: 'Capricornio' },
+                { slug: 'aquarius', label: 'Acuario' },
+                { slug: 'pisces', label: 'Piscis' }
+            ];
+            var SIGN_SLUGS = {
+                'Aries':'aries','Tauro':'taurus','G\u00e9minis':'gemini','C\u00e1ncer':'cancer',
+                'Leo':'leo','Virgo':'virgo','Libra':'libra','Escorpio':'scorpio',
+                'Sagitario':'sagittarius','Capricornio':'capricorn','Acuario':'aquarius','Piscis':'pisces'
+            };
+
+            function fillSignSelect(sel) {
+                sel.innerHTML = SIGNS.map(function(s) {
+                    return '<option value="' + s.slug + '">' + s.label + '</option>';
+                }).join('');
+            }
+            function prefillFromProfile(sel) {
+                var sign = window.lastProfileSign;
+                if (sign && SIGN_SLUGS[sign.name]) sel.value = SIGN_SLUGS[sign.name];
+            }
+
+            function showEl(el) { el.style.display = ''; }
+            function hideEl(el) { el.style.display = 'none'; }
+            function showError(el, msg) {
+                el.textContent = msg;
+                showEl(el);
+            }
+
+            async function prokerala(ep, params) {
+                var qs = new URLSearchParams(params).toString();
+                var res = await fetch('/.netlify/functions/astro?ep=' + encodeURIComponent(ep) + '&' + qs, {
+                    headers: { 'Accept': 'application/json, image/svg+xml' }
+                });
+                if (!res.ok) {
+                    var msg = 'Error ' + res.status;
+                    try {
+                        var j = await res.json();
+                        msg = j.error || j.detail || msg;
+                    } catch (e) {}
+                    throw new Error(msg);
+                }
+                var ct = res.headers.get('content-type') || '';
+                if (ct.indexOf('svg') !== -1) return { svg: await res.text() };
+                return { json: await res.json() };
+            }
+
+            async function geocodePlace(q) {
+                if (!q) throw new Error('Ingres\u00e1 la ciudad de nacimiento');
+                var url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q);
+                var res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+                if (!res.ok) throw new Error('No se pudo geolocalizar la ciudad');
+                var data = await res.json();
+                if (!data || !data.length) throw new Error('No se encontr\u00f3 la ciudad, prob\u00e1 con otro formato');
+                return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+            }
+
+            async function getTzName(lat, lon) {
+                try {
+                    var url = 'https://api.bigdatacloud.net/data/timezone-by-location?latitude=' + lat + '&longitude=' + lon + '&json=true';
+                    var res = await fetch(url);
+                    if (res.ok) {
+                        var data = await res.json();
+                        if (data && data.ianaTimezone) return data.ianaTimezone;
+                    }
+                } catch (e) {}
+                return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+            }
+
+            function tzOffsetMinutes(tz, date) {
+                try {
+                    var dtf = new Intl.DateTimeFormat('en-US', {
+                        timeZone: tz, timeZoneName: 'shortOffset',
+                        year: 'numeric', month: '2-digit', day: '2-digit',
+                        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+                    });
+                    var parts = dtf.formatToParts(date);
+                    var opt = null;
+                    for (var i = 0; i < parts.length; i++) {
+                        if (parts[i].type === 'timeZoneName') opt = parts[i].value;
+                    }
+                    var re = /([+\-])(\d{2}):(\d{2})/;
+                    var m = re.exec(opt);
+                    if (!m) return 0;
+                    var sign = m[1] === '-' ? -1 : 1;
+                    return sign * (parseInt(m[2], 10) * 60 + parseInt(m[3], 10));
+                } catch (e) { return 0; }
+            }
+
+            function naiveToIso(dtValue, tz) {
+                var parts = dtValue.split('T');
+                var d = parts[0].split('-');
+                var t = parts[1].split(':');
+                var date = new Date(Date.UTC(+d[0], +d[1] - 1, +d[2], +t[0], +t[1]));
+                var off = tzOffsetMinutes(tz, date);
+                var sign = off < 0 ? '-' : '+';
+                var abs = Math.abs(off);
+                var hh = String(Math.floor(abs / 60)).padStart(2, '0');
+                var mm = String(abs % 60).padStart(2, '0');
+                return dtValue + ':00' + sign + hh + ':' + mm;
+            }
+
+            function todayNoon() {
+                var n = new Date();
+                return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(n.getDate()).padStart(2, '0') + 'T12:00';
+            }
+
+            async function resolveProfile(dtEl, placeEl, unknownEl, label) {
+                var dt = dtEl.value;
+                var place = placeEl.value.trim();
+                var unknown = unknownEl.checked;
+                var geo = await geocodePlace(place);
+                var tz = await getTzName(geo.lat, geo.lon);
+                var iso;
+                if (unknown) {
+                    iso = naiveToIso(dt || todayNoon(), tz);
+                } else {
+                    if (!dt) throw new Error('Ingres\u00e1 fecha y hora de ' + label);
+                    iso = naiveToIso(dt, tz);
+                }
+                return {
+                    datetime: iso,
+                    coordinates: geo.lat + ',' + geo.lon,
+                    unknown: unknown
+                };
+            }
+
+            // ===== CARTA NATAL =====
+            var natalBtn = document.getElementById('natalBtn');
+            if (natalBtn) {
+                natalBtn.addEventListener('click', function() {
+                    (async function() {
+                        var loading = document.getElementById('natalLoading');
+                        var errorEl = document.getElementById('natalError');
+                        var result = document.getElementById('natalResult');
+                        natalBtn.disabled = true;
+                        hideEl(errorEl); hideEl(result); showEl(loading);
+                        try {
+                            var profile = await resolveProfile(
+                                document.getElementById('natalDateTime'),
+                                document.getElementById('natalPlace'),
+                                document.getElementById('natalUnknownTime'),
+                                'la persona'
+                            );
+                            var base = {
+                                'profile[datetime]': profile.datetime,
+                                'profile[coordinates]': profile.coordinates
+                            };
+                            if (profile.unknown) base['profile[birth_time_unknown]'] = 'true';
+                            var chart = await prokerala('natal-chart', base);
+                            document.getElementById('natalChartSvg').innerHTML = chart.svg;
+                            var pos = await prokerala('natal-planet-position', base);
+                            var list = (pos.json && pos.json.data && pos.json.data.planet_positions) || [];
+                            var tbody = document.getElementById('natalTableBody');
+                            tbody.innerHTML = '';
+                            list.forEach(function(p) {
+                                var tr = document.createElement('tr');
+                                var deg = Math.floor(p.degree) + '\u00b0' + Math.floor((p.degree % 1) * 60) + "'";
+                                var retro = p.is_retrograde ? '<span class="retro">R</span>' : '';
+                                tr.innerHTML = '<td>' + p.name + '</td><td>' + (p.zodiac ? p.zodiac.name : '') + '</td>' +
+                                    '<td>' + deg + '</td><td>Cas\u00e1 ' + p.house_number + '</td><td>' + retro + '</td>';
+                                tbody.appendChild(tr);
+                            });
+                            showEl(result);
+                        } catch (err) { showError(errorEl, err.message); }
+                        hideEl(loading);
+                        natalBtn.disabled = false;
+                    })();
+                });
+            }
+
+            // ===== HOR\u00d3SCOPO DEL D\u00cdA =====
+            var horoSign = document.getElementById('horoSign');
+            if (horoSign) {
+                fillSignSelect(horoSign);
+                prefillFromProfile(horoSign);
+            }
+            var horoLove1 = document.getElementById('horoLove1');
+            var horoLove2 = document.getElementById('horoLove2');
+            if (horoLove1 && horoLove2) {
+                fillSignSelect(horoLove1);
+                fillSignSelect(horoLove2);
+                horoLove2.value = 'virgo';
+            }
+            var horoBtn = document.getElementById('horoBtn');
+            if (horoBtn) {
+                horoBtn.addEventListener('click', function() {
+                    (async function() {
+                        var loading = document.getElementById('horoLoading');
+                        var errorEl = document.getElementById('horoError');
+                        var result = document.getElementById('horoResult');
+                        horoBtn.disabled = true;
+                        hideEl(errorEl); hideEl(result); showEl(loading);
+                        try {
+                            var r = await prokerala('daily', {
+                                sign: horoSign.value,
+                                datetime: new Date().toISOString()
+                            });
+                            var dp = r.json.data.daily_prediction;
+                            document.getElementById('horoSignName').textContent = dp.sign_name;
+                            document.getElementById('horoDate').textContent = dp.date;
+                            document.getElementById('horoText').textContent = dp.prediction;
+                            showEl(result);
+                        } catch (err) { showError(errorEl, err.message); }
+                        hideEl(loading);
+                        horoBtn.disabled = false;
+                    })();
+                });
+            }
+            var horoLoveBtn = document.getElementById('horoLoveBtn');
+            if (horoLoveBtn) {
+                horoLoveBtn.addEventListener('click', function() {
+                    (async function() {
+                        var loading = document.getElementById('horoLoveLoading');
+                        var errorEl = document.getElementById('horoLoveError');
+                        var result = document.getElementById('horoLoveResult');
+                        horoLoveBtn.disabled = true;
+                        hideEl(errorEl); hideEl(result); showEl(loading);
+                        try {
+                            var r = await prokerala('daily-love', {
+                                sign_one: horoLove1.value,
+                                sign_two: horoLove2.value,
+                                datetime: new Date().toISOString()
+                            });
+                            var preds = (r.json.data && r.json.data.daily_love_predictions) || [];
+                            if (preds.length) {
+                                var p = preds[0];
+                                var n1 = (p.sign_one && p.sign_one.name) || horoLove1.value;
+                                var n2 = (p.sign_two && p.sign_two.name) || horoLove2.value;
+                                document.getElementById('horoLoveHeader').textContent = n1 + ' + ' + n2;
+                                document.getElementById('horoLoveText').textContent = p.prediction;
+                            }
+                            showEl(result);
+                        } catch (err) { showError(errorEl, err.message); }
+                        hideEl(loading);
+                        horoLoveBtn.disabled = false;
+                    })();
+                });
+            }
+
+            // ===== COMPATIBILIDAD (SINASTRI\u00cdA) =====
+            var compatBtn = document.getElementById('compatBtn');
+            if (compatBtn) {
+                compatBtn.addEventListener('click', function() {
+                    (async function() {
+                        var loading = document.getElementById('compatLoading');
+                        var errorEl = document.getElementById('compatError');
+                        var result = document.getElementById('compatResult');
+                        compatBtn.disabled = true;
+                        hideEl(errorEl); hideEl(result); showEl(loading);
+                        try {
+                            var p1 = await resolveProfile(
+                                document.getElementById('compatDT1'),
+                                document.getElementById('compatPlace1'),
+                                document.getElementById('compatUnknown1'),
+                                'la persona 1'
+                            );
+                            var p2 = await resolveProfile(
+                                document.getElementById('compatDT2'),
+                                document.getElementById('compatPlace2'),
+                                document.getElementById('compatUnknown2'),
+                                'la persona 2'
+                            );
+                            var params = {
+                                'primary_profile[datetime]': p1.datetime,
+                                'primary_profile[coordinates]': p1.coordinates,
+                                'secondary_profile[datetime]': p2.datetime,
+                                'secondary_profile[coordinates]': p2.coordinates
+                            };
+                            if (p1.unknown) params['primary_profile[birth_time_unknown]'] = 'true';
+                            if (p2.unknown) params['secondary_profile[birth_time_unknown]'] = 'true';
+                            var chart = await prokerala('synastry-chart', params);
+                            document.getElementById('compatChartSvg').innerHTML = chart.svg;
+                            showEl(result);
+                        } catch (err) { showError(errorEl, err.message); }
+                        hideEl(loading);
+                        compatBtn.disabled = false;
+                    })();
+                });
             }
         })();
     </script>
