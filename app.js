@@ -457,6 +457,40 @@
             document.getElementById('intro-astrologia').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
+
+            // ===== TIRADA DE TAROT (Pasado / Presente / Futuro) =====
+            var tiradaBtn = document.getElementById('tiradaBtn');
+            if (tiradaBtn) {
+                tiradaBtn.addEventListener('click', function() {
+                    var deck = allCards().slice();
+                    for (var i = deck.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+                    }
+                    var labels = ['Pasado', 'Presente', 'Futuro'];
+                    var picks = deck.slice(0, 3).map(function(c) {
+                        return { card: c, reversed: Math.random() < 0.5 };
+                    });
+                    var spread = document.getElementById('tiradaSpread');
+                    spread.innerHTML = picks.map(function(p, i) {
+                        return '<div class="tirada-slot' + (p.reversed ? ' reversed' : '') + '">' +
+                            '<div class="tirada-label">' + labels[i] + '</div>' +
+                            '<div class="tirada-img-wrap"><img src="' + p.card.img + '" alt="' + p.card.name + '"></div>' +
+                            '<div class="tirada-name">' + p.card.name + '</div>' +
+                            (p.reversed ? '<div class="tirada-rev">Invertida</div>' : '') +
+                            '</div>';
+                    }).join('');
+                    var reading = document.getElementById('tiradaReading');
+                    reading.innerHTML = '<h3>&#x2726; Lectura de tu Tirada &#x2726;</h3>' + picks.map(function(p, i) {
+                        var txt = p.reversed
+                            ? 'En posición invertida, esta energía se vive hacia adentro, bloqueada o pide revisión: ' + p.card.desc
+                            : p.card.desc;
+                        return '<div class="reading-card"><h4>' + labels[i] + ': ' + p.card.name + (p.reversed ? ' (invertida)' : '') + '</h4><p>' + txt + '</p></div>';
+                    }).join('');
+                    spread.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+            }
+
         // === VIEW SWITCHING ===
         var cardsSection = document.querySelector('.cards-section');
         var zodiacSection = document.querySelector('.zodiac-section');
@@ -467,6 +501,7 @@
         var natalSection = document.querySelector('.natal-section');
         var horoscopeSection = document.querySelector('.horoscope-section');
         var compatibilitySection = document.querySelector('.compatibility-section');
+        var tiradaSection = document.querySelector('.tirada-section');
         var transitsSection = document.querySelector('.transits-section');
         var recsSection = document.querySelector('.recommendations-section');
         var intro = document.getElementById('intro');
@@ -481,6 +516,7 @@
         natalSection.classList.add('view-hidden');
         horoscopeSection.classList.add('view-hidden');
         compatibilitySection.classList.add('view-hidden');
+        tiradaSection.classList.add('view-hidden');
 
         var viewLinks = document.querySelectorAll('.nav-links a[data-view]');
         viewLinks.forEach(function(link) {
@@ -498,6 +534,7 @@ elementsSection.classList.add('view-hidden');
                 natalSection.classList.add('view-hidden');
                 horoscopeSection.classList.add('view-hidden');
                 compatibilitySection.classList.add('view-hidden');
+                tiradaSection.classList.add('view-hidden');
                 transitsSection.classList.add('view-hidden');
                 recsSection.classList.add('view-hidden');
                 if (view === 'cards') {
@@ -536,6 +573,10 @@ elementsSection.classList.add('view-hidden');
                     compatibilitySection.classList.remove('view-hidden');
                     document.getElementById('navLinks').classList.remove('open');
                     compatibilitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else if (view === 'tirada') {
+                    tiradaSection.classList.remove('view-hidden');
+                    document.getElementById('navLinks').classList.remove('open');
+                    tiradaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else if (view === 'signal') {
                     transitsSection.classList.remove('view-hidden');
                     recsSection.classList.remove('view-hidden');
