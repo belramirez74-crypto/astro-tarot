@@ -3,3 +3,6 @@
 
 [functions]
   directory = "netlify/functions"
+
+[functions."report"]
+  timeout = 26
