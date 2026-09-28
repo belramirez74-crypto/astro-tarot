@@ -1,4 +1,5 @@
-// Devuelve los precios configurados (públicos, no sensibles) para mostrarlos en la web.
+// Devuelve los precios y la Public Key de Mercado Pago (ambos datos públicos, no sensibles)
+// para mostrarlos y usarlos en la web. La Public Key está diseñada para exponerse en el frontend.
 exports.handler = async () => {
   return {
     statusCode: 200,
@@ -6,7 +7,8 @@ exports.handler = async () => {
     body: JSON.stringify({
       full: Number(process.env.MP_PRICE_FULL) || 1500,
       category: Number(process.env.MP_PRICE_CATEGORY) || 1200,
-      currency: 'ARS'
+      currency: 'ARS',
+      mpPublicKey: process.env.MP_PUBLIC_KEY || null
     })
   };
 };

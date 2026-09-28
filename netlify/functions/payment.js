@@ -67,7 +67,7 @@ exports.handler = async (event) => {
       console.error('MP error', res.status, JSON.stringify(out).slice(0, 300));
       return reply(502, c.headers, { error: 'No se pudo iniciar el pago' });
     }
-    return reply(200, c.headers, { url: out.init_point || out.sandbox_init_point });
+    return reply(200, c.headers, { url: out.init_point || out.sandbox_init_point, preferenceId: out.id });
   } catch (err) {
     return reply(500, c.headers, { error: 'error interno' });
   }

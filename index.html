@@ -415,6 +415,15 @@
             </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
+        <div class="mp-modal-overlay" id="mpModalOverlay" style="display:none">
+            <div class="mp-modal">
+                <button class="mp-modal-close" id="mpModalClose" type="button" aria-label="Cerrar">&times;</button>
+                <h3>&#x2726; Completar pago &#x2726;</h3>
+                <p class="mp-modal-hint">Si ten&eacute;s la app de Mercado Pago instalada, se va a abrir autom&aacute;ticamente.</p>
+                <div id="mpWalletContainer"></div>
+                <div class="astro-loading" id="mpWalletLoading"><span class="loading-spinner"></span> Preparando el pago...</div>
+            </div>
+        </div>
         <footer>
             <span class="footer-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="footer-img"></span>
             <span>Astro Tarot &mdash; La sabidur&iacute;a de las estrellas al alcance de tu alma</span>
@@ -424,6 +433,7 @@
     <script src="vendor/astrochart.js"></script>
     <script src="natal.js"></script>
     <script src="reading.js"></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="horo.js"></script>
     <script src="app.js"></script>
 </body>

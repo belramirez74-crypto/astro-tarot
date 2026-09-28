@@ -517,13 +517,16 @@
                 });
             }
 
-            // ---- Precios ----
+            // ---- Precios y Public Key de Mercado Pago ----
+            var mpPublicKey = null;
+            var mpInstance = null;
             fetch('/.netlify/functions/prices').then(function(r) { return r.json(); }).then(function(p) {
                 document.getElementById('priceFull').textContent = '$' + p.full + ' ' + p.currency;
                 Object.keys(CAT_NAMES).forEach(function(k) {
                     var el = document.getElementById('priceCat_' + k);
                     if (el) el.textContent = '$' + p.category + ' ' + p.currency;
                 });
+                mpPublicKey = p.mpPublicKey;
             }).catch(function() {});
 
             // ---- Tokens de desbloqueo (persisten en este navegador) ----
@@ -540,6 +543,42 @@
                 try { localStorage.setItem('tarot_unlock_' + item, JSON.stringify({ token: token, exp: exp })); } catch (e) {}
             }
 
+            // Abre el pago con el botón oficial de Mercado Pago (Wallet), que prioriza
+            // abrir la app instalada del usuario; si no la tiene, usa el checkout del navegador.
+            function openMpModal(url) {
+                var overlay = document.getElementById('mpModalOverlay');
+                var container = document.getElementById('mpWalletContainer');
+                var loading = document.getElementById('mpWalletLoading');
+                container.innerHTML = '';
+                overlay.style.display = 'flex';
+
+                if (!mpPublicKey || typeof MercadoPago === 'undefined') {
+                    location.href = url; // sin SDK/Public Key: va directo al checkout
+                    return;
+                }
+                loading.style.display = '';
+                try {
+                    if (!mpInstance) mpInstance = new MercadoPago(mpPublicKey, { locale: 'es-AR' });
+                    var prefId = new URL(url).searchParams.get('pref_id');
+                    var bricks = mpInstance.bricks();
+                    bricks.create('wallet', 'mpWalletContainer', {
+                        initialization: { preferenceId: prefId, redirectMode: 'self' },
+                        customization: { texts: { valueProp: 'smart_option' } }
+                    }).then(function() { loading.style.display = 'none'; })
+                      .catch(function() { loading.style.display = 'none'; location.href = url; });
+                } catch (e) {
+                    loading.style.display = 'none';
+                    location.href = url;
+                }
+            }
+            var mpModalCloseBtn = document.getElementById('mpModalClose');
+            if (mpModalCloseBtn) {
+                mpModalCloseBtn.addEventListener('click', function() {
+                    document.getElementById('mpModalOverlay').style.display = 'none';
+                    document.getElementById('mpWalletContainer').innerHTML = '';
+                });
+            }
+
             async function startCheckout(item, btn, errEl) {
                 if (btn) btn.disabled = true;
                 if (errEl) tHideEl(errEl);
@@ -550,10 +589,11 @@
                     var data = await res.json();
                     if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar el pago');
                     try { sessionStorage.setItem('tarot_pending_item', item); } catch (e) {}
-                    location.href = data.url;
+                    openMpModal(data.url);
                 } catch (err) {
-                    if (btn) btn.disabled = false;
                     if (errEl) tShowError(errEl, err.message);
+                } finally {
+                    if (btn) btn.disabled = false;
                 }
             }
 

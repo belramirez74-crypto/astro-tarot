@@ -1669,3 +1669,23 @@
 .categoria-btn .categoria-icon { font-size: 1.6rem; color: var(--violeta-brillante); }
 .categoria-btn .categoria-price { color: #fbbf24; font-weight: 600; font-size: 0.85rem; }
 .categoria-btn:disabled { opacity: 0.6; cursor: wait; }
+
+/* ===== MODAL DE PAGO (WALLET DE MERCADO PAGO) ===== */
+.mp-modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,14,26,0.85); backdrop-filter: blur(4px);
+    z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.mp-modal {
+    position: relative; width: 100%; max-width: 380px;
+    background: linear-gradient(160deg, #1a1030, #0a0e1a);
+    border: 1px solid rgba(168,85,247,0.35); border-radius: 16px; padding: 1.8rem 1.5rem;
+    box-shadow: 0 0 40px rgba(168,85,247,0.25); text-align: center;
+}
+.mp-modal h3 { font-family: 'Cinzel', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
+.mp-modal-hint { color: var(--blanco); font-size: 0.85rem; opacity: 0.8; margin-bottom: 1.2rem; }
+.mp-modal-close {
+    position: absolute; top: 0.7rem; right: 0.9rem; background: none; border: none;
+    color: var(--blanco); font-size: 1.6rem; cursor: pointer; line-height: 1;
+}
+#mpWalletContainer { min-height: 56px; }
+#mpWalletLoading { display: none; }
