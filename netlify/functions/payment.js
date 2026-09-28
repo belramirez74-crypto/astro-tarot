@@ -43,20 +43,24 @@ exports.handler = async (event) => {
   const site = c.origin || ('https://' + ((event.headers || {}).host || ''));
 
   try {
+    // auto_return exige que back_urls.success sea una URL pública; en localhost, Mercado Pago
+    // no puede validarla, así que se omite ahí (el usuario igual puede volver manualmente).
+    const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(site);
+    const body = {
+      items: [{ title: item.title, quantity: 1, currency_id: 'ARS', unit_price: price }],
+      back_urls: {
+        success: site + '/?pago=exito&item=' + encodeURIComponent(data.item),
+        failure: site + '/?pago=error',
+        pending: site + '/?pago=pendiente'
+      },
+      external_reference: data.item,
+      statement_descriptor: 'ASTRO TAROT'
+    };
+    if (!isLocal) body.auto_return = 'approved';
     const res = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + process.env.MP_ACCESS_TOKEN },
-      body: JSON.stringify({
-        items: [{ title: item.title, quantity: 1, currency_id: 'ARS', unit_price: price }],
-        back_urls: {
-          success: site + '/?pago=exito&item=' + encodeURIComponent(data.item),
-          failure: site + '/?pago=error',
-          pending: site + '/?pago=pendiente'
-        },
-        auto_return: 'approved',
-        external_reference: data.item,
-        statement_descriptor: 'ASTRO TAROT'
-      })
+      body: JSON.stringify(body)
     });
     const out = await res.json();
     if (!res.ok) {
