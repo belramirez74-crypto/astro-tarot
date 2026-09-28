@@ -458,38 +458,174 @@
         });
 
 
-            // ===== TIRADA DE TAROT (Pasado / Presente / Futuro) =====
+            // ===== TIRADA DE TAROT (gratis: Pasado/Presente/Futuro; pagas: completa y por categoría) =====
+            function tShowEl(el) { el.style.display = ''; }
+            function tHideEl(el) { el.style.display = 'none'; }
+            function tShowError(el, msg) { el.textContent = msg; tShowEl(el); }
+            function tRenderReport(el, text) {
+                el.innerHTML = '';
+                text.split(/\n+/).forEach(function(line) {
+                    line = line.trim();
+                    if (!line) return;
+                    var isH = /^#{1,3}\s/.test(line);
+                    var node = document.createElement(isH ? 'h2' : 'p');
+                    node.textContent = line.replace(/^#{1,3}\s*/, '').replace(/\*\*/g, '');
+                    el.appendChild(node);
+                });
+            }
+            function shuffledDeck() {
+                var deck = allCards().slice();
+                for (var i = deck.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
+                }
+                return deck;
+            }
+            function drawSpread(n) {
+                return shuffledDeck().slice(0, n).map(function(c) { return { card: c, reversed: Math.random() < 0.5 }; });
+            }
+            function renderSpread(el, picks, labels) {
+                el.innerHTML = picks.map(function(p, i) {
+                    return '<div class="tirada-slot' + (p.reversed ? ' reversed' : '') + '">' +
+                        '<div class="tirada-label">' + labels[i] + '</div>' +
+                        '<div class="tirada-img-wrap"><img src="' + p.card.img + '" alt="' + p.card.name + '"></div>' +
+                        '<div class="tirada-name">' + p.card.name + '</div>' +
+                        (p.reversed ? '<div class="tirada-rev">Invertida</div>' : '') +
+                        '</div>';
+                }).join('');
+            }
+            function firstSentence(t) { var m = /^[^.]+\./.exec(t); return m ? m[0] : t; }
+
+            var FREE_LABELS = ['Pasado', 'Presente', 'Futuro'];
+            var FULL_LABELS = ['Situación actual', 'Desafío', 'Pasado reciente', 'Futuro cercano', 'Vos', 'Influencias externas', 'Resultado probable'];
+            var CAT_LABELS = ['Situación actual', 'Obstáculo', 'Consejo', 'Influencia externa', 'Resultado probable'];
+            var CAT_NAMES = { amor: 'Amor y relaciones', finanzas: 'Finanzas y dinero', profesion: 'Profesión y trabajo', familia: 'Familia y hogar' };
+
             var tiradaBtn = document.getElementById('tiradaBtn');
             if (tiradaBtn) {
                 tiradaBtn.addEventListener('click', function() {
-                    var deck = allCards().slice();
-                    for (var i = deck.length - 1; i > 0; i--) {
-                        var j = Math.floor(Math.random() * (i + 1));
-                        var t = deck[i]; deck[i] = deck[j]; deck[j] = t;
-                    }
-                    var labels = ['Pasado', 'Presente', 'Futuro'];
-                    var picks = deck.slice(0, 3).map(function(c) {
-                        return { card: c, reversed: Math.random() < 0.5 };
-                    });
+                    var picks = drawSpread(3);
                     var spread = document.getElementById('tiradaSpread');
-                    spread.innerHTML = picks.map(function(p, i) {
-                        return '<div class="tirada-slot' + (p.reversed ? ' reversed' : '') + '">' +
-                            '<div class="tirada-label">' + labels[i] + '</div>' +
-                            '<div class="tirada-img-wrap"><img src="' + p.card.img + '" alt="' + p.card.name + '"></div>' +
-                            '<div class="tirada-name">' + p.card.name + '</div>' +
-                            (p.reversed ? '<div class="tirada-rev">Invertida</div>' : '') +
-                            '</div>';
-                    }).join('');
+                    renderSpread(spread, picks, FREE_LABELS);
                     var reading = document.getElementById('tiradaReading');
-                    reading.innerHTML = '<h3>&#x2726; Lectura de tu Tirada &#x2726;</h3>' + picks.map(function(p, i) {
-                        var txt = p.reversed
-                            ? 'En posición invertida, esta energía se vive hacia adentro, bloqueada o pide revisión: ' + p.card.desc
-                            : p.card.desc;
-                        return '<div class="reading-card"><h4>' + labels[i] + ': ' + p.card.name + (p.reversed ? ' (invertida)' : '') + '</h4><p>' + txt + '</p></div>';
+                    reading.innerHTML = '<h3>&#x2726; Mini Lectura (gratis) &#x2726;</h3>' + picks.map(function(p, i) {
+                        var txt = (p.reversed ? 'Invertida: ' : '') + firstSentence(p.card.desc);
+                        return '<div class="reading-card"><h4>' + FREE_LABELS[i] + ': ' + p.card.name + (p.reversed ? ' (invertida)' : '') + '</h4><p>' + txt + '</p></div>';
                     }).join('');
+                    document.getElementById('tiradaPaywall').style.display = '';
                     spread.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 });
             }
+
+            // ---- Precios ----
+            fetch('/.netlify/functions/prices').then(function(r) { return r.json(); }).then(function(p) {
+                document.getElementById('priceFull').textContent = '$' + p.full + ' ' + p.currency;
+                Object.keys(CAT_NAMES).forEach(function(k) {
+                    var el = document.getElementById('priceCat_' + k);
+                    if (el) el.textContent = '$' + p.category + ' ' + p.currency;
+                });
+            }).catch(function() {});
+
+            // ---- Tokens de desbloqueo (persisten en este navegador) ----
+            function getToken(item) {
+                try {
+                    var raw = localStorage.getItem('tarot_unlock_' + item);
+                    if (!raw) return null;
+                    var d = JSON.parse(raw);
+                    if (!d.token || Date.now() > d.exp) return null;
+                    return d.token;
+                } catch (e) { return null; }
+            }
+            function saveToken(item, token, exp) {
+                try { localStorage.setItem('tarot_unlock_' + item, JSON.stringify({ token: token, exp: exp })); } catch (e) {}
+            }
+
+            async function startCheckout(item, btn, errEl) {
+                if (btn) btn.disabled = true;
+                if (errEl) tHideEl(errEl);
+                try {
+                    var res = await fetch('/.netlify/functions/payment', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item: item })
+                    });
+                    var data = await res.json();
+                    if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar el pago');
+                    try { sessionStorage.setItem('tarot_pending_item', item); } catch (e) {}
+                    location.href = data.url;
+                } catch (err) {
+                    if (btn) btn.disabled = false;
+                    if (errEl) tShowError(errEl, err.message);
+                }
+            }
+
+            var unlockFullBtn = document.getElementById('unlockFullBtn');
+            if (unlockFullBtn) {
+                unlockFullBtn.addEventListener('click', function() {
+                    startCheckout('full', unlockFullBtn, document.getElementById('tiradaPayError'));
+                });
+            }
+            document.querySelectorAll('.categoria-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var item = btn.getAttribute('data-item');
+                    var already = getToken(item);
+                    if (already) { runPremiumReading(item, already); return; }
+                    startCheckout(item, btn, document.getElementById('categoriaPayError'));
+                });
+            });
+
+            async function runPremiumReading(item, token) {
+                var isFull = item === 'full';
+                var spreadEl = document.getElementById(isFull ? 'fullSpread' : 'categoriaSpread');
+                var outEl = document.getElementById(isFull ? 'fullAiOut' : 'categoriaAiOut');
+                var resultEl = document.getElementById(isFull ? 'tiradaFullResult' : 'categoriaResult');
+                var labels = isFull ? FULL_LABELS : CAT_LABELS;
+                var picks = drawSpread(labels.length);
+                renderSpread(spreadEl, picks, labels);
+                if (!isFull) document.getElementById('categoriaTitle').textContent = '✦ Tu Lectura: ' + CAT_NAMES[item] + ' ✦';
+                resultEl.style.display = '';
+                outEl.innerHTML = '<p class="ai-status">Interpretando tu tirada…</p>';
+                resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                try {
+                    var res = await fetch('/.netlify/functions/tarot-report', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            item: item, token: token,
+                            cards: picks.map(function(p, i) { return { position: labels[i], name: p.card.name, reversed: p.reversed, meaning: p.card.desc }; })
+                        })
+                    });
+                    var data = await res.json();
+                    if (!res.ok) {
+                        if (res.status === 402) { try { localStorage.removeItem('tarot_unlock_' + item); } catch (e) {} }
+                        throw new Error(data.error || 'No se pudo generar la lectura');
+                    }
+                    tRenderReport(outEl, data.report);
+                } catch (err) {
+                    outEl.innerHTML = '<p class="ai-status">' + err.message + '</p>';
+                }
+            }
+
+            // ---- Vuelta desde Mercado Pago ----
+            (function checkPaymentReturn() {
+                var qs = new URLSearchParams(location.search);
+                var paymentId = qs.get('payment_id') || qs.get('collection_id');
+                var pago = qs.get('pago');
+                if (!paymentId && !pago) return;
+                var item = qs.get('item') || (function() { try { return sessionStorage.getItem('tarot_pending_item'); } catch (e) { return null; } })();
+                history.replaceState({}, '', location.pathname);
+                if (pago !== 'exito' || !paymentId || !item) return;
+                (async function() {
+                    var errEl = document.getElementById(item === 'full' ? 'tiradaPayError' : 'categoriaPayError');
+                    document.querySelector('[data-view="tirada"]').click();
+                    try {
+                        var res = await fetch('/.netlify/functions/verify-payment?payment_id=' + encodeURIComponent(paymentId));
+                        var data = await res.json();
+                        if (!res.ok || !data.approved) throw new Error((data && data.error) || 'El pago no se pudo confirmar todavía. Si ya pagaste, esperá un minuto y volvé a intentar.');
+                        saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
+                        runPremiumReading(data.item, data.token);
+                    } catch (err) {
+                        if (errEl) tShowError(errEl, err.message);
+                    }
+                })();
+            })();
 
         // === VIEW SWITCHING ===
         var cardsSection = document.querySelector('.cards-section');
