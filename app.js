@@ -1,3 +1,7 @@
+        // Si el usuario vuelve de pagar (Mercado Pago o la vuelta manual desde su app), no tapar
+        // la pantalla con el cartel de bienvenida: ya sabemos que quiere ver su lectura.
+        var __mpPagoReturn = /[?&]pago=exito(&|$)/.test(location.search) && /[?&]payment_id=/.test(location.search);
+
         const canvas = document.getElementById('stars-canvas');
         const ctx = canvas.getContext('2d');
         let stars = [], W, H;
@@ -1022,7 +1026,7 @@ elementsSection.classList.add('view-hidden');
             var modal = document.getElementById('birthdayModal');
             var form = document.getElementById('birthdayForm');
             var input = document.getElementById('birthdayInput');
-            if (!localStorage.getItem('astroBirthday')) {
+            if (!localStorage.getItem('astroBirthday') && !__mpPagoReturn) {
                 modal.style.display = 'flex';
             }
             form.addEventListener('submit', function(e) {
