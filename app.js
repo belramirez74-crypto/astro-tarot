@@ -518,6 +518,7 @@
                     }).join('');
                     document.getElementById('tiradaPaywall').style.display = '';
                     spread.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    if (window.Account) Account.logReading('tirada_gratis', picks.map(function(p) { return p.card.name; }).join(', '));
                 });
             }
 
@@ -531,6 +532,7 @@
                     if (el) el.textContent = '$' + p.category + ' ' + p.currency;
                 });
                 mpPublicKey = p.mpPublicKey;
+                window.__planPrice = p.plan;
             }).catch(function() {});
 
             // ---- Tokens de desbloqueo (persisten en este navegador) ----
@@ -647,7 +649,7 @@
             var unlockFullBtn = document.getElementById('unlockFullBtn');
             if (unlockFullBtn) {
                 unlockFullBtn.addEventListener('click', function() {
-                    startCheckout('full', unlockFullBtn, document.getElementById('tiradaPayError'));
+                    tryPlanOrCheckout('full', unlockFullBtn, document.getElementById('tiradaPayError'));
                 });
             }
             document.querySelectorAll('.categoria-btn').forEach(function(btn) {
@@ -655,11 +657,20 @@
                     var item = btn.getAttribute('data-item');
                     var already = getToken(item);
                     if (already) { runPremiumReading(item, already); return; }
-                    startCheckout(item, btn, document.getElementById('categoriaPayError'));
+                    tryPlanOrCheckout(item, btn, document.getElementById('categoriaPayError'));
                 });
             });
 
-            async function runPremiumReading(item, token) {
+            // Si hay sesión con plan activo, intenta usar un cupo mensual (gratis) antes de cobrar por separado.
+            async function tryPlanOrCheckout(item, btn, errEl) {
+                if (window.Account && Account.isLoggedIn() && Account.hasActivePlan()) {
+                    var jwt = await Account.getAccessToken();
+                    if (jwt) { runPremiumReading(item, null, jwt, btn, errEl); return; }
+                }
+                startCheckout(item, btn, errEl);
+            }
+
+            async function runPremiumReading(item, token, jwt, btn, errEl) {
                 var isFull = item === 'full';
                 var spreadEl = document.getElementById(isFull ? 'fullSpread' : 'categoriaSpread');
                 var outEl = document.getElementById(isFull ? 'fullAiOut' : 'categoriaAiOut');
@@ -672,8 +683,10 @@
                 outEl.innerHTML = '<p class="ai-status">Interpretando tu tirada…</p>';
                 resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 try {
+                    var headers = { 'Content-Type': 'application/json' };
+                    if (jwt) headers['Authorization'] = 'Bearer ' + jwt;
                     var res = await fetch('/.netlify/functions/tarot-report', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        method: 'POST', headers: headers,
                         body: JSON.stringify({
                             item: item, token: token,
                             cards: picks.map(function(p, i) { return { position: labels[i], name: p.card.name, reversed: p.reversed, meaning: p.card.desc }; })
@@ -681,10 +694,23 @@
                     });
                     var data = await res.json();
                     if (!res.ok) {
-                        if (res.status === 402) { try { localStorage.removeItem('tarot_unlock_' + item); } catch (e) {} }
+                        if (res.status === 402 && token) { try { localStorage.removeItem('tarot_unlock_' + item); } catch (e) {} }
+                        if (res.status === 402 && jwt && btn) {
+                            // Cupo del plan agotado: ofrecer pagar esa lectura por separado, sin perder el intento.
+                            outEl.innerHTML = '<p class="ai-status">' + data.error + '</p>';
+                            var payBtn = document.createElement('button');
+                            payBtn.className = 'astro-btn'; payBtn.type = 'button'; payBtn.textContent = 'Pagar esta lectura';
+                            payBtn.addEventListener('click', function() { startCheckout(item, btn, errEl); });
+                            outEl.appendChild(payBtn);
+                            return;
+                        }
                         throw new Error(data.error || 'No se pudo generar la lectura');
                     }
                     tRenderReport(outEl, data.report);
+                    if (window.Account) {
+                        Account.logReading(isFull ? 'tirada_full' : 'tirada_categoria',
+                            (isFull ? 'Lectura completa' : CAT_NAMES[item]) + ': ' + picks.map(function(p) { return p.card.name; }).join(', '));
+                    }
                 } catch (err) {
                     outEl.innerHTML = '<p class="ai-status">' + err.message + '</p>';
                 }
@@ -955,7 +981,19 @@ elementsSection.classList.add('view-hidden');
         var signalDetails = document.getElementById('signalDetails');
         var signalAdvice = document.getElementById('signalAdvice');
 
-        signalBtn.addEventListener('click', function() {
+        signalBtn.addEventListener('click', async function() {
+            var limitMsg = document.getElementById('signalLimitMsg');
+            if (window.Account) {
+                var quota = await Account.checkAndCountSenal();
+                if (!quota.allowed) {
+                    limitMsg.innerHTML = 'Ya usaste tus 3 señales gratis. Con el <a href="#" id="signalPlanLink">plan mensual</a> las tenés ilimitadas.';
+                    limitMsg.style.display = '';
+                    var link = document.getElementById('signalPlanLink');
+                    if (link) link.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
+                    return;
+                }
+                limitMsg.style.display = 'none';
+            }
             pullCount++;
             var card;
             if (pullCount === 1) {
@@ -1004,6 +1042,7 @@ elementsSection.classList.add('view-hidden');
             signalAdvice.textContent = oraculo[Math.floor(Math.random() * oraculo.length)];
             signalPlaceholder.style.display = 'none';
             signalResult.classList.add('show');
+            if (window.Account) Account.logReading('senal', card.name);
             // Animate
             signalResult.style.opacity = '0';
             signalResult.style.transform = 'scale(0.8)';
@@ -1014,36 +1053,31 @@ elementsSection.classList.add('view-hidden');
             }, 50);
         });
 
-        // === Birthday Modal ===
-        function openBirthdayModal() {
-            var modal = document.getElementById('birthdayModal');
-            var input = document.getElementById('birthdayInput');
-            modal.style.display = 'flex';
-            input.value = '';
-            input.focus();
-        }
+        // === Modal de bienvenida: iniciar sesión (opcional) u omitir ===
+        // El "alma"/insignia de signo en el menú solo aparece para quien se registra; entrar sin
+        // cuenta sigue dejando usar el sitio entero (carta natal incluida) con normalidad.
         (function() {
             var modal = document.getElementById('birthdayModal');
-            var form = document.getElementById('birthdayForm');
-            var input = document.getElementById('birthdayInput');
-            if (!localStorage.getItem('astroBirthday') && !__mpPagoReturn) {
+            if (!localStorage.getItem('astroWelcomeSeen') && !__mpPagoReturn) {
                 modal.style.display = 'flex';
             }
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                var val = input.value;
-                if (val) {
-                    localStorage.setItem('astroBirthday', val);
-                    modal.style.display = 'none';
-                    showUserProfile(val);
-                }
+            document.getElementById('welcomeSkipBtn').addEventListener('click', function() {
+                localStorage.setItem('astroWelcomeSeen', '1');
+                modal.style.display = 'none';
+            });
+            document.getElementById('welcomeLoginBtn').addEventListener('click', function() {
+                localStorage.setItem('astroWelcomeSeen', '1');
+                modal.style.display = 'none';
+                document.getElementById('authModal').style.display = 'flex';
             });
             document.getElementById('navProfileBtn').addEventListener('click', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
-                localStorage.removeItem('astroBirthday');
-                document.getElementById('navProfile').classList.remove('show');
-                openBirthdayModal();
+                if (window.Account && Account.isLoggedIn()) {
+                    document.getElementById('accountModal').style.display = 'flex';
+                } else {
+                    document.getElementById('authModal').style.display = 'flex';
+                }
             });
         })();
 
@@ -1191,12 +1225,6 @@ elementsSection.classList.add('view-hidden');
         document.getElementById('profileModal').addEventListener('click', function(e) {
             if (e.target === this) document.getElementById('profileModal').classList.remove('open');
         });
-
-        // Restore profile on page load if birthday exists
-        (function() {
-            var stored = localStorage.getItem('astroBirthday');
-            if (stored) showUserProfile(stored);
-        })();
 
         function getZodiacSign(day, month) {
             var signs = [
@@ -1674,13 +1702,28 @@ elementsSection.classList.add('view-hidden');
                     aiBtn.disabled = true;
                     out.innerHTML = '<p class="ai-status">Interpretando tu carta…</p>';
                     try {
+                        var jwt = window.Account ? await Account.getAccessToken() : null;
+                        if (!jwt) {
+                            out.innerHTML = '<p class="ai-status">El informe completo es parte del plan mensual. <a href="#" id="natalPlanLink">Iniciá sesión y suscribite</a> para acceder.</p>';
+                            var link0 = document.getElementById('natalPlanLink');
+                            if (link0) link0.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('authModal').style.display = 'flex'; });
+                            aiBtn.disabled = false; return;
+                        }
                         var res = await fetch('/.netlify/functions/report', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
                             body: JSON.stringify(lastChart)
                         });
                         var data = await res.json();
-                        if (!res.ok) throw new Error(data.error || 'No se pudo generar el informe');
+                        if (!res.ok) {
+                            if (res.status === 402) {
+                                out.innerHTML = '<p class="ai-status">' + data.error + ' <a href="#" id="natalPlanLink2">Suscribirme</a></p>';
+                                var link1 = document.getElementById('natalPlanLink2');
+                                if (link1) link1.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
+                                aiBtn.disabled = false; return;
+                            }
+                            throw new Error(data.error || 'No se pudo generar el informe');
+                        }
                         renderReport(out, data.report);
                     } catch (err) {
                         out.innerHTML = '';
@@ -1760,6 +1803,10 @@ elementsSection.classList.add('view-hidden');
                             lastChart.planets.push({ name: 'Medio Cielo', sign: calc.mc.sign, degree: Math.floor(calc.mc.degree) + '°', house: 10, retro: false });
                             document.getElementById('natalAiOut').innerHTML = '';
                             showEl(result);
+                            if (window.Account) {
+                                Account.logReading('natal', 'Sol en ' + (list[0] && list[0].zodiac ? list[0].zodiac.name : '') + ', Ascendente en ' + calc.asc.sign);
+                                Account.saveNatalData(lastChart, { datetime: profile.datetime, lat: parseFloat(parts[0]), lon: parseFloat(parts[1]), unknown: !!profile.unknown });
+                            }
                         } catch (err) { showError(errorEl, err.message); }
                         hideEl(loading);
                         natalBtn.disabled = false;
@@ -1795,6 +1842,7 @@ elementsSection.classList.add('view-hidden');
                         document.getElementById('horoDate').textContent = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
                         document.getElementById('horoText').innerHTML = paras(r.paragraphs);
                         showEl(result);
+                        if (window.Account) Account.logReading('horoscopo', r.sign);
                     } catch (err) { showError(errorEl, err.message); }
                 });
             }
@@ -1857,11 +1905,56 @@ elementsSection.classList.add('view-hidden');
                                 html += '<div class="reading-card"><h4>' + Horo.esc(c.title) + '</h4><p>' + Horo.esc(c.text) + '</p></div>';
                             });
                             document.getElementById('compatReading').innerHTML = html;
+                            lastSynastry = {
+                                p1: A.planets.map(function(p) { return { name: p.name, sign: p.zodiac ? p.zodiac.name : '', house: p.house_number, retro: !!p.is_retrograde }; }),
+                                p2: B.planets.map(function(p) { return { name: p.name, sign: p.zodiac ? p.zodiac.name : '', house: p.house_number, retro: !!p.is_retrograde }; }),
+                                aspects: s.allAspects.map(function(a) { return { a: a.a, b: a.b, type: a.asp.type, orb: a.orb }; })
+                            };
+                            document.getElementById('compatAiOut').innerHTML = '';
                             showEl(result);
                         } catch (err) { showError(errorEl, err.message); }
                         hideEl(loading);
                         compatBtn.disabled = false;
                     })();
+                });
+            }
+            var lastSynastry = null;
+            var compatAiBtn = document.getElementById('compatAiBtn');
+            if (compatAiBtn) {
+                compatAiBtn.addEventListener('click', async function() {
+                    var out = document.getElementById('compatAiOut');
+                    if (!lastSynastry) return;
+                    compatAiBtn.disabled = true;
+                    out.innerHTML = '<p class="ai-status">Conjugando ambas cartas…</p>';
+                    try {
+                        var jwt = window.Account ? await Account.getAccessToken() : null;
+                        if (!jwt) {
+                            out.innerHTML = '<p class="ai-status">El informe extenso es parte del plan mensual. <a href="#" id="compatPlanLink">Iniciá sesión y suscribite</a> para acceder.</p>';
+                            var l0 = document.getElementById('compatPlanLink');
+                            if (l0) l0.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('authModal').style.display = 'flex'; });
+                            compatAiBtn.disabled = false; return;
+                        }
+                        var res = await fetch('/.netlify/functions/synastry-report', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
+                            body: JSON.stringify(lastSynastry)
+                        });
+                        var data = await res.json();
+                        if (!res.ok) {
+                            if (res.status === 402) {
+                                out.innerHTML = '<p class="ai-status">' + data.error + ' <a href="#" id="compatPlanLink2">Suscribirme</a></p>';
+                                var l1 = document.getElementById('compatPlanLink2');
+                                if (l1) l1.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
+                                compatAiBtn.disabled = false; return;
+                            }
+                            throw new Error(data.error || 'No se pudo generar el informe');
+                        }
+                        renderReport(out, data.report);
+                        if (window.Account) Account.logReading('compatibilidad', 'Informe de compatibilidad completo');
+                    } catch (err) {
+                        out.innerHTML = '<p class="ai-status">' + err.message + '</p>';
+                    }
+                    compatAiBtn.disabled = false;
                 });
             }
         })();

@@ -1689,3 +1689,22 @@
 }
 #mpWalletContainer { min-height: 56px; }
 #mpWalletLoading { display: none; }
+
+/* ===== CUENTA DE USUARIO ===== */
+.nav-account-btn {
+    background: linear-gradient(135deg, var(--violeta-brillante), var(--violeta-oscuro));
+    color: #fff; border: none; border-radius: 20px; padding: 0.5rem 1.1rem;
+    font-family: 'Inter', sans-serif; font-size: 0.9rem; cursor: pointer;
+}
+
+.birthday-skip-btn {
+    display: block; margin: 0.8rem auto 0; background: none; border: none;
+    color: var(--violeta-claro); font-size: 0.85rem; text-decoration: underline;
+    cursor: pointer; opacity: 0.8;
+}
+.birthday-skip-btn:hover { opacity: 1; }
+.plan-badge {
+    display: inline-block; background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1a1030; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.6rem;
+    border-radius: 10px; margin-left: 0.5rem;
+}

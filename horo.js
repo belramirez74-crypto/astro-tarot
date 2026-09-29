@@ -166,7 +166,7 @@
         var moons = love(SIGNS.indexOf(lA.zodiac.name), SIGNS.indexOf(lB.zodiac.name));
         score += (signs.score - 70) / 6 + (moons.score - 70) / 6;
         score = Math.max(20, Math.min(97, Math.round(score)));
-        return { score: score, cards: cards.slice(0, 12),
+        return { score: score, cards: cards.slice(0, 12), allAspects: found,
             sunText: 'Sol en ' + sA.zodiac.name + ' con Sol en ' + sB.zodiac.name + ': ' + signs.paragraphs[0],
             moonText: 'Luna en ' + lA.zodiac.name + ' con Luna en ' + lB.zodiac.name + ': ' + moons.paragraphs[0] };
     }

@@ -3,6 +3,7 @@
 // Las claves viven solo como variables de entorno.
 
 const { generateText } = require('./_lib/ai.js');
+const { requirePlan } = require('./_lib/plan.js');
 const MAX_BODY = 16000;
 
 const SYSTEM = 'Sos un astrólogo experimentado que escribe en español rioplatense, con calidez y claridad. ' +
@@ -36,6 +37,11 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return reply(405, c.headers, { error: 'método no permitido' });
   if (!process.env.GEMINI_API_KEY && !process.env.GROQ_API_KEY) return reply(500, c.headers, { error: 'API de IA no configurada' });
   if (!event.body || event.body.length > MAX_BODY) return reply(400, c.headers, { error: 'datos inválidos' });
+
+  const authHeader = (event.headers || {}).authorization || (event.headers || {}).Authorization || '';
+  const jwt = authHeader.replace(/^Bearer\s+/i, '');
+  const plan = jwt ? await requirePlan(jwt).catch(function () { return null; }) : null;
+  if (!plan) return reply(402, c.headers, { error: 'El informe completo de carta natal es parte del plan mensual. Suscribite para acceder.' });
 
   let data;
   try { data = JSON.parse(event.body); } catch (e) { return reply(400, c.headers, { error: 'JSON inválido' }); }

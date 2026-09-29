@@ -2,6 +2,7 @@
 // Requiere un token de pago válido emitido por verify-payment.js tras aprobar el pago en Mercado Pago.
 const { generateText } = require('./_lib/ai.js');
 const { verifyToken } = require('./_lib/paytoken.js');
+const { consumeTiradaQuota } = require('./_lib/plan.js');
 
 const MAX_BODY = 6000;
 const MAX_CARDS = 10;
@@ -42,8 +43,16 @@ exports.handler = async (event) => {
   const item = CATEGORY_FOCUS[data.item] ? data.item : null;
   if (!item) return reply(400, c.headers, { error: 'ítem inválido' });
 
-  const payload = verifyToken(data.token, item);
-  if (!payload) return reply(402, c.headers, { error: 'Esta lectura requiere un pago válido.' });
+  // Se acepta un pago único ya confirmado (token) o, si el usuario está logueado y suscripto,
+  // un cupo de su plan mensual (4 tiradas pagas por mes, se descuenta acá mismo).
+  var payload = verifyToken(data.token, item);
+  if (!payload) {
+    var authHeader = (event.headers || {}).authorization || (event.headers || {}).Authorization || '';
+    var jwt = authHeader.replace(/^Bearer\s+/i, '');
+    var plan = jwt ? await consumeTiradaQuota(jwt).catch(function () { return null; }) : null;
+    if (!plan) return reply(402, c.headers, { error: 'Esta lectura requiere un pago válido o el plan mensual.' });
+    if (!plan.quotaLeft) return reply(402, c.headers, { error: 'Ya usaste tus 4 tiradas del plan este mes. Podés pagar esta lectura por separado.' });
+  }
 
   const cards = Array.isArray(data.cards) ? data.cards.slice(0, MAX_CARDS) : [];
   if (!cards.length) return reply(400, c.headers, { error: 'faltan cartas' });

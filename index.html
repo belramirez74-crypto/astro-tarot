@@ -12,11 +12,28 @@
     <div class="birthday-modal" id="birthdayModal">
         <div class="birthday-modal-content">
             <h2><span class="star-icon">&#x2726;</span> Bienvenido a Astro Tarot<span class="star-icon">&#x2726;</span></h2>
-            <p>Ingres&aacute; tu fecha de nacimiento</p>
-            <form id="birthdayForm">
-                <input type="date" id="birthdayInput" required>
-                <button type="submit">Comenzar viaje</button>
+            <p>Cre&aacute; tu perfil para guardar tu carta natal, tu historial de lecturas y recibir recordatorios. Es opcional.</p>
+            <button class="astro-btn" id="welcomeLoginBtn" type="button">Iniciar sesi&oacute;n / Crear mi perfil</button>
+            <button class="birthday-skip-btn" id="welcomeSkipBtn" type="button">Continuar sin registrarme</button>
+        </div>
+    </div>
+    <div class="mp-modal-overlay" id="authModal" style="display:none">
+        <div class="mp-modal">
+            <button class="mp-modal-close" id="authModalClose" type="button" aria-label="Cerrar">&times;</button>
+            <h3>&#x2726; Cre&aacute; tu perfil &#x2726;</h3>
+            <p class="mp-modal-hint">Guard&aacute; tu carta natal, tu historial de lecturas y recib&iacute; recordatorios para volver.</p>
+            <form id="authForm">
+                <input type="email" id="authEmailInput" placeholder="tu@email.com" required style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
+                <button class="astro-btn" type="submit">Enviarme el enlace</button>
             </form>
+            <p class="ai-status" id="authStatus"></p>
+        </div>
+    </div>
+    <div class="mp-modal-overlay" id="accountModal" style="display:none">
+        <div class="mp-modal" style="max-width:480px;max-height:85vh;overflow-y:auto">
+            <button class="mp-modal-close" id="accountModalClose" type="button" aria-label="Cerrar">&times;</button>
+            <h3>&#x2726; Mi Cuenta &#x2726;</h3>
+            <div id="accountModalBody" style="text-align:left"></div>
         </div>
     </div>
     <div class="profile-modal" id="profileModal">
@@ -69,6 +86,7 @@
                 <li><a href="#" data-view="natal">Carta Natal</a></li>
                 <li><a href="#" data-view="horoscope">Hor&oacute;scopo</a></li>
                 <li><a href="#" data-view="compatibility">Compatibilidad</a></li>
+                <li><button class="nav-account-btn" id="accountBtn" type="button">Crear mi perfil</button></li>
             </ul>
         </div>
         <div class="nav-profile" id="navProfile">
@@ -306,6 +324,10 @@
                 <h3>&#x2726; Carta de Sinastr&iacute;a &#x2726;</h3>
                 <div class="compat-chart" id="compatChartSvg"></div>
                 <div class="natal-reading" id="compatReading"></div>
+                <div class="natal-ai" id="compatAi">
+                    <button class="astro-btn" id="compatAiBtn" type="button">&#x2726; Informe de compatibilidad completo (plan) &#x2726;</button>
+                    <div id="compatAiOut" class="ai-report"></div>
+                </div>
             </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
         </section>
@@ -366,6 +388,7 @@
                         </div>
                     </div>
                     <button class="signal-btn" id="signalBtn">Tu se&ntilde;al</button>
+                    <p class="ai-status" id="signalLimitMsg" style="display:none"></p>
                 </div>
             </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
@@ -435,6 +458,7 @@
     <script src="reading.js"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script src="horo.js"></script>
+    <script src="account.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
