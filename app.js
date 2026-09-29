@@ -697,7 +697,11 @@
                 if (pago !== 'exito' || !paymentId || !item) return;
                 (async function() {
                     var errEl = document.getElementById(item === 'full' ? 'tiradaPayError' : 'categoriaPayError');
-                    document.querySelector('[data-view="tirada"]').click();
+                    // Se espera al siguiente tick: recién ahí ya está armado el resto de la página
+                    // (el link "Tirada" del menú todavía no tiene su listener en este punto del script).
+                    await new Promise(function(r) { setTimeout(r, 0); });
+                    var tiradaLink = document.querySelector('[data-view="tirada"]');
+                    if (tiradaLink) tiradaLink.click();
                     try {
                         var res = await fetch('/.netlify/functions/verify-payment?payment_id=' + encodeURIComponent(paymentId));
                         var data = await res.json();
