@@ -1068,7 +1068,14 @@ elementsSection.classList.add('view-hidden');
             document.getElementById('welcomeLoginBtn').addEventListener('click', function() {
                 localStorage.setItem('astroWelcomeSeen', '1');
                 modal.style.display = 'none';
-                document.getElementById('authModal').style.display = 'flex';
+                if (window.Account) Account.openAuthModal(false);
+                else document.getElementById('authModal').style.display = 'flex';
+            });
+            document.getElementById('welcomeSignupBtn').addEventListener('click', function() {
+                localStorage.setItem('astroWelcomeSeen', '1');
+                modal.style.display = 'none';
+                if (window.Account) Account.openAuthModal(true);
+                else document.getElementById('authModal').style.display = 'flex';
             });
             document.getElementById('navProfileBtn').addEventListener('click', function(e) {
                 e.stopPropagation();

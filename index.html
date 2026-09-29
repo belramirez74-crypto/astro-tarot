@@ -12,19 +12,26 @@
     <div class="birthday-modal" id="birthdayModal">
         <div class="birthday-modal-content">
             <h2><span class="star-icon">&#x2726;</span> Bienvenido a Astro Tarot<span class="star-icon">&#x2726;</span></h2>
-            <p>Ingres&aacute; o cre&aacute; tu cuenta para guardar tu carta natal, tu historial de lecturas y recibir recordatorios. Es opcional.</p>
-            <button class="astro-btn" id="welcomeLoginBtn" type="button">Ingresar / Crear cuenta</button>
+            <p>Guard&aacute; tu carta natal, tu historial de lecturas y recib&iacute; recordatorios. Es opcional.</p>
+            <div class="auth-tabs" style="margin-bottom:0.8rem">
+                <button class="astro-btn" id="welcomeLoginBtn" type="button" style="flex:1">Iniciar sesi&oacute;n</button>
+                <button class="astro-btn" id="welcomeSignupBtn" type="button" style="flex:1">Crear cuenta</button>
+            </div>
             <button class="birthday-skip-btn" id="welcomeSkipBtn" type="button">Continuar sin registrarme</button>
         </div>
     </div>
     <div class="mp-modal-overlay" id="authModal" style="display:none">
         <div class="mp-modal">
             <button class="mp-modal-close" id="authModalClose" type="button" aria-label="Cerrar">&times;</button>
-            <h3>&#x2726; Ingres&aacute; o cre&aacute; tu cuenta &#x2726;</h3>
-            <p class="mp-modal-hint">Pon&eacute; tu email: si ya ten&eacute;s cuenta te llevamos a tu perfil, y si es la primera vez, te la creamos. Guard&aacute; tu carta natal, tu historial de lecturas y recib&iacute; recordatorios.</p>
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="authTabLogin">Iniciar sesi&oacute;n</button>
+                <button type="button" class="auth-tab" id="authTabSignup">Crear cuenta</button>
+            </div>
+            <h3 id="authModalTitle">&#x2726; Iniciar sesi&oacute;n &#x2726;</h3>
+            <p class="mp-modal-hint" id="authModalHint">Pon&eacute; el email con el que te registraste y te mandamos un enlace para entrar, sin contrase&ntilde;a.</p>
             <form id="authForm">
                 <input type="email" id="authEmailInput" placeholder="tu@email.com" required style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
-                <button class="astro-btn" type="submit">Ingresar / Crear cuenta</button>
+                <button class="astro-btn" type="submit" id="authSubmitBtn">Enviarme el enlace</button>
             </form>
             <p class="ai-status" id="authStatus"></p>
         </div>

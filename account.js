@@ -185,6 +185,23 @@
         } catch (e) {}
     }
 
+    function setAuthTab(isSignup) {
+        var tabLogin = document.getElementById('authTabLogin'), tabSignup = document.getElementById('authTabSignup');
+        if (tabLogin) tabLogin.classList.toggle('active', !isSignup);
+        if (tabSignup) tabSignup.classList.toggle('active', isSignup);
+        var title = document.getElementById('authModalTitle'), hint = document.getElementById('authModalHint');
+        if (title) title.innerHTML = '&#x2726; ' + (isSignup ? 'Crear cuenta' : 'Iniciar sesión') + ' &#x2726;';
+        if (hint) hint.textContent = isSignup
+            ? 'Poné tu email y te mandamos un enlace para crear tu cuenta. Guardás tu carta natal, tu historial y recibís recordatorios.'
+            : 'Poné el email con el que te registraste y te mandamos un enlace para entrar, sin contraseña.';
+    }
+
+    function openAuthModal(isSignup) {
+        setAuthTab(!!isSignup);
+        var m = document.getElementById('authModal');
+        if (m) m.style.display = 'flex';
+    }
+
     function wireUi() {
         var accBtn = document.getElementById('accountBtn');
         if (accBtn) {
@@ -193,7 +210,7 @@
                     document.getElementById('accountModal').style.display = 'flex';
                     refreshProfile().then(renderAccountModal);
                 } else {
-                    document.getElementById('authModal').style.display = 'flex';
+                    openAuthModal(false);
                 }
             });
         }
@@ -201,6 +218,10 @@
         if (accountClose) accountClose.addEventListener('click', function () { document.getElementById('accountModal').style.display = 'none'; });
         var authClose = document.getElementById('authModalClose');
         if (authClose) authClose.addEventListener('click', function () { document.getElementById('authModal').style.display = 'none'; });
+
+        var tabLogin = document.getElementById('authTabLogin'), tabSignup = document.getElementById('authTabSignup');
+        if (tabLogin) tabLogin.addEventListener('click', function () { setAuthTab(false); });
+        if (tabSignup) tabSignup.addEventListener('click', function () { setAuthTab(true); });
 
         var authForm = document.getElementById('authForm');
         if (authForm) {
@@ -284,7 +305,7 @@
     window.Account = {
         logReading: logReading, saveNatalData: saveNatalData, isLoggedIn: isLoggedIn,
         checkAndCountSenal: checkAndCountSenal, getAccessToken: getAccessToken,
-        hasActivePlan: hasActivePlan, openSubscribeModal: openSubscribeModal
+        hasActivePlan: hasActivePlan, openSubscribeModal: openSubscribeModal, openAuthModal: openAuthModal
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
