@@ -579,6 +579,8 @@
                 });
             }
 
+            var pendingPayment = null; // { item, ref, errEl } — pago abierto, esperando confirmación
+
             async function startCheckout(item, btn, errEl) {
                 if (btn) btn.disabled = true;
                 if (errEl) tHideEl(errEl);
@@ -588,7 +590,11 @@
                     });
                     var data = await res.json();
                     if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar el pago');
-                    try { sessionStorage.setItem('tarot_pending_item', item); } catch (e) {}
+                    try {
+                        sessionStorage.setItem('tarot_pending_item', item);
+                        if (data.ref) sessionStorage.setItem('tarot_pending_ref', data.ref);
+                    } catch (e) {}
+                    pendingPayment = { item: item, ref: data.ref, errEl: errEl };
                     openMpModal(data.url);
                 } catch (err) {
                     if (errEl) tShowError(errEl, err.message);
@@ -596,6 +602,43 @@
                     if (btn) btn.disabled = false;
                 }
             }
+
+            // Cuando el pago se completa DENTRO de la app de Mercado Pago (el botón Wallet la abre
+            // si está instalada), el usuario vuelve a esta pestaña a mano y no hay redirección de
+            // Mercado Pago. Al recuperar el foco, se pregunta "¿ya se aprobó?" por la referencia del pago.
+            var pollTimer = null;
+            async function pollPendingPayment() {
+                var pending = pendingPayment;
+                if (!pending && sessionStorage) {
+                    try {
+                        var it = sessionStorage.getItem('tarot_pending_item'), rf = sessionStorage.getItem('tarot_pending_ref');
+                        if (it && rf) pending = { item: it, ref: rf, errEl: document.getElementById(it === 'full' ? 'tiradaPayError' : 'categoriaPayError') };
+                    } catch (e) {}
+                }
+                if (!pending || !pending.ref || getToken(pending.item)) return;
+                clearTimeout(pollTimer);
+                var attempts = 0;
+                (function tick() {
+                    attempts++;
+                    fetch('/.netlify/functions/verify-payment?ref=' + encodeURIComponent(pending.ref))
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                            if (data && data.approved) {
+                                pendingPayment = null;
+                                try { sessionStorage.removeItem('tarot_pending_item'); sessionStorage.removeItem('tarot_pending_ref'); } catch (e) {}
+                                document.getElementById('mpModalOverlay').style.display = 'none';
+                                saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
+                                runPremiumReading(data.item, data.token);
+                            } else if (attempts < 20) {
+                                pollTimer = setTimeout(tick, 3000);
+                            }
+                        }).catch(function() {
+                            if (attempts < 20) pollTimer = setTimeout(tick, 3000);
+                        });
+                })();
+            }
+            document.addEventListener('visibilitychange', function() { if (!document.hidden) pollPendingPayment(); });
+            window.addEventListener('focus', pollPendingPayment);
 
             var unlockFullBtn = document.getElementById('unlockFullBtn');
             if (unlockFullBtn) {

@@ -34,21 +34,37 @@ exports.handler = async (event) => {
 
   const q = event.queryStringParameters || {};
   const paymentId = q.payment_id;
-  if (!paymentId || !/^\d+$/.test(paymentId)) return reply(400, c.headers, { error: 'payment_id inválido' });
+  const ref = q.ref;
+  if ((!paymentId || !/^\d+$/.test(paymentId)) && !ref) return reply(400, c.headers, { error: 'payment_id o ref inválido' });
+  if (ref && !/^[a-z]+:[a-f0-9]{16}$/.test(ref)) return reply(400, c.headers, { error: 'ref inválido' });
+
+  function ok(externalRef) {
+    // external_reference tiene forma "item:nonce"; el token solo guarda el item.
+    const item = String(externalRef || '').split(':')[0];
+    if (!item) return reply(502, c.headers, { error: 'Pago sin referencia de ítem' });
+    const token = sign({ item: item, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
+    return reply(200, c.headers, { approved: true, item: item, token: token });
+  }
 
   try {
+    if (ref) {
+      // Vuelta desde la app de Mercado Pago: no hay payment_id en la URL, se busca por referencia.
+      const res = await fetch('https://api.mercadopago.com/v1/payments/search?external_reference=' + encodeURIComponent(ref) +
+        '&sort=date_created&criteria=desc&limit=1', { headers: { authorization: 'Bearer ' + process.env.MP_ACCESS_TOKEN } });
+      const out = await res.json();
+      if (!res.ok) return reply(502, c.headers, { error: 'No se pudo verificar el pago' });
+      const p = (out.results || [])[0];
+      if (!p) return reply(200, c.headers, { approved: false, status: 'pending' });
+      if (p.status !== 'approved') return reply(200, c.headers, { approved: false, status: p.status });
+      return ok(p.external_reference);
+    }
     const res = await fetch('https://api.mercadopago.com/v1/payments/' + paymentId, {
       headers: { authorization: 'Bearer ' + process.env.MP_ACCESS_TOKEN }
     });
     const out = await res.json();
     if (!res.ok) return reply(502, c.headers, { error: 'No se pudo verificar el pago' });
     if (out.status !== 'approved') return reply(200, c.headers, { approved: false, status: out.status });
-
-    const item = out.external_reference;
-    if (!item) return reply(502, c.headers, { error: 'Pago sin referencia de ítem' });
-
-    const token = sign({ item: item, paymentId: paymentId, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
-    return reply(200, c.headers, { approved: true, item: item, token: token });
+    return ok(out.external_reference);
   } catch (err) {
     return reply(500, c.headers, { error: 'error interno' });
   }

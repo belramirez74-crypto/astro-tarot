@@ -46,6 +46,10 @@ exports.handler = async (event) => {
     // auto_return exige que back_urls.success sea una URL pública; en localhost, Mercado Pago
     // no puede validarla, así que se omite ahí (el usuario igual puede volver manualmente).
     const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(site);
+    // ref único: cuando el pago se completa DENTRO de la app de Mercado Pago (deep link), el
+    // navegador no vuelve solo a back_urls; el frontend usa este ref para preguntar "¿ya se aprobó?"
+    // al volver a la pestaña, en vez de depender solo de la redirección.
+    const ref = data.item + ':' + require('crypto').randomBytes(8).toString('hex');
     const body = {
       items: [{ title: item.title, quantity: 1, currency_id: 'ARS', unit_price: price }],
       back_urls: {
@@ -53,7 +57,7 @@ exports.handler = async (event) => {
         failure: site + '/?pago=error',
         pending: site + '/?pago=pendiente'
       },
-      external_reference: data.item,
+      external_reference: ref,
       statement_descriptor: 'ASTRO TAROT'
     };
     if (!isLocal) body.auto_return = 'approved';
@@ -67,7 +71,7 @@ exports.handler = async (event) => {
       console.error('MP error', res.status, JSON.stringify(out).slice(0, 300));
       return reply(502, c.headers, { error: 'No se pudo iniciar el pago' });
     }
-    return reply(200, c.headers, { url: out.init_point || out.sandbox_init_point, preferenceId: out.id });
+    return reply(200, c.headers, { url: out.init_point || out.sandbox_init_point, preferenceId: out.id, ref: ref });
   } catch (err) {
     return reply(500, c.headers, { error: 'error interno' });
   }
