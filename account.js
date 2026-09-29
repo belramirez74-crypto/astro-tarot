@@ -62,7 +62,7 @@
         var np = document.getElementById('navProfile');
         if (np) np.classList.remove('show');
         var accBtn = document.getElementById('accountBtn');
-        if (accBtn) accBtn.textContent = 'Crear mi perfil';
+        if (accBtn) accBtn.textContent = 'Ingresar / Crear cuenta';
     }
 
     async function refreshProfile() {
