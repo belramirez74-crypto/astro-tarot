@@ -1643,9 +1643,30 @@
 /* ===== TIRADA DE TAROT ===== */
 /* ===== TIRADA: diseño más elaborado ===== */
 #tirada .signal-inner { position: relative; }
-#tirada .signal-inner::before {
-    content: '\2726 \2727 \2726'; display: block; text-align: center; letter-spacing: 1.2rem;
-    color: rgba(198,134,221,0.5); font-size: 0.9rem; margin-bottom: 0.6rem;
+
+.tirada-emblem { position: relative; width: 110px; height: 110px; margin: 0.5rem auto 1.2rem; display: grid; place-items: center; }
+.tirada-emblem-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 1px solid rgba(220,200,255,0.35); border-top-color: rgba(198,134,221,0.9);
+    box-shadow: 0 0 30px -6px rgba(150,100,255,0.6);
+    animation: lubeSpin 14s linear infinite;
+}
+.tirada-emblem-ring::before {
+    content: ''; position: absolute; inset: 14px; border-radius: 50%; border: 1px dashed rgba(220,200,255,0.25);
+}
+.tirada-emblem-icon {
+    font-size: 2.6rem; filter: drop-shadow(0 0 16px rgba(198,134,221,0.75));
+    animation: lubeFloat 6s ease-in-out infinite;
+}
+.tirada-intro-sub {
+    text-align: center; color: #C686DD; font-size: 0.78rem; letter-spacing: 0.35em;
+    text-transform: uppercase; margin: -0.4rem 0 0.8rem;
+}
+.tirada-free-badge {
+    display: inline-block; margin-left: 0.4rem; padding: 0.12rem 0.65rem; border-radius: 999px;
+    background: linear-gradient(135deg, rgba(150,255,190,0.25), rgba(90,220,150,0.1));
+    border: 1px solid rgba(150,255,190,0.45); color: #a7f3d0; font-weight: 700;
+    font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle;
 }
 #tiradaBtn { position: relative; }
 #tiradaBtn::before {
