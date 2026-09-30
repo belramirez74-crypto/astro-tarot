@@ -31,7 +31,10 @@
             <p class="mp-modal-hint" id="authModalHint">Entr&aacute; con tu email y contrase&ntilde;a.</p>
             <form id="authForm">
                 <input type="email" id="authEmailInput" placeholder="tu@email.com" required autocomplete="email" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
-                <input type="password" id="authPasswordInput" placeholder="Contrase&ntilde;a" required minlength="6" autocomplete="current-password" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.4rem">
+                <div class="auth-pass-wrap">
+                    <input type="password" id="authPasswordInput" placeholder="Contrase&ntilde;a" required minlength="6" autocomplete="current-password">
+                    <button type="button" id="authPassToggle" aria-label="Mostrar contrase&ntilde;a">&#x1F441;</button>
+                </div>
                 <p class="mp-modal-hint" id="authPasswordHint" style="margin:0 0 0.8rem;text-align:left;font-size:0.78rem">M&iacute;nimo 6 caracteres.</p>
                 <button class="astro-btn" type="submit" id="authSubmitBtn">Iniciar sesi&oacute;n</button>
             </form>

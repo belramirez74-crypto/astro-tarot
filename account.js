@@ -229,6 +229,17 @@
         if (tabLogin) tabLogin.addEventListener('click', function () { setAuthTab(false); });
         if (tabSignup) tabSignup.addEventListener('click', function () { setAuthTab(true); });
 
+        var passToggle = document.getElementById('authPassToggle');
+        if (passToggle) {
+            passToggle.addEventListener('click', function () {
+                var input = document.getElementById('authPasswordInput');
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                passToggle.textContent = show ? '🙈' : '👁️';
+                passToggle.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            });
+        }
+
         var authForm = document.getElementById('authForm');
         if (authForm) {
             authForm.addEventListener('submit', async function (e) {
