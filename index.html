@@ -42,6 +42,21 @@
             <p class="ai-status" id="authStatus"></p>
         </div>
     </div>
+    <div class="mp-modal-overlay" id="resetPasswordModal" style="display:none">
+        <div class="mp-modal">
+            <h3>&#x2726; Eleg&iacute; tu contrase&ntilde;a nueva &#x2726;</h3>
+            <p class="mp-modal-hint">Termin&aacute; de recuperar tu cuenta poniendo una contrase&ntilde;a nueva.</p>
+            <form id="resetPasswordForm">
+                <div class="auth-pass-wrap">
+                    <input type="password" id="resetPasswordInput" placeholder="Contrase&ntilde;a nueva" required minlength="6" autocomplete="new-password">
+                    <button type="button" id="resetPassToggle" aria-label="Mostrar contrase&ntilde;a">&#x1F441;</button>
+                </div>
+                <p class="mp-modal-hint" style="margin:0 0 0.8rem;text-align:left;font-size:0.78rem">M&iacute;nimo 6 caracteres.</p>
+                <button class="astro-btn" type="submit">Guardar contrase&ntilde;a</button>
+            </form>
+            <p class="ai-status" id="resetPasswordStatus"></p>
+        </div>
+    </div>
     <div class="mp-modal-overlay" id="accountModal" style="display:none">
         <div class="mp-modal" style="max-width:480px;max-height:85vh;overflow-y:auto">
             <button class="mp-modal-close" id="accountModalClose" type="button" aria-label="Cerrar">&times;</button>

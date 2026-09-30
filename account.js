@@ -28,6 +28,10 @@
             sb.auth.onAuthStateChange(function (event, session) {
                 if (session && session.user) { currentUser = session.user; onLoggedIn(); }
                 else if (event === 'SIGNED_OUT') { currentUser = null; currentProfile = null; onLoggedOut(); }
+                if (event === 'PASSWORD_RECOVERY') {
+                    var m = document.getElementById('resetPasswordModal');
+                    if (m) m.style.display = 'flex';
+                }
             });
             var s0 = await sb.auth.getSession();
             if (s0.data && s0.data.session) { currentUser = s0.data.session.user; onLoggedIn(); }
@@ -286,6 +290,33 @@
                     status.textContent = 'Te mandamos un mail a ' + email + ' para elegir una contraseña nueva.';
                 } catch (err) {
                     status.textContent = 'No se pudo enviar el mail: ' + (err.message || 'error');
+                }
+            });
+        }
+
+        var resetToggle = document.getElementById('resetPassToggle');
+        if (resetToggle) {
+            resetToggle.addEventListener('click', function () {
+                var input = document.getElementById('resetPasswordInput');
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                resetToggle.textContent = show ? '🙈' : '👁️';
+            });
+        }
+        var resetForm = document.getElementById('resetPasswordForm');
+        if (resetForm) {
+            resetForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                var pass = document.getElementById('resetPasswordInput').value;
+                var status = document.getElementById('resetPasswordStatus');
+                status.textContent = 'Guardando...';
+                try {
+                    var r = await sb.auth.updateUser({ password: pass });
+                    if (r.error) throw r.error;
+                    status.textContent = 'Listo, ya podés usar tu contraseña nueva.';
+                    setTimeout(function () { document.getElementById('resetPasswordModal').style.display = 'none'; }, 1500);
+                } catch (err) {
+                    status.textContent = 'No se pudo guardar: ' + (err.message || 'error');
                 }
             });
         }
