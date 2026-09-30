@@ -94,7 +94,7 @@
                 '<p>Tiradas pagas usadas este mes: ' + used + ' / 4</p></div>';
         }
         return '<div class="reading-card"><h4>Plan Astro Tarot</h4>' +
-            '<p>Informe natal completo con IA, informe de compatibilidad completo, 4 tiradas pagas por mes incluidas y señales ilimitadas.</p>' +
+            '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas pagas por mes incluidas y señales ilimitadas.</p>' +
             '<button class="astro-btn" id="subscribeBtn" type="button">Suscribirme — $' + (window.__planPrice || 7500) + ' ARS/mes</button>' +
             '<div class="astro-error" id="subscribeError" style="display:none"></div></div>';
     }
