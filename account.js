@@ -83,18 +83,18 @@
     var KIND_LABEL = {
         natal: 'Carta natal', tirada_gratis: 'Tirada gratis (Pasado/Presente/Futuro)',
         tirada_full: 'Lectura completa (7 cartas)', tirada_categoria: 'Lectura por categoría',
-        horoscopo: 'Horóscopo del día', senal: 'Señal del Tarot', compatibilidad: 'Informe de compatibilidad'
+        horoscopo: 'Horóscopo del día', senal: 'Señal del Tarot', oraculo: 'Oráculo (I Ching)', compatibilidad: 'Informe de compatibilidad'
     };
 
     function planStatusHtml(prof) {
         if (prof && prof.plan_active) {
             var used = prof.plan_tiradas_used || 0;
             return '<div class="reading-card"><h4>Plan Astro Tarot <span class="plan-badge">ACTIVO</span></h4>' +
-                '<p>Informe natal completo, informe de compatibilidad completo y señales ilimitadas.</p>' +
+                '<p>Informe natal completo, informe de compatibilidad completo y consultas al oráculo ilimitadas.</p>' +
                 '<p>Tiradas pagas usadas este mes: ' + used + ' / 4</p></div>';
         }
         return '<div class="reading-card"><h4>Plan Astro Tarot</h4>' +
-            '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas pagas por mes incluidas y señales ilimitadas.</p>' +
+            '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas pagas por mes incluidas y consultas al oráculo ilimitadas.</p>' +
             '<button class="astro-btn" id="subscribeBtn" type="button">Suscribirme — $' + (window.__planPrice || 7500) + ' ARS/mes</button>' +
             '<div class="astro-error" id="subscribeError" style="display:none"></div></div>';
     }
@@ -120,7 +120,7 @@
         body.innerHTML =
             '<div class="reading-card"><h4>Tu cuenta</h4><p>' + esc(email) + '</p>' +
             '<p>Fecha de nacimiento: ' + esc(birth) + '</p>' +
-            '<p>Señales usadas: ' + esc(senales) + '</p></div>' +
+            '<p>Consultas al oráculo: ' + esc(senales) + '</p></div>' +
             planStatusHtml(prof) +
             '<div class="reading-card"><h4>Recordatorios por email</h4>' +
             '<label class="astro-check"><input type="checkbox" id="notifyEnabledInput"' + (enabled ? ' checked' : '') + '> Quiero recibir recordatorios</label>' +

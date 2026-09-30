@@ -983,25 +983,8 @@ elementsSection.classList.add('view-hidden');
             return out;
         }
 
-        // === SIGNAL LOGIC ===
-        var pullCount = 0;
-        var firstCard = null;
-
-        function pickCard() {
-            var deck = allCards();
-            // Bias toward most-clicked sign's suit
-            var bestSuit = 'major', bestVal = 0;
-            ['major','wands','cups','swords','pentacles'].forEach(function(s) {
-                if (affinity[s] > bestVal) { bestVal = affinity[s]; bestSuit = s; }
-            });
-            var pool = bestVal > 0 && Math.random() < 0.5
-                ? cardData[bestSuit].slice()
-                : deck;
-            return pool[Math.floor(Math.random() * pool.length)];
-        }
-
-        // === SIGNAL UI ===
-        var oraculo = [
+        // === ORÁCULO (I Ching) ===
+        var oraculoFrases = [
             'Confía en el ritmo del universo.',
             'Tu intuición es tu brújula más fiel.',
             'Lo que buscas también te está buscando.',
@@ -1031,19 +1014,27 @@ elementsSection.classList.add('view-hidden');
         var signalBtn = document.getElementById('signalBtn');
         var signalPlaceholder = document.getElementById('signalPlaceholder');
         var signalResult = document.getElementById('signalResult');
-        var signalImg = document.getElementById('signalImg');
-        var signalName = document.getElementById('signalName');
-        var signalNumber = document.getElementById('signalNumber');
-        var signalDesc = document.getElementById('signalDesc');
-        var signalDetails = document.getElementById('signalDetails');
-        var signalAdvice = document.getElementById('signalAdvice');
+
+        function renderHexLines(container, lines, moving) {
+            container.innerHTML = '';
+            for (var i = 5; i >= 0; i--) {
+                var row = document.createElement('div');
+                row.className = 'hex-line' + (lines[i] ? ' yang' : ' yin') + (moving && moving.indexOf(i) !== -1 ? ' moving' : '');
+                if (lines[i]) {
+                    row.innerHTML = '<span class="hex-bar"></span>';
+                } else {
+                    row.innerHTML = '<span class="hex-bar hex-bar-l"></span><span class="hex-bar hex-bar-r"></span>';
+                }
+                container.appendChild(row);
+            }
+        }
 
         signalBtn.addEventListener('click', async function() {
             var limitMsg = document.getElementById('signalLimitMsg');
             if (window.Account) {
                 var quota = await Account.checkAndCountSenal();
                 if (!quota.allowed) {
-                    limitMsg.innerHTML = 'Ya usaste tus 3 señales gratis. Con el <a href="#" id="signalPlanLink">plan mensual</a> las tenés ilimitadas.';
+                    limitMsg.innerHTML = 'Ya usaste tus 3 consultas gratis. Con el <a href="#" id="signalPlanLink">plan mensual</a> las tenés ilimitadas.';
                     limitMsg.style.display = '';
                     var link = document.getElementById('signalPlanLink');
                     if (link) link.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
@@ -1051,56 +1042,26 @@ elementsSection.classList.add('view-hidden');
                 }
                 limitMsg.style.display = 'none';
             }
-            pullCount++;
-            var card;
-            if (pullCount === 1) {
-                card = pickCard();
-                firstCard = card;
-            } else if (pullCount % 3 === 0 && firstCard) {
-                card = firstCard;
+            if (!window.IChing) return;
+            var r = IChing.cast();
+            renderHexLines(document.getElementById('hexLines'), r.primary.lines, r.moving);
+            document.getElementById('hexNumber').textContent = 'Hexagrama ' + r.primary.num;
+            document.getElementById('hexName').textContent = r.primary.name;
+            document.getElementById('hexMeaning').textContent = r.primary.meaning;
+            document.getElementById('hexAdvice').textContent = r.primary.advice;
+            var resultBlock = document.getElementById('hexResultBlock');
+            if (r.result) {
+                document.getElementById('hexResultName').textContent = r.result.num + '. ' + r.result.name;
+                document.getElementById('hexResultText').textContent = r.result.meaning;
+                renderHexLines(document.getElementById('hexResultLines'), r.result.lines, null);
+                resultBlock.style.display = '';
             } else {
-                card = pickCard();
+                resultBlock.style.display = 'none';
             }
-            // Build image path
-            var suitIdx = {major:0, wands:1, cups:2, swords:3, pentacles:4};
-            var cardIdx = 0;
-            var found = false;
-            var suits = ['major','wands','cups','swords','pentacles'];
-            for (var si = 0; si < suits.length; si++) {
-                var list = cardData[suits[si]];
-                for (var ci = 0; ci < list.length; ci++) {
-                    if (list[ci] === card) { cardIdx = card.num !== undefined ? parseInt(card.num) : ci; found = true; break; }
-                }
-                if (found) break;
-            }
-            // Simple index: find position in flat deck
-            var flat = allCards();
-            var pos = 0;
-            for (var i = 0; i < flat.length; i++) {
-                if (flat[i] === card) { pos = i; break; }
-            }
-            signalImg.src = 'images/cards/card_' + String(pos).padStart(3,'0') + '.webp';
-            signalName.textContent = card.name;
-            // Determine suit name for display
-            var suitName = '';
-            var suitsList = ['major','wands','cups','swords','pentacles'];
-            var suitLabels = ['Arcano Mayor','Bastos','Copas','Espadas','Oros'];
-            for (var si2 = 0; si2 < suitsList.length; si2++) {
-                if (cardData[suitsList[si2]].indexOf(card) !== -1) { suitName = suitLabels[si2]; break; }
-            }
-            var numLabel = suitName === 'Arcano Mayor' ? 'Arcano Mayor Nº ' + card.num : suitName;
-            signalNumber.textContent = numLabel;
-            signalDesc.textContent = card.desc || 'Confía en tu intuición.';
-            var dets = [];
-            if (card.sig) dets.push('♄ ' + card.sig);
-            if (card.sigL) dets.push('☉ ' + card.sigL);
-            if (card.casa) dets.push('☽ Casa ' + card.casa);
-            signalDetails.innerHTML = dets.map(function(d) { return '<span>' + d + '</span>'; }).join('');
-            signalAdvice.textContent = oraculo[Math.floor(Math.random() * oraculo.length)];
+            document.getElementById('hexPhrase').textContent = oraculoFrases[Math.floor(Math.random() * oraculoFrases.length)];
             signalPlaceholder.style.display = 'none';
             signalResult.classList.add('show');
-            if (window.Account) Account.logReading('senal', card.name);
-            // Animate
+            if (window.Account) Account.logReading('oraculo', r.primary.num + '. ' + r.primary.name);
             signalResult.style.opacity = '0';
             signalResult.style.transform = 'scale(0.8)';
             setTimeout(function() {
