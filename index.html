@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astro Tarot - Astrolog&iacute;a y Tarot</title>
+    <title>LUBE - Astrolog&iacute;a &amp; Tarot</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="birthday-modal" id="birthdayModal">
         <div class="birthday-modal-content">
-            <h2><span class="star-icon">&#x2726;</span> Bienvenido a Astro Tarot<span class="star-icon">&#x2726;</span></h2>
+            <h2><span class="star-icon">&#x2726;</span> Bienvenido a LUBE<span class="star-icon">&#x2726;</span></h2>
             <p>Guard&aacute; tu carta natal, tu historial de lecturas y recib&iacute; recordatorios. Es opcional.</p>
             <div class="auth-tabs" style="margin-bottom:0.8rem">
                 <button class="astro-btn" id="welcomeLoginBtn" type="button" style="flex:1">Iniciar sesi&oacute;n</button>
@@ -28,11 +28,14 @@
                 <button type="button" class="auth-tab" id="authTabSignup">Crear cuenta</button>
             </div>
             <h3 id="authModalTitle">&#x2726; Iniciar sesi&oacute;n &#x2726;</h3>
-            <p class="mp-modal-hint" id="authModalHint">Pon&eacute; el email con el que te registraste y te mandamos un enlace para entrar, sin contrase&ntilde;a.</p>
+            <p class="mp-modal-hint" id="authModalHint">Entr&aacute; con tu email y contrase&ntilde;a.</p>
             <form id="authForm">
-                <input type="email" id="authEmailInput" placeholder="tu@email.com" required style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
-                <button class="astro-btn" type="submit" id="authSubmitBtn">Enviarme el enlace</button>
+                <input type="email" id="authEmailInput" placeholder="tu@email.com" required autocomplete="email" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
+                <input type="password" id="authPasswordInput" placeholder="Contrase&ntilde;a" required minlength="6" autocomplete="current-password" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.4rem">
+                <p class="mp-modal-hint" id="authPasswordHint" style="margin:0 0 0.8rem;text-align:left;font-size:0.78rem">M&iacute;nimo 6 caracteres.</p>
+                <button class="astro-btn" type="submit" id="authSubmitBtn">Iniciar sesi&oacute;n</button>
             </form>
+            <p class="mp-modal-hint" id="authForgotWrap"><a href="#" id="authForgotLink">&#191;Olvidaste tu contrase&ntilde;a?</a></p>
             <p class="ai-status" id="authStatus"></p>
         </div>
     </div>
@@ -79,7 +82,7 @@
     <nav class="navbar" id="navbar">
         <div class="navbar-left">
             <button class="nav-toggle" id="navToggle" aria-label="Menu">&#x2630;</button>
-            <a href="#" class="brand">Astro Tarot</a>
+            <a href="#" class="brand"><span class="lube-star">&#x2726;</span>LUBE<span class="lube-sub">Astrolog&iacute;a &amp; Tarot</span></a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#" data-view="all" class="active">Inicio</a></li>
                 <li><a href="#" data-view="signal">Se&ntilde;al</a></li>
@@ -130,8 +133,9 @@
                 <span class="constellation-star" style="top:7%;left:52%;font-size:0.8rem;opacity:0.4;animation-delay:-20s">&#x2726;</span>
                 <span class="constellation-star" style="top:42%;left:48%;font-size:1.5rem;opacity:0.4;animation-delay:-22s">&#x2726;</span>
             </div>
-            <div class="hero-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="hero-img"></div>
-            <h1>Astro Tarot</h1>
+            <div class="hero-symbol"><svg class="lube-sunmoon" viewBox="0 0 200 200" aria-label="Sol y luna"><defs><radialGradient id="lubeSun" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#b8283a"/><stop offset=".45" stop-color="#7d1020"/><stop offset="1" stop-color="#4a0712"/></radialGradient><mask id="lubeMoonMask"><rect width="200" height="200" fill="#fff"/><circle cx="92" cy="98" r="35" fill="#000"/></mask></defs><circle cx="100" cy="100" r="66" fill="none" stroke="#C686DD" stroke-opacity=".3"/><circle cx="100" cy="100" r="50" fill="url(#lubeSun)"/><circle cx="72" cy="112" r="42" fill="#2A123F" mask="url(#lubeMoonMask)" stroke="#C686DD" stroke-width="2"/></svg></div>
+            <h1>LUBE</h1>
+            <div class="lube-tagline">Astrolog&iacute;a &amp; Tarot</div>
             <p>Explor&aacute; las 78 cartas del Tarot Rider-Waite con sus significados y correspondencias astrol&oacute;gicas. Descubr&iacute; los 12 signos del zod&iacute;aco, sus cartas asociadas y los rasgos de personalidad que los definen. Naveg&aacute; por las Casas, Planetas y Elementos para una visi&oacute;n completa de la astrolog&iacute;a. Ped&iacute; tu Se&ntilde;al y dej&aacute; que el universo te hable a trav&eacute;s del mazo.</p>
             <a href="#" class="btn-scroll" id="btnExplorar">Explorar</a>
             <div class="scroll-indicator">
@@ -380,7 +384,7 @@
                 <h2>Tu Se&ntilde;al del Tarot</h2>
                 <div class="signal-card" id="signalCard">
                     <div class="signal-placeholder" id="signalPlaceholder">
-                        <span class="signal-icon"><span class="crystal-symbol lg"><img src="images/bola-de-cristal.png" alt=""></span></span>
+                        <span class="signal-icon lube-glyph">&#x2726;</span>
                         <p>El mazo guarda un mensaje para vos. Ped&iacute; tu se&ntilde;al y deja que el universo hable.</p>
                     </div>
                     <div class="signal-result" id="signalResult">
@@ -455,8 +459,9 @@
             </div>
         </div>
         <footer>
-            <span class="footer-symbol"><img src="images/bola-de-cristal.png" alt="Bola de cristal" class="footer-img"></span>
-            <span>Astro Tarot &mdash; La sabidur&iacute;a de las estrellas al alcance de tu alma</span>
+            <span class="lube-foot-name"><b>&#x2726;</b>LUBE<b>&#x2726;</b></span>
+            <span>LUBE &mdash; La sabidur&iacute;a de las estrellas al alcance de tu alma</span>
+            <span class="lube-foot-tag">Astrolog&iacute;a &amp; Tarot</span>
         </footer>
     </div>
     <script src="vendor/astronomy.browser.min.js"></script>
@@ -467,5 +472,6 @@
     <script src="horo.js"></script>
     <script src="account.js"></script>
     <script src="app.js"></script>
+    <script src="lube.js"></script>
 </body>
 </html>

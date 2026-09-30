@@ -20,7 +20,7 @@
 
     async function init() {
         try {
-            var cfg = await fetch('/.netlify/functions/config').then(function (r) { return r.json(); });
+            var cfg = await fetch('/api/config').then(function (r) { return r.json(); });
             if (!cfg.supabaseUrl || !cfg.supabaseAnonKey) return; // cuentas no configuradas aún
             if (!window.supabase) await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
             sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
@@ -148,7 +148,7 @@
         if (btn) btn.disabled = true;
         if (errEl) errEl.style.display = 'none';
         try {
-            var res = await fetch('/.netlify/functions/subscribe', {
+            var res = await fetch('/api/subscribe', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: currentUser.email })
             });
@@ -171,7 +171,7 @@
         for (var i = 0; i < 20 && !currentUser; i++) await new Promise(function (r) { setTimeout(r, 300); });
         if (!currentUser) return;
         try {
-            var res = await fetch('/.netlify/functions/verify-subscription?preapproval_id=' + encodeURIComponent(preapprovalId));
+            var res = await fetch('/api/verify-subscription?preapproval_id=' + encodeURIComponent(preapprovalId));
             var data = await res.json();
             if (res.ok && data.active) {
                 await sb.from('profiles').update({
@@ -192,8 +192,14 @@
         var title = document.getElementById('authModalTitle'), hint = document.getElementById('authModalHint');
         if (title) title.innerHTML = '&#x2726; ' + (isSignup ? 'Crear cuenta' : 'Iniciar sesión') + ' &#x2726;';
         if (hint) hint.textContent = isSignup
-            ? 'Poné tu email y te mandamos un enlace para crear tu cuenta. Guardás tu carta natal, tu historial y recibís recordatorios.'
-            : 'Poné el email con el que te registraste y te mandamos un enlace para entrar, sin contraseña.';
+            ? 'Elegí una contraseña para tu cuenta nueva. Vas a guardar tu carta natal, tu historial y recibir recordatorios.'
+            : 'Entrá con tu email y contraseña.';
+        var submit = document.getElementById('authSubmitBtn');
+        if (submit) submit.textContent = isSignup ? 'Crear cuenta' : 'Iniciar sesión';
+        var pass = document.getElementById('authPasswordInput');
+        if (pass) pass.setAttribute('autocomplete', isSignup ? 'new-password' : 'current-password');
+        var forgot = document.getElementById('authForgotWrap');
+        if (forgot) forgot.style.display = isSignup ? 'none' : '';
     }
 
     function openAuthModal(isSignup) {
@@ -228,15 +234,47 @@
             authForm.addEventListener('submit', async function (e) {
                 e.preventDefault();
                 var email = document.getElementById('authEmailInput').value.trim();
+                var password = document.getElementById('authPasswordInput').value;
                 var status = document.getElementById('authStatus');
-                if (!email) return;
+                var isSignup = document.getElementById('authTabSignup').classList.contains('active');
+                if (!email || !password) return;
+                status.textContent = isSignup ? 'Creando tu cuenta...' : 'Ingresando...';
+                try {
+                    if (isSignup) {
+                        var r = await sb.auth.signUp({ email: email, password: password, options: { emailRedirectTo: location.origin } });
+                        if (r.error) throw r.error;
+                        if (r.data && r.data.session) {
+                            status.textContent = ''; // ya quedó logueado (confirmación de email desactivada)
+                        } else {
+                            status.textContent = 'Te mandamos un mail a ' + email + ' para confirmar tu cuenta. Después ya podés iniciar sesión con tu contraseña.';
+                        }
+                    } else {
+                        var r2 = await sb.auth.signInWithPassword({ email: email, password: password });
+                        if (r2.error) throw r2.error;
+                        status.textContent = '';
+                    }
+                } catch (err) {
+                    var msg = err.message || 'error';
+                    if (/invalid login credentials/i.test(msg)) msg = 'Email o contraseña incorrectos.';
+                    if (/already registered/i.test(msg)) msg = 'Ese email ya tiene una cuenta. Probá "Iniciar sesión".';
+                    status.textContent = msg;
+                }
+            });
+        }
+        var forgotLink = document.getElementById('authForgotLink');
+        if (forgotLink) {
+            forgotLink.addEventListener('click', async function (e) {
+                e.preventDefault();
+                var email = document.getElementById('authEmailInput').value.trim();
+                var status = document.getElementById('authStatus');
+                if (!email) { status.textContent = 'Escribí tu email arriba primero.'; return; }
                 status.textContent = 'Enviando...';
                 try {
-                    var r = await sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: location.origin } });
+                    var r = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin });
                     if (r.error) throw r.error;
-                    status.textContent = 'Te enviamos un enlace a ' + email + '. Abrilo para confirmar tu cuenta.';
+                    status.textContent = 'Te mandamos un mail a ' + email + ' para elegir una contraseña nueva.';
                 } catch (err) {
-                    status.textContent = 'No se pudo enviar el enlace: ' + (err.message || 'error');
+                    status.textContent = 'No se pudo enviar el mail: ' + (err.message || 'error');
                 }
             });
         }

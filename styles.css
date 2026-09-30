@@ -1,30 +1,33 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
-            --violeta-oscuro: #0a0e1a;
-            --violeta-medio: #3d1a6e;
-            --violeta-claro: #7b2dbf;
-            --violeta-brillante: #a855f7;
-            --rojo-oscuro: #4a0e0e;
-            --rojo-medio: #8b1a1a;
-            --rojo-claro: #dc2626;
-            --rojo-brillante: #ef4444;
+            --violeta-oscuro: #120726;
+            --violeta-medio: #4B1F6F;
+            --violeta-claro: #8a45c9;
+            --violeta-brillante: #C686DD;
+            --rojo-oscuro: #3D0B0D;
+            --rojo-medio: #7d1020;
+            --rojo-claro: #921422;
+            --rojo-brillante: #b8283a;
             --verde-oscuro: #0a2e1a;
             --verde-medio: #1a6e3d;
             --verde-claro: #22c55e;
             --verde-brillante: #4ade80;
             --oro: #fbbf24;
-            --blanco: #f8fafc;
-            --gris: #94a3b8;
-            --magenta: #c0266e;
-            --magenta-brillo: #ec4899;
-            --azul: #3b82f6;
-            --azul-claro: #60a5fa;
+            --blanco: #f4ecff;
+            --gris: #cdbde6;
+            --magenta: #7b337e;
+            --magenta-brillo: #C686DD;
+            --azul: #2846DC;
+            --azul-claro: #6b8bff;
             --marron: #a0522d;
-            --plata: #9ca3af;
+            --plata: #b9a3d9;
+            --lube-bordo: 146,20,34;
+            --lube-azul: 40,70,220;
+            --lube-lila: 198,134,221;
         }
         html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--violeta-oscuro);
             color: var(--blanco);
             overflow-x: hidden;
@@ -129,7 +132,7 @@
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
         @keyframes floatPlanet { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .hero h1 {
-            font-family: 'Cinzel', serif;
+            font-family: 'Marcellus', serif;
             font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900;
             color: var(--violeta-brillante);
             text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
@@ -155,7 +158,7 @@
         }
         #intro-astrologia { padding-top: 12rem; }
         .intro h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 1.5rem; color: #c8b0e0;
         }
         .intro p { font-size: 1.1rem; line-height: 1.8; color: var(--gris); }
@@ -165,7 +168,7 @@
             text-align: center;
         }
         .history-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2rem;
+            font-family: 'Marcellus', serif; font-size: 2rem;
             margin-bottom: 1.5rem; color: #c8b0e0;
         }
         .history-section p {
@@ -175,14 +178,14 @@
             max-width: 1400px; margin: 0 auto; padding: 4rem 2rem 5rem;
         }
         .cards-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             text-align: center; margin-bottom: 0.5rem; color: #c8b0e0;
         }
         .cards-section .subtitle {
             text-align: center; color: var(--gris); margin-bottom: 1.5rem; font-size: 1rem;
         }
         .section-label {
-            font-family: 'Cinzel', serif; font-size: 2rem;
+            font-family: 'Marcellus', serif; font-size: 2rem;
             color: #fff; margin: 2rem 0 1rem; padding-bottom: 0.5rem;
             border-bottom: 1px solid rgba(120, 80, 160, 0.2);
             text-align: center; letter-spacing: 0.05em;
@@ -232,13 +235,13 @@
             transition: all 0.3s;
         }
         .card-name {
-            font-family: 'Cinzel', serif; font-size: 0.95rem;
+            font-family: 'Marcellus', serif; font-size: 0.95rem;
             font-weight: 700; text-align: center; margin-bottom: 0.2rem;
             color: #c8b0e0; letter-spacing: 0.03em;
             text-shadow: 0 0 20px rgba(140, 100, 200, 0.2);
         }
         .card-number {
-            font-family: 'Cinzel', serif; font-size: 0.75rem;
+            font-family: 'Marcellus', serif; font-size: 0.75rem;
             text-align: center; color: rgba(160, 120, 200, 0.5);
             margin-bottom: 0.7rem; letter-spacing: 0.05em;
         }
@@ -304,7 +307,7 @@
             border: 1px solid rgba(120, 80, 160, 0.25);
             border-radius: 50px; background: transparent;
             color: #a898c0; cursor: pointer;
-            font-family: 'Inter', sans-serif; font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem;
             transition: all 0.3s; text-decoration: none;
         }
         .nav-section:hover { border-color: rgba(160, 120, 200, 0.4); background: rgba(80, 40, 120, 0.12); }
@@ -312,7 +315,7 @@
             max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
         }
         .planets-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .planets-section .subtitle {
@@ -346,10 +349,10 @@
             display: flex; align-items: center; gap: 1rem;
         }
         .planet-name {
-            font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--blanco);
+            font-family: 'Marcellus', serif; font-size: 1.3rem; color: var(--blanco);
         }
         .planet-sign {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.85rem; color: var(--violeta-brillante); font-weight: 600;
             white-space: nowrap;
         }
@@ -360,7 +363,7 @@
             max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
         }
         .elements-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .elements-section .subtitle {
@@ -412,7 +415,7 @@
         .element-card.air .element-sym { background: rgba(70, 130, 220, 0.15); }
         .element-card.water .element-sym { background: rgba(50, 180, 210, 0.15); }
         .element-name {
-            font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--blanco);
+            font-family: 'Marcellus', serif; font-size: 1.5rem; color: var(--blanco);
         }
         .element-signs {
             display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem;
@@ -433,7 +436,7 @@
             max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
         }
         .modalidades-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .modalidades-section .subtitle {
@@ -460,7 +463,7 @@
             margin-bottom: 0.8rem;
         }
         .modalidad-card h3 {
-            font-family: 'Cinzel', serif; font-size: 1.4rem;
+            font-family: 'Marcellus', serif; font-size: 1.4rem;
             color: var(--violeta-brillante); margin-bottom: 0.3rem;
         }
         }
@@ -491,7 +494,7 @@
             max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
         }
         .natal-section h2, .horoscope-section h2, .compatibility-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .natal-section .subtitle, .horoscope-section .subtitle, .compatibility-section .subtitle {
@@ -521,7 +524,7 @@
             border: 1px solid var(--violeta-claro);
             border-radius: 8px; padding: 0.7rem 0.9rem;
             color: var(--blanco);
-            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem;
             width: 100%; box-sizing: border-box; outline: none;
         }
         .astro-form-card input:focus, .astro-form-card select:focus {
@@ -541,7 +544,7 @@
             background: linear-gradient(135deg, var(--violeta-claro), var(--violeta-brillante));
             border: none; color: var(--blanco);
             padding: 0.8rem 2.2rem; border-radius: 25px;
-            font-family: 'Cinzel', serif; font-size: 0.95rem;
+            font-family: 'Marcellus', serif; font-size: 0.95rem;
             cursor: pointer; transition: all 0.3s ease;
             align-self: flex-start;
         }
@@ -553,7 +556,7 @@
         .astro-loading {
             display: flex; align-items: center; justify-content: center;
             gap: 0.8rem; color: var(--violeta-brillante);
-            font-family: 'Cinzel', serif; font-size: 1rem;
+            font-family: 'Marcellus', serif; font-size: 1rem;
             padding: 2rem 0; margin: 0 auto; max-width: 90%;
         }
         .loading-spinner {
@@ -580,7 +583,7 @@
         .natal-chart svg, .compat-chart svg { width: 100%; height: auto; display: block; }
         .natal-planets { width: 100%; max-width: 560px; }
         .natal-planets h3, .compat-result h3, .horo-subtitle {
-            text-align: center; font-family: 'Cinzel', serif;
+            text-align: center; font-family: 'Marcellus', serif;
             color: var(--violeta-claro); font-size: 1.1rem; margin-bottom: 0.8rem;
         }
         .planet-table {
@@ -590,7 +593,7 @@
             color: var(--violeta-brillante); font-weight: 600;
             text-align: left; padding: 0.6rem 0.8rem;
             border-bottom: 1px solid rgba(168,85,247,0.2);
-            font-family: 'Cinzel', serif; font-size: 0.78rem;
+            font-family: 'Marcellus', serif; font-size: 0.78rem;
             text-transform: uppercase; letter-spacing: 0.05em;
         }
         .planet-table td {
@@ -601,7 +604,7 @@
         .planet-table .retro { color: #f87171; }
         .natal-reading { width: 100%; max-width: 560px; margin-top: 1.5rem; }
         .natal-reading h3 {
-            text-align: center; font-family: 'Cinzel', serif;
+            text-align: center; font-family: 'Marcellus', serif;
             color: var(--violeta-claro); font-size: 1.1rem; margin-bottom: 1rem;
         }
         .reading-card {
@@ -611,7 +614,7 @@
             border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 0.9rem;
         }
         .reading-card h4 {
-            font-family: 'Cinzel', serif; font-size: 0.95rem;
+            font-family: 'Marcellus', serif; font-size: 0.95rem;
             color: var(--violeta-brillante); margin: 0 0 0.6rem;
             border-bottom: 1px dashed rgba(168,85,247,0.25); padding-bottom: 0.4rem;
         }
@@ -627,7 +630,7 @@
             margin: 0 auto 1.5rem; max-width: 640px; text-align: center;
         }
         .horo-header, .horo-love-header {
-            font-family: 'Cinzel', serif; font-size: 1.1rem;
+            font-family: 'Marcellus', serif; font-size: 1.1rem;
             color: var(--violeta-brillante); margin-bottom: 0.5rem;
         }
         .horo-header #horoDate { color: var(--gris); font-size: 0.85rem; margin-left: 0.6rem; }
@@ -640,7 +643,7 @@
             flex: 1; min-width: 220px;
         }
         .compat-person h3 {
-            font-family: 'Cinzel', serif; color: var(--violeta-claro);
+            font-family: 'Marcellus', serif; color: var(--violeta-claro);
             font-size: 0.95rem; margin: 0 0 0.2rem; text-align: center;
         }
         .compat-form .compat-person label { font-size: 0.8rem; }
@@ -661,7 +664,7 @@
             text-align: center;
         }
         .signal-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.2rem;
+            font-family: 'Marcellus', serif; font-size: 2.2rem;
             margin-bottom: 0.5rem; color: var(--violeta-brillante);
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             text-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
@@ -701,7 +704,7 @@
         .signal-img-wrapper img { width: 100%; height: auto; display: block; }
         .signal-info { text-align: center; }
         .signal-name {
-            font-family: 'Cinzel', serif; font-size: 1.5rem;
+            font-family: 'Marcellus', serif; font-size: 1.5rem;
             color: var(--violeta-brillante); margin-bottom: 0.2rem;
             text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
         }
@@ -736,7 +739,7 @@
             margin-top: 1.5rem; padding: 0.9rem 2.5rem;
             background: linear-gradient(135deg, var(--violeta-claro), var(--rojo-claro));
             color: var(--blanco); border: none; border-radius: 50px;
-            font-family: 'Cinzel', serif; font-size: 1rem;
+            font-family: 'Marcellus', serif; font-size: 1rem;
             cursor: pointer; transition: all 0.3s;
             box-shadow: 0 4px 20px rgba(160, 90, 210, 0.2);
         }
@@ -784,7 +787,7 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .birthday-modal-content h2 {
-            font-family: 'Cinzel', serif;
+            font-family: 'Marcellus', serif;
             font-size: 1.4rem; color: var(--violeta-brillante);
             margin-bottom: 0.8rem;
         }
@@ -805,7 +808,7 @@
             border: 1px solid var(--violeta-claro);
             border-radius: 8px; padding: 0.8rem 1rem;
             color: var(--blanco);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 1rem; width: 100%;
             max-width: 280px; outline: none; cursor: pointer;
         }
@@ -820,7 +823,7 @@
             background: linear-gradient(135deg, var(--violeta-claro), var(--violeta-brillante));
             border: none; color: var(--blanco);
             padding: 0.8rem 2.5rem; border-radius: 25px;
-            font-family: 'Cinzel', serif; font-size: 1rem;
+            font-family: 'Marcellus', serif; font-size: 1rem;
             cursor: pointer; transition: all 0.3s ease;
         }
         .birthday-modal-content button:hover {
@@ -849,7 +852,7 @@
             position: absolute; top: 0.8rem; right: 1.2rem;
             background: rgba(255,255,255,0.03); border: none;
             color: var(--gris); font-size: 1.4rem; cursor: pointer; line-height: 1;
-            transition: all 0.2s; font-family: 'Inter', sans-serif;
+            transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif;
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
         }
@@ -879,7 +882,7 @@
         }
         .profile-modal-title { display: flex; flex-direction: column; gap: 0.2rem; }
         .profile-modal-name {
-            font-family: 'Cinzel', serif; font-size: 1.3rem;
+            font-family: 'Marcellus', serif; font-size: 1.3rem;
             color: #d4b8f0; letter-spacing: 0.03em;
         }
         .profile-modal-sign {
@@ -901,7 +904,7 @@
         .profile-modal-section:nth-child(3) { border-left-color: #34d399; }
         .profile-modal-section:nth-child(4) { border-left-color: #fbbf24; }
         .profile-modal-section h3 {
-            font-family: 'Cinzel', serif; font-size: 0.8rem;
+            font-family: 'Marcellus', serif; font-size: 0.8rem;
             color: #c8b0e0; margin-bottom: 0.35rem;
             text-transform: uppercase; letter-spacing: 0.1em;
         }
@@ -957,7 +960,7 @@
             min-width: 0;
         }
         .nav-profile-name {
-            font-family: 'Cinzel', serif; font-size: 1.05rem;
+            font-family: 'Marcellus', serif; font-size: 1.05rem;
             color: var(--violeta-brillante); white-space: nowrap;
             letter-spacing: 0.03em;
         }
@@ -968,7 +971,7 @@
             background: none; border: none; color: rgba(160,120,200,0.3);
             font-size: 1rem; cursor: pointer; padding: 0 0.1rem 0 0.4rem;
             line-height: 1; transition: color 0.2s;
-            font-family: 'Inter', sans-serif; opacity: 0.6;
+            font-family: 'Plus Jakarta Sans', sans-serif; opacity: 0.6;
         }
         .nav-profile-btn:hover { color: var(--violeta-claro); opacity: 1; }
 
@@ -1034,7 +1037,7 @@
             transform: translateY(-2px);
         }
         .rec-card h3 {
-            font-family: 'Cinzel', serif;
+            font-family: 'Marcellus', serif;
             font-size: 1.05rem; color: var(--violeta-brillante);
             margin-bottom: 1rem; text-align: center;
         }
@@ -1113,7 +1116,7 @@
             max-width: 1000px; margin: 0 auto; padding: 5rem 2rem;
         }
         .houses-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .houses-section .subtitle {
@@ -1138,13 +1141,13 @@
             display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;
         }
         .house-num {
-            font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 900;
+            font-family: 'Marcellus', serif; font-size: 1.8rem; font-weight: 900;
             color: var(--violeta-brillante); width: 48px; height: 48px;
             display: flex; align-items: center; justify-content: center;
             background: rgba(160, 90, 210, 0.1); border-radius: 10px; flex-shrink: 0;
         }
         .house-name {
-            font-family: 'Cinzel', serif; font-size: 1.3rem; color: var(--blanco);
+            font-family: 'Marcellus', serif; font-size: 1.3rem; color: var(--blanco);
         }
         .house-sign {
             font-size: 0.85rem; color: var(--violeta-brillante); font-weight: 600;
@@ -1155,7 +1158,7 @@
             padding-left: 0; border-left: none;
         }
         .zodiac-section h2 {
-            font-family: 'Cinzel', serif; font-size: 2.5rem;
+            font-family: 'Marcellus', serif; font-size: 2.5rem;
             margin-bottom: 0.5rem; text-align: center; color: #c8b0e0;
         }
         .zodiac-section .subtitle {
@@ -1254,11 +1257,11 @@
             text-shadow: 0 0 20px rgba(160, 90, 210, 0.3);
         }
         .zodiac-name {
-            font-family: 'Cinzel', serif; font-size: 1.15rem; color: var(--blanco);
+            font-family: 'Marcellus', serif; font-size: 1.15rem; color: var(--blanco);
             line-height: 1.2;
         }
         .zodiac-name small {
-            display: block; font-family: 'Inter', sans-serif;
+            display: block; font-family: 'Plus Jakarta Sans', sans-serif;
             font-size: 0.75rem; color: var(--gris); font-weight: 400;
             letter-spacing: 0.1em; text-transform: uppercase;
         }
@@ -1324,7 +1327,7 @@
             flex: 1; min-width: 0;
         }
         .navbar .brand {
-            font-family: 'Cinzel', serif; font-size: 1.15rem;
+            font-family: 'Marcellus', serif; font-size: 1.15rem;
             color: var(--violeta-brillante); text-decoration: none;
             text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
             white-space: nowrap;
@@ -1344,7 +1347,7 @@
         .navbar .nav-links a {
             padding: 0.5rem 0.8rem; border-radius: 8px;
             color: #a898c0; text-decoration: none; font-size: 0.85rem;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.3s; border: 1px solid transparent;
             width: 100%; text-align: left;
             position: relative; overflow: hidden;
@@ -1631,7 +1634,7 @@
 
 .natal-ai { width: 100%; max-width: 560px; margin-top: 1.5rem; text-align: center; }
 .ai-report { text-align: left; margin-top: 1rem; }
-.ai-report h2 { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--violeta-brillante); margin: 1.2rem 0 0.4rem; border-bottom: 1px dashed rgba(168,85,247,0.25); padding-bottom: 0.3rem; }
+.ai-report h2 { font-family: 'Marcellus', serif; font-size: 1rem; color: var(--violeta-brillante); margin: 1.2rem 0 0.4rem; border-bottom: 1px dashed rgba(168,85,247,0.25); padding-bottom: 0.3rem; }
 .ai-report p { color: var(--blanco); font-size: 0.9rem; line-height: 1.75; margin: 0.4rem 0; }
 .ai-report .ai-status { text-align: center; color: var(--violeta-claro); }
 .horo-text p { margin: 0 0 0.8rem; }
@@ -1640,7 +1643,7 @@
 /* ===== TIRADA DE TAROT ===== */
 .tirada-spread { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin: 2rem 0; }
 .tirada-slot { width: 160px; text-align: center; }
-.tirada-slot .tirada-label { font-family: 'Cinzel', serif; color: var(--violeta-claro); font-size: 0.85rem; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.tirada-slot .tirada-label { font-family: 'Marcellus', serif; color: var(--violeta-claro); font-size: 0.85rem; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; }
 .tirada-slot .tirada-img-wrap { border-radius: 10px; overflow: hidden; border: 1px solid rgba(168,85,247,0.3); box-shadow: 0 0 18px rgba(168,85,247,0.25); background: rgba(168,85,247,0.05); aspect-ratio: 250/429; }
 .tirada-slot .tirada-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
 .tirada-slot.reversed .tirada-img-wrap img { transform: rotate(180deg); }
@@ -1653,16 +1656,16 @@
     background: linear-gradient(145deg, rgba(168,85,247,0.1), rgba(168,85,247,0.03));
     border: 1px solid rgba(168,85,247,0.25); border-radius: 14px; padding: 1.5rem;
 }
-.paywall-card h3 { font-family: 'Cinzel', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
+.paywall-card h3 { font-family: 'Marcellus', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
 .paywall-card p { color: var(--blanco); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
 .tirada-premium { margin-top: 2rem; }
-.tirada-premium h3 { text-align: center; font-family: 'Cinzel', serif; color: var(--violeta-claro); margin-bottom: 1rem; }
+.tirada-premium h3 { text-align: center; font-family: 'Marcellus', serif; color: var(--violeta-claro); margin-bottom: 1rem; }
 .categoria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; max-width: 720px; margin: 1.5rem auto; }
 .categoria-btn {
     display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
     background: linear-gradient(145deg, rgba(168,85,247,0.08), rgba(168,85,247,0.02));
     border: 1px solid rgba(168,85,247,0.2); border-radius: 12px; padding: 1.2rem 1rem;
-    color: var(--blanco); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.9rem;
+    color: var(--blanco); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
     transition: transform 0.2s, border-color 0.2s;
 }
 .categoria-btn:hover { transform: translateY(-3px); border-color: var(--violeta-brillante); }
@@ -1681,7 +1684,7 @@
     border: 1px solid rgba(168,85,247,0.35); border-radius: 16px; padding: 1.8rem 1.5rem;
     box-shadow: 0 0 40px rgba(168,85,247,0.25); text-align: center;
 }
-.mp-modal h3 { font-family: 'Cinzel', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
+.mp-modal h3 { font-family: 'Marcellus', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
 .mp-modal-hint { color: var(--blanco); font-size: 0.85rem; opacity: 0.8; margin-bottom: 1.2rem; }
 .mp-modal-close {
     position: absolute; top: 0.7rem; right: 0.9rem; background: none; border: none;
@@ -1694,7 +1697,7 @@
 .nav-account-btn {
     background: linear-gradient(135deg, var(--violeta-brillante), var(--violeta-oscuro));
     color: #fff; border: none; border-radius: 20px; padding: 0.5rem 1.1rem;
-    font-family: 'Inter', sans-serif; font-size: 0.9rem; cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; cursor: pointer;
 }
 
 .birthday-skip-btn {
@@ -1712,7 +1715,159 @@
 .auth-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
 .auth-tab {
     flex: 1; padding: 0.5rem; border-radius: 8px; border: 1px solid rgba(168,85,247,0.25);
-    background: rgba(255,255,255,0.03); color: var(--blanco); font-family: 'Inter', sans-serif;
+    background: rgba(255,255,255,0.03); color: var(--blanco); font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.85rem; cursor: pointer; opacity: 0.7;
 }
 .auth-tab.active { background: rgba(168,85,247,0.25); border-color: var(--violeta-brillante); opacity: 1; }
+
+#authForgotWrap { margin-top: 0.4rem; }
+#authForgotWrap a { color: var(--violeta-claro); text-decoration: underline; }
+
+
+/* =====================================================================
+   LUBE — Astrología & Tarot · capa estética (solo visual)
+   ===================================================================== */
+@keyframes lubeDrift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.15)}}
+@keyframes lubeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes lubeSpin{to{transform:rotate(360deg)}}
+@keyframes lubeSweep{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(320%) skewX(-20deg)}}
+@keyframes lubeShimmer{to{background-position:300% 50%}}
+@keyframes lubeGlow{0%,100%{filter:drop-shadow(0 4px 22px rgba(198,134,221,.45))}50%{filter:drop-shadow(0 4px 36px rgba(184,40,58,.65))}}
+@keyframes lubeBlurIn{from{opacity:0;letter-spacing:.35em;filter:blur(14px)}to{opacity:1;letter-spacing:.08em;filter:blur(0)}}
+html{background:#120726}
+body{background:radial-gradient(120% 80% at 50% -10%,#4B1F6F 0%,#2A123F 36%,#121F50 78%,#2B0128 118%) fixed !important;padding-top:0 !important;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--blanco)}
+body::before,body::after{content:'';position:fixed;pointer-events:none;z-index:-1;border-radius:50%;filter:blur(70px)}
+body::before{left:50%;top:-180px;width:900px;height:700px;margin-left:-450px;background:radial-gradient(closest-side,rgba(120,60,190,.55),rgba(198,134,221,.22) 55%,transparent);animation:lubeDrift 18s ease-in-out infinite}
+body::after{right:-160px;top:55%;width:560px;height:560px;background:radial-gradient(closest-side,rgba(61,11,13,.7),rgba(43,1,40,.5) 60%,transparent);animation:lubeDrift 22s ease-in-out infinite reverse}
+h1,h2,h3,h4,.navbar .brand,.card-name,.zodiac-name,.house-name,.planet-name,.element-name,.signal-name,.astro-btn,.signal-btn{font-weight:400 !important}
+button,input,select,textarea{font-family:inherit}
+a{color:#C686DD}a:hover{color:#e6d5ff}
+
+/* ---- vidrio ---- */
+.astro-form-card,.house-card,.planet-card,.element-card,.modalidad-card,.rec-card,.transit-card,.signal-card,.paywall-card,.tirada-premium,.categoria-btn,.reading-card,.natal-reading,.horo-result,.horo-love,.intro,.history-section,.hero p,footer{
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(220,190,255,.18),transparent 60%),linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.025) 50%,rgba(58,8,16,.5)) !important;
+  backdrop-filter:blur(20px) saturate(170%);-webkit-backdrop-filter:blur(20px) saturate(170%);
+  border:1px solid rgba(220,200,255,.14) !important;border-radius:26px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -1px 0 rgba(var(--lube-bordo),.6),inset 1px 0 0 rgba(var(--lube-azul),.45),inset 0 -26px 50px -28px rgba(128,16,30,.4),inset 26px 0 50px -30px rgba(30,60,210,.35),0 24px 50px -24px rgba(8,0,25,.9) !important;
+}
+.intro,.history-section{margin-left:auto;margin-right:auto;max-width:860px;width:calc(100% - 48px);box-sizing:border-box;margin-bottom:22px}
+#intro-astrologia{padding-top:3rem !important}
+.intro h2,.history-section h2{color:#f4ecff;font-size:clamp(1.8rem,3vw,2.4rem)}
+.intro .highlight{color:#C686DD}
+.hero p{padding:1.6rem 2rem;max-width:720px;font-weight:300;font-size:1rem;color:#d9caf0}
+.section-divider{opacity:.6}
+.house-card:hover,.planet-card:hover,.element-card:hover,.modalidad-card:hover,.rec-card:hover,.transit-card:hover,.categoria-btn:hover{transform:translateY(-5px);border-color:rgba(198,134,221,.55) !important}
+.element-card.fire,.element-card.earth,.element-card.air,.element-card.water{border-color:rgba(220,200,255,.14) !important}
+.card-tarot,.zodiac-card{background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.03)) !important;border:1px solid rgba(220,200,255,.2) !important;border-radius:20px !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(var(--lube-bordo),.6),inset 1px 0 0 rgba(var(--lube-azul),.45),0 20px 40px -18px rgba(8,0,25,.9),0 0 30px -8px rgba(150,100,255,.3) !important}
+.card-tarot:hover,.zodiac-card:hover{border-color:rgba(198,134,221,.55) !important}
+.zodiac-front,.zodiac-back{background:linear-gradient(150deg,rgba(75,31,111,.55),rgba(43,1,40,.75)) !important;border-radius:20px !important}
+.zodiac-img-wrapper{display:none !important}
+.planet-table th{color:#C686DD}
+.planet-table td,.planet-table th{border-color:rgba(220,200,255,.1) !important}
+
+/* ---- títulos ---- */
+.zodiac-section h2,.houses-section h2,.planets-section h2,.elements-section h2,.modalidades-section h2,.natal-section h2,.horoscope-section h2,.compatibility-section h2,.cards-section h2,.signal-section h2,.transits-section h2,.recommendations-section h2,.tirada-section h2,.horo-subtitle,.section-label{
+  background:linear-gradient(180deg,#fff,#d9c2ff 60%,#C686DD);-webkit-background-clip:text;background-clip:text;color:transparent !important;letter-spacing:.06em}
+.subtitle{color:#cdbde6 !important;font-weight:300}
+
+/* ---- hero ---- */
+.hero::before,.hero::after{opacity:.35}
+.hero-symbol{position:relative;width:250px;height:250px;display:grid;place-items:center;margin:0 auto 1rem}
+.hero-symbol::before{content:'';position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(closest-side,rgba(150,100,255,.55),transparent);filter:blur(16px)}
+.hero-symbol::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px dashed rgba(198,134,221,.4);animation:lubeSpin 40s linear infinite}
+.lube-sunmoon{position:relative;width:210px;height:210px;overflow:visible;animation:lubeFloat 7s ease-in-out infinite;filter:drop-shadow(0 0 22px rgba(140,20,40,.65))}
+.hero h1{font-size:clamp(3.5rem,9vw,7rem) !important;line-height:1;letter-spacing:.08em;margin:1.6rem 0 0 !important;
+  background:linear-gradient(100deg,#fff 0%,#e6d5ff 15%,#C686DD 32%,#b8283a 50%,#C686DD 68%,#e6d5ff 85%,#fff 100%);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent !important;text-shadow:none;
+  animation:lubeBlurIn 1.6s .15s both cubic-bezier(.2,.8,.2,1),lubeShimmer 7s 1.8s linear infinite,lubeGlow 5s 1.8s ease-in-out infinite}
+.hero .lube-tagline{margin:6px 0 1.8rem;font-size:.9rem;font-weight:500;letter-spacing:.42em;text-transform:uppercase;color:#C686DD}
+.orbit-star,.constellation-star{color:#C686DD}
+
+/* ---- botones ---- */
+.btn-scroll,.astro-btn,.signal-btn,.nav-account-btn,.birthday-modal-content button,.categoria-btn .categoria-price{position:relative;overflow:hidden}
+.btn-scroll,.astro-btn,.signal-btn,.nav-account-btn,.birthday-modal-content button:not(.birthday-skip-btn){
+  background:linear-gradient(180deg,#9a66ff,#6b3df5 60%,#5a2fd6) !important;color:#fff !important;border:1px solid rgba(255,255,255,.3) !important;border-radius:999px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -6px 12px rgba(50,10,140,.4),0 14px 40px -8px rgba(107,61,245,.9),0 0 0 6px rgba(150,100,255,.1) !important;letter-spacing:.04em}
+.btn-scroll::after,.astro-btn::after,.signal-btn::after,.nav-account-btn::after{content:'';position:absolute;top:0;left:0;bottom:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:lubeSweep 4s ease-in-out infinite;pointer-events:none}
+.btn-scroll:hover,.astro-btn:hover,.signal-btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+
+/* ---- formularios ---- */
+.astro-form-card input,.astro-form-card select,.mp-modal input,.birthday-modal-content input{background:rgba(20,5,40,.5) !important;border:1px solid rgba(220,200,255,.2) !important;border-radius:16px !important;color:#f4ecff !important;box-shadow:inset 0 2px 8px rgba(0,0,0,.3);color-scheme:dark;outline:none}
+.astro-form-card input:focus,.astro-form-card select:focus,.mp-modal input:focus{border-color:#C686DD !important;box-shadow:0 0 0 3px rgba(198,134,221,.2)}
+.astro-check input,.astro-form-card input[type=checkbox]{accent-color:#C686DD}
+.auth-tabs{padding:4px;border-radius:999px;background:rgba(20,5,40,.5);border:1px solid rgba(220,200,255,.14)}
+.auth-tab{border-radius:999px !important;border:0 !important;background:transparent !important;color:#dccdf5 !important}
+.auth-tab.active{background:linear-gradient(180deg,rgba(150,100,255,.65),rgba(107,61,245,.45)) !important;color:#fff !important;opacity:1}
+
+/* ---- modales ---- */
+.mp-modal-overlay,.profile-modal,.birthday-modal{background:rgba(10,2,25,.65) !important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.mp-modal,.birthday-modal-content,.profile-modal-content{background:radial-gradient(500px circle at 50% 0%,rgba(198,134,221,.22),transparent 60%),linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.04) 50%,rgba(58,8,16,.55)),rgba(30,8,60,.78) !important;backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid rgba(220,200,255,.22) !important;border-radius:32px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1px 0 rgba(var(--lube-bordo),.6),inset 1px 0 0 rgba(var(--lube-azul),.45),0 40px 80px -20px rgba(4,0,15,.9) !important}
+.mp-modal-close,.profile-modal-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.1) !important;color:#f4ecff !important}
+.mp-modal-close:hover,.profile-modal-close:hover{background:rgba(198,134,221,.35) !important}
+
+/* ---- señal ---- */
+.lube-glyph{font-size:44px;color:#C686DD;text-shadow:0 0 24px #C686DD;display:block;line-height:1;margin-bottom:.6rem}
+
+/* ---- footer ---- */
+footer{max-width:1120px;width:calc(100% - 48px);box-sizing:border-box;margin:60px auto 32px !important;flex-direction:column;text-align:center;gap:10px !important;padding:30px 24px !important;font-size:.95rem !important;color:#cdbde6 !important}
+footer .lube-foot-name{font-family:'Marcellus',serif;font-size:26px;letter-spacing:.16em;color:#f4ecff}
+footer .lube-foot-name b{color:#C686DD;font-weight:400;font-size:.55em;margin:0 10px;text-shadow:0 0 12px #C686DD}
+footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#a58bc9}
+
+/* ---- NAVBAR ---- */
+.navbar{top:16px !important;left:50% !important;right:auto !important;transform:translateX(-50%);width:min(1240px,calc(100% - 32px));box-sizing:border-box;padding:8px 10px 8px 22px !important;border-radius:999px;gap:16px;
+  background:linear-gradient(115deg,rgba(90,10,26,.94) 0%,rgba(125,16,32,.9) 14%,rgba(84,34,130,.86) 42%,rgba(122,64,190,.78) 72%,rgba(178,122,232,.72) 100%) !important;
+  backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid rgba(220,200,255,.18) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(120,60,200,.3),0 12px 40px -8px rgba(10,2,30,.7)}
+.navbar-left{gap:22px !important;flex:1;min-width:0}
+.navbar .brand{display:flex;align-items:center;gap:9px;font-size:24px !important;letter-spacing:.01em;color:#f4ecff !important;white-space:nowrap;text-shadow:none}
+.navbar .brand .lube-star{color:#C686DD;font-size:16px;text-shadow:0 0 12px #b78cff}
+.navbar .brand .lube-sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#e3d0f7;opacity:.85;padding-left:12px;border-left:1px solid rgba(255,255,255,.3)}
+.nav-toggle{display:none !important}
+.navbar .nav-links{display:flex !important;flex-direction:row;position:static !important;background:none !important;backdrop-filter:none;border:0 !important;padding:0 !important;min-width:0 !important;width:auto;gap:2px !important;align-items:center;margin:0}
+.navbar .nav-links li{list-style:none;position:relative}
+.navbar .nav-links a,.navbar .nav-links .lube-gbtn{display:flex;align-items:center;gap:7px;width:auto;padding:9px 15px;border-radius:999px;font-size:14px;font-weight:500;white-space:nowrap;color:#eadffb;background:transparent;border:0;cursor:pointer;text-align:left}
+.navbar .nav-links a::before{display:none}
+.navbar .nav-links > li > a:hover,.navbar .nav-links .lube-gbtn:hover,.lube-group.open > .lube-gbtn{background:rgba(255,255,255,.12);color:#fff}
+.navbar .nav-links > li > a.active,.lube-group.has-active > .lube-gbtn{color:#fff;background:linear-gradient(180deg,rgba(150,100,255,.55),rgba(107,61,245,.35));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 16px -4px rgba(107,61,245,.8)}
+.lube-gbtn i{font-style:normal;font-size:9px;opacity:.7;transition:transform .3s}
+.lube-group:hover > .lube-gbtn i,.lube-group.open > .lube-gbtn i{transform:rotate(180deg)}
+.lube-drop{position:absolute;top:calc(100% + 14px);left:-8px;min-width:210px;margin:0;padding:8px !important;list-style:none;border-radius:22px;
+  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.05) 50%,rgba(150,100,255,.12)),rgba(40,12,80,.8);backdrop-filter:blur(26px) saturate(190%);-webkit-backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(220,200,255,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 24px 50px -10px rgba(8,0,25,.8);opacity:0;visibility:hidden;transform:translateY(-8px) scale(.94);transform-origin:top left;transition:all .28s cubic-bezier(.2,.9,.3,1.2)}
+.lube-group::after{content:'';position:absolute;left:0;right:0;top:100%;height:16px}
+.lube-group:hover > .lube-drop,.lube-group.open > .lube-drop{opacity:1;visibility:visible;transform:none}
+.lube-drop a{border-radius:14px !important;width:100% !important;box-sizing:border-box}
+.lube-drop a::after{display:none}
+.lube-drop a:hover{background:rgba(160,110,255,.25) !important;color:#fff}
+.lube-drop a.active{background:rgba(160,110,255,.3) !important;box-shadow:none !important}
+.lube-right{display:flex;align-items:center;gap:10px;flex:none}
+.nav-account-btn{padding:10px 18px !important;font-size:13px !important;font-weight:600;white-space:nowrap}
+.nav-profile{margin:0 !important;padding:4px 6px 4px 14px !important;background:rgba(20,5,40,.45) !important;border:1px solid rgba(220,200,255,.14) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.nav-profile-avatar{position:relative;background:conic-gradient(from 0deg,#C686DD,#6b3df5,#7b337e,#C686DD) !important}
+.nav-avatar-img:not(.uploaded){display:none !important}
+.nav-profile-avatar::before{content:'\2726';position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:16px;text-shadow:0 0 10px #C686DD;pointer-events:none}
+.nav-profile-avatar:has(.uploaded)::before{display:none}
+.nav-profile-name{color:#f4ecff !important}.nav-profile-detail{color:#b9a3d9 !important}
+
+@media(max-width:1150px){.nav-profile-info{display:none !important}.nav-profile{padding-left:6px !important}}
+@media(max-width:1040px){
+  .nav-toggle{display:grid !important;place-items:center;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14) !important;color:#fff !important;font-size:20px !important;padding:0 !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+  .navbar{padding-left:20px !important;padding-right:8px !important}
+  .navbar .nav-links{display:none !important;position:fixed !important;top:84px;left:16px;right:16px;z-index:49;max-height:calc(100vh - 104px);overflow:auto;flex-direction:column;align-items:stretch;gap:6px !important;padding:14px !important;border-radius:28px;
+    background:linear-gradient(115deg,rgba(90,10,26,.92) 0%,rgba(84,34,130,.92) 45%,rgba(122,64,190,.88) 100%) !important;backdrop-filter:blur(26px) saturate(190%);-webkit-backdrop-filter:blur(26px) saturate(190%);border:1px solid rgba(220,200,255,.22) !important;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 30px 60px -12px rgba(8,0,25,.85)}
+  .navbar .nav-links.open{display:flex !important}
+  .navbar .nav-links a,.navbar .nav-links .lube-gbtn{padding:12px 16px;font-size:15px;width:100%;box-sizing:border-box}
+  .lube-group{margin-top:8px}
+  .lube-gbtn{pointer-events:none;font-size:11px !important;letter-spacing:.24em;text-transform:uppercase;opacity:.85;padding:6px 16px !important;background:none !important;box-shadow:none !important}
+  .lube-gbtn i{display:none}
+  .lube-drop{position:static;opacity:1;visibility:visible;transform:none;min-width:0;padding:0 !important;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .lube-group::after{display:none}
+}
+@media(max-width:600px){
+  .navbar .brand .lube-sub{display:none}
+  .nav-account-btn{padding:11px 14px !important;font-size:12px !important}
+  .lube-right{gap:8px}
+  footer{width:calc(100% - 36px)}
+  .intro,.history-section{width:calc(100% - 36px)}
+}

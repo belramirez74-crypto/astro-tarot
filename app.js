@@ -525,7 +525,7 @@
             // ---- Precios y Public Key de Mercado Pago ----
             var mpPublicKey = null;
             var mpInstance = null;
-            fetch('/.netlify/functions/prices').then(function(r) { return r.json(); }).then(function(p) {
+            fetch('/api/prices').then(function(r) { return r.json(); }).then(function(p) {
                 document.getElementById('priceFull').textContent = '$' + p.full + ' ' + p.currency;
                 Object.keys(CAT_NAMES).forEach(function(k) {
                     var el = document.getElementById('priceCat_' + k);
@@ -591,7 +591,7 @@
                 if (btn) btn.disabled = true;
                 if (errEl) tHideEl(errEl);
                 try {
-                    var res = await fetch('/.netlify/functions/payment', {
+                    var res = await fetch('/api/payment', {
                         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item: item })
                     });
                     var data = await res.json();
@@ -626,7 +626,7 @@
                 var attempts = 0;
                 (function tick() {
                     attempts++;
-                    fetch('/.netlify/functions/verify-payment?ref=' + encodeURIComponent(pending.ref))
+                    fetch('/api/verify-payment?ref=' + encodeURIComponent(pending.ref))
                         .then(function(r) { return r.json(); })
                         .then(function(data) {
                             if (data && data.approved) {
@@ -685,7 +685,7 @@
                 try {
                     var headers = { 'Content-Type': 'application/json' };
                     if (jwt) headers['Authorization'] = 'Bearer ' + jwt;
-                    var res = await fetch('/.netlify/functions/tarot-report', {
+                    var res = await fetch('/api/tarot-report', {
                         method: 'POST', headers: headers,
                         body: JSON.stringify({
                             item: item, token: token,
@@ -733,7 +733,7 @@
                     var tiradaLink = document.querySelector('[data-view="tirada"]');
                     if (tiradaLink) tiradaLink.click();
                     try {
-                        var res = await fetch('/.netlify/functions/verify-payment?payment_id=' + encodeURIComponent(paymentId));
+                        var res = await fetch('/api/verify-payment?payment_id=' + encodeURIComponent(paymentId));
                         var data = await res.json();
                         if (!res.ok || !data.approved) throw new Error((data && data.error) || 'El pago no se pudo confirmar todavía. Si ya pagaste, esperá un minuto y volvé a intentar.');
                         saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
@@ -1716,7 +1716,7 @@ elementsSection.classList.add('view-hidden');
                             if (link0) link0.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('authModal').style.display = 'flex'; });
                             aiBtn.disabled = false; return;
                         }
-                        var res = await fetch('/.netlify/functions/report', {
+                        var res = await fetch('/api/report', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
                             body: JSON.stringify(lastChart)
@@ -1941,7 +1941,7 @@ elementsSection.classList.add('view-hidden');
                             if (l0) l0.addEventListener('click', function(e) { e.preventDefault(); document.getElementById('authModal').style.display = 'flex'; });
                             compatAiBtn.disabled = false; return;
                         }
-                        var res = await fetch('/.netlify/functions/synastry-report', {
+                        var res = await fetch('/api/synastry-report', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
                             body: JSON.stringify(lastSynastry)

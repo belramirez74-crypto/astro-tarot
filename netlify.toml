@@ -6,3 +6,10 @@
 
 [functions."report"]
   timeout = 26
+
+# Mismo frontend para Netlify y Vercel: acá se llama siempre a /api/..., y esto lo redirige
+# a las Netlify Functions de siempre (en Vercel, /api/ ya apunta directo a esas funciones).
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
