@@ -39,7 +39,10 @@ exports.handler = async (event) => {
   const item = ITEMS[data.item];
   if (!item) return reply(400, c.headers, { error: 'ítem inválido' });
 
-  const price = Number(process.env[item.envPrice]) || item.fallback;
+  const useDiscount = !!data.discount && item.envPrice === 'MP_PRICE_CATEGORY';
+  const price = useDiscount
+    ? (Number(process.env.MP_PRICE_CATEGORY_DISCOUNT) || 2500)
+    : (Number(process.env[item.envPrice]) || item.fallback);
   const site = c.origin || ('https://' + ((event.headers || {}).host || ''));
 
   try {
@@ -51,7 +54,7 @@ exports.handler = async (event) => {
     // al volver a la pestaña, en vez de depender solo de la redirección.
     const ref = data.item + ':' + require('crypto').randomBytes(8).toString('hex');
     const body = {
-      items: [{ title: item.title, quantity: 1, currency_id: 'ARS', unit_price: price }],
+      items: [{ title: item.title + (useDiscount ? ' (Promo)' : ''), quantity: 1, currency_id: 'ARS', unit_price: price }],
       back_urls: {
         success: site + '/?pago=exito&item=' + encodeURIComponent(data.item),
         failure: site + '/?pago=error',

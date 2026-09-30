@@ -533,7 +533,63 @@
                 });
                 mpPublicKey = p.mpPublicKey;
                 window.__planPrice = p.plan;
+                setupPromoModals(p);
             }).catch(function() {});
+
+            // ---- Cartel de sugerencia (precios reales, sin descuentos falsos) y, si lo rechaza,
+            // una segunda oferta despues con un descuento real en la lectura por categoría. ----
+            function setupPromoModals(p) {
+                var promoModal = document.getElementById('promoModal');
+                var discModal = document.getElementById('promoDiscountModal');
+                if (!promoModal || !discModal) return;
+                var shownFlag = 'tarot_promo_shown';
+                document.getElementById('promoPlanPrice').textContent = '$' + p.plan + ' ' + p.currency;
+                document.getElementById('promoCatPrice').textContent = '$' + p.category + ' ' + p.currency;
+                document.getElementById('promoDiscountOld').textContent = '$' + p.category + ' ' + p.currency;
+                document.getElementById('promoDiscountNew').textContent = '$' + p.categoryDiscount + ' ' + p.currency;
+
+                var alreadyShown = false;
+                try { alreadyShown = sessionStorage.getItem(shownFlag) === '1'; } catch (e) {}
+                if (alreadyShown || __mpPagoReturn) return;
+
+                setTimeout(function() {
+                    if (getComputedStyle(document.getElementById('birthdayModal')).display !== 'none') return; // no pisar el de bienvenida
+                    promoModal.style.display = 'flex';
+                    try { sessionStorage.setItem(shownFlag, '1'); } catch (e) {}
+                }, 12000);
+
+                function closePromo() { promoModal.style.display = 'none'; }
+                document.getElementById('promoModalClose').addEventListener('click', closePromo);
+                document.getElementById('promoSkipBtn').addEventListener('click', function() {
+                    closePromo();
+                    setTimeout(function() { discModal.style.display = 'flex'; }, 25000);
+                });
+                document.getElementById('promoPlanBtn').addEventListener('click', function() {
+                    closePromo();
+                    document.querySelector('[data-view="tirada"]').click();
+                    if (window.Account) Account.openSubscribeModal();
+                    else document.getElementById('authModal').style.display = 'flex';
+                });
+                document.getElementById('promoTiradaBtn').addEventListener('click', function() {
+                    closePromo();
+                    var link = document.querySelector('[data-view="tirada"]');
+                    if (link) link.click();
+                    var target = document.getElementById('categoriaGrid');
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+
+                document.getElementById('promoDiscountClose').addEventListener('click', function() { discModal.style.display = 'none'; });
+                document.getElementById('promoDiscountSkipBtn').addEventListener('click', function() { discModal.style.display = 'none'; });
+                document.querySelectorAll('#promoDiscountModal [data-discount-item]').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var item = btn.getAttribute('data-discount-item');
+                        discModal.style.display = 'none';
+                        var link = document.querySelector('[data-view="tirada"]');
+                        if (link) link.click();
+                        startCheckout(item, btn, document.getElementById('promoDiscountError'), true);
+                    });
+                });
+            }
 
             // ---- Tokens de desbloqueo (persisten en este navegador) ----
             function getToken(item) {
@@ -587,12 +643,12 @@
 
             var pendingPayment = null; // { item, ref, errEl } — pago abierto, esperando confirmación
 
-            async function startCheckout(item, btn, errEl) {
+            async function startCheckout(item, btn, errEl, discount) {
                 if (btn) btn.disabled = true;
                 if (errEl) tHideEl(errEl);
                 try {
                     var res = await fetch('/api/payment', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item: item })
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item: item, discount: !!discount })
                     });
                     var data = await res.json();
                     if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar el pago');

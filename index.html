@@ -361,14 +361,6 @@
                     </ul>
                 </div>
                 <div class="rec-card">
-                    <h3>&#x2726; Recursos en L&iacute;nea &#x2726;</h3>
-                    <ul>
-                        <li><strong>Astro.com</strong> &mdash; Cartas natales profesionales gratuitas con interpretaciones detalladas de tr&aacute;nsitos y sinastr&iacute;a.</li>
-                        <li><strong>Biddy Tarot</strong> &mdash; Significados detallados de cada carta del Tarot Rider-Waite con enfoque pr&aacute;ctico.</li>
-                        <li><strong>NASA Eyes</strong> &mdash; Visualizaci&oacute;n 3D interactiva del sistema solar en tiempo real para comprender las &oacute;rbitas planetarias.</li>
-                    </ul>
-                </div>
-                <div class="rec-card">
                     <h3>&#x2726; Consejos Pr&aacute;cticos &#x2726;</h3>
                     <ul>
                         <li><strong>Tir&aacute; una carta al d&iacute;a</strong> y reflexion&aacute; sobre su significado en tu jornada. La pr&aacute;ctica constante es la mejor maestra.</li>
@@ -456,6 +448,31 @@
                 <p class="mp-modal-hint">Si ten&eacute;s la app de Mercado Pago instalada, se va a abrir autom&aacute;ticamente.</p>
                 <div id="mpWalletContainer"></div>
                 <div class="astro-loading" id="mpWalletLoading"><span class="loading-spinner"></span> Preparando el pago...</div>
+            </div>
+        </div>
+        <div class="mp-modal-overlay" id="promoModal" style="display:none">
+            <div class="mp-modal">
+                <button class="mp-modal-close" id="promoModalClose" type="button" aria-label="Cerrar">&times;</button>
+                <h3>&#x2726; Ir m&aacute;s profundo &#x2726;</h3>
+                <p class="mp-modal-hint">Con el plan mensual ten&eacute;s el informe natal completo, 4 tiradas pagas por mes y se&ntilde;ales ilimitadas. O si preferis algo puntual, eleg&iacute; una lectura por categor&iacute;a.</p>
+                <button class="astro-btn" id="promoPlanBtn" type="button" style="width:100%;margin-bottom:0.6rem">Ver el plan mensual &mdash; <span id="promoPlanPrice">$&mdash;</span>/mes</button>
+                <button class="astro-btn" id="promoTiradaBtn" type="button" style="width:100%">Ver lecturas por categor&iacute;a &mdash; <span id="promoCatPrice">$&mdash;</span></button>
+                <button class="birthday-skip-btn" id="promoSkipBtn" type="button">No, gracias</button>
+            </div>
+        </div>
+        <div class="mp-modal-overlay" id="promoDiscountModal" style="display:none">
+            <div class="mp-modal">
+                <button class="mp-modal-close" id="promoDiscountClose" type="button" aria-label="Cerrar">&times;</button>
+                <h3>&#x2726; Antes de que te vayas &#x2726;</h3>
+                <p class="mp-modal-hint">Llevate una lectura por categor&iacute;a con descuento: <strong><span id="promoDiscountOld">$&mdash;</span> &rarr; <span id="promoDiscountNew">$2.500</span></strong>. Eleg&iacute; un &aacute;rea:</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.6rem">
+                    <button class="astro-btn" type="button" data-discount-item="amor">Amor</button>
+                    <button class="astro-btn" type="button" data-discount-item="finanzas">Finanzas</button>
+                    <button class="astro-btn" type="button" data-discount-item="profesion">Profesi&oacute;n</button>
+                    <button class="astro-btn" type="button" data-discount-item="familia">Familia</button>
+                </div>
+                <div class="astro-error" id="promoDiscountError" style="display:none"></div>
+                <button class="birthday-skip-btn" id="promoDiscountSkipBtn" type="button">No, gracias</button>
             </div>
         </div>
         <footer>

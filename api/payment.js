@@ -21,7 +21,13 @@ module.exports = async function handler(req, res) {
   const item = ITEMS[data.item];
   if (!item) return reply(res, 400, c.headers, { error: 'ítem inválido' });
 
-  const price = Number(process.env[item.envPrice]) || item.fallback;
+  // Promo puntual: lectura por categoría con descuento real. El monto lo define el servidor
+  // (nunca el cliente), así que lo peor que puede pasar es que alguien pida el precio promo
+  // sin haber visto el cartel — no hay forma de fijar un monto arbitrario desde el navegador.
+  const useDiscount = !!data.discount && item.envPrice === 'MP_PRICE_CATEGORY';
+  const price = useDiscount
+    ? (Number(process.env.MP_PRICE_CATEGORY_DISCOUNT) || 2500)
+    : (Number(process.env[item.envPrice]) || item.fallback);
   const site = c.origin || ('https://' + ((req.headers || {}).host || ''));
 
   try {
@@ -33,7 +39,7 @@ module.exports = async function handler(req, res) {
     // al volver a la pestaña, en vez de depender solo de la redirección.
     const ref = data.item + ':' + require('crypto').randomBytes(8).toString('hex');
     const body = {
-      items: [{ title: item.title, quantity: 1, currency_id: 'ARS', unit_price: price }],
+      items: [{ title: item.title + (useDiscount ? ' (Promo)' : ''), quantity: 1, currency_id: 'ARS', unit_price: price }],
       back_urls: {
         success: site + '/?pago=exito&item=' + encodeURIComponent(data.item),
         failure: site + '/?pago=error',
