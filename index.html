@@ -31,30 +31,12 @@
             <p class="mp-modal-hint" id="authModalHint">Entr&aacute; con tu email y contrase&ntilde;a.</p>
             <form id="authForm">
                 <input type="email" id="authEmailInput" placeholder="tu@email.com" required autocomplete="email" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.8rem">
-                <div class="auth-pass-wrap">
-                    <input type="password" id="authPasswordInput" placeholder="Contrase&ntilde;a" required minlength="6" autocomplete="current-password">
-                    <button type="button" id="authPassToggle" aria-label="Mostrar contrase&ntilde;a">&#x1F441;</button>
-                </div>
+                <input type="password" id="authPasswordInput" placeholder="Contrase&ntilde;a" required minlength="6" autocomplete="current-password" style="width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(168,85,247,0.3);background:rgba(255,255,255,0.05);color:#fff;margin-bottom:0.4rem">
                 <p class="mp-modal-hint" id="authPasswordHint" style="margin:0 0 0.8rem;text-align:left;font-size:0.78rem">M&iacute;nimo 6 caracteres.</p>
                 <button class="astro-btn" type="submit" id="authSubmitBtn">Iniciar sesi&oacute;n</button>
             </form>
             <p class="mp-modal-hint" id="authForgotWrap"><a href="#" id="authForgotLink">&#191;Olvidaste tu contrase&ntilde;a?</a></p>
             <p class="ai-status" id="authStatus"></p>
-        </div>
-    </div>
-    <div class="mp-modal-overlay" id="resetPasswordModal" style="display:none">
-        <div class="mp-modal">
-            <h3>&#x2726; Eleg&iacute; tu contrase&ntilde;a nueva &#x2726;</h3>
-            <p class="mp-modal-hint">Termin&aacute; de recuperar tu cuenta poniendo una contrase&ntilde;a nueva.</p>
-            <form id="resetPasswordForm">
-                <div class="auth-pass-wrap">
-                    <input type="password" id="resetPasswordInput" placeholder="Contrase&ntilde;a nueva" required minlength="6" autocomplete="new-password">
-                    <button type="button" id="resetPassToggle" aria-label="Mostrar contrase&ntilde;a">&#x1F441;</button>
-                </div>
-                <p class="mp-modal-hint" style="margin:0 0 0.8rem;text-align:left;font-size:0.78rem">M&iacute;nimo 6 caracteres.</p>
-                <button class="astro-btn" type="submit">Guardar contrase&ntilde;a</button>
-            </form>
-            <p class="ai-status" id="resetPasswordStatus"></p>
         </div>
     </div>
     <div class="mp-modal-overlay" id="accountModal" style="display:none">
@@ -278,7 +260,7 @@
                 <div class="natal-reading" id="natalReading"></div>
                 <div class="natal-reading" id="natalAspectReading"></div>
                 <div class="natal-ai" id="natalAi">
-                    <button class="astro-btn" id="natalAiBtn" type="button">&#x2726; Generar informe completo</button>
+                    <button class="astro-btn" id="natalAiBtn" type="button">&#x2726; Generar informe completo con IA</button>
                     <div id="natalAiOut" class="ai-report"></div>
                 </div>
             </div>
@@ -379,6 +361,14 @@
                     </ul>
                 </div>
                 <div class="rec-card">
+                    <h3>&#x2726; Recursos en L&iacute;nea &#x2726;</h3>
+                    <ul>
+                        <li><strong>Astro.com</strong> &mdash; Cartas natales profesionales gratuitas con interpretaciones detalladas de tr&aacute;nsitos y sinastr&iacute;a.</li>
+                        <li><strong>Biddy Tarot</strong> &mdash; Significados detallados de cada carta del Tarot Rider-Waite con enfoque pr&aacute;ctico.</li>
+                        <li><strong>NASA Eyes</strong> &mdash; Visualizaci&oacute;n 3D interactiva del sistema solar en tiempo real para comprender las &oacute;rbitas planetarias.</li>
+                    </ul>
+                </div>
+                <div class="rec-card">
                     <h3>&#x2726; Consejos Pr&aacute;cticos &#x2726;</h3>
                     <ul>
                         <li><strong>Tir&aacute; una carta al d&iacute;a</strong> y reflexion&aacute; sobre su significado en tu jornada. La pr&aacute;ctica constante es la mejor maestra.</li>
@@ -417,47 +407,40 @@
         <section class="tirada-section fade-section view-hidden" id="tirada">
             <div class="signal-inner">
                 <h2>&#x2726; Tirada de Tarot &#x2726;</h2>
-                <p class="subtitle">La tirada cl&aacute;sica de tres cartas: Pasado, Presente y Futuro</p>
-                <div style="text-align:center"><span class="tirada-free-badge">gratis</span></div>
+                <p class="subtitle">La tirada cl&aacute;sica de tres cartas: Pasado, Presente y Futuro &mdash; <strong>gratis</strong></p>
                 <button class="signal-btn" id="tiradaBtn">Tirar las cartas</button>
                 <div class="tirada-spread" id="tiradaSpread"></div>
                 <div class="natal-reading" id="tiradaReading"></div>
 
                 <div class="paywall-card" id="tiradaPaywall" style="display:none">
                     <h3>&#x2726; &#191;Quer&eacute;s ir m&aacute;s profundo? &#x2726;</h3>
-                    <p>Desbloque&aacute; una tirada de <strong>7 cartas</strong> con una lectura completa que conecta todas las cartas en un relato &uacute;nico.</p>
+                    <p>Desbloque&aacute; una tirada de <strong>7 cartas</strong> con una lectura completa e interpretada por IA, que conecta todas las cartas en un relato &uacute;nico.</p>
                     <button class="astro-btn" id="unlockFullBtn" data-item="full">Lectura completa &mdash; <span id="priceFull">$&mdash;</span></button>
-                    <div class="promo-or"><span>o eleg&iacute; una lectura enfocada en un &aacute;rea</span></div>
-                    <div class="categoria-grid" id="categoriaGrid">
-                        <button class="categoria-btn" data-item="amor">
-                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2665;</span></span>
-                            <span class="categoria-label">Amor y relaciones</span>
-                            <span class="categoria-price" id="priceCat_amor">$&mdash;</span>
-                        </button>
-                        <button class="categoria-btn" data-item="finanzas">
-                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2726;</span></span>
-                            <span class="categoria-label">Finanzas y dinero</span>
-                            <span class="categoria-price" id="priceCat_finanzas">$&mdash;</span>
-                        </button>
-                        <button class="categoria-btn" data-item="profesion">
-                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2699;</span></span>
-                            <span class="categoria-label">Profesi&oacute;n y trabajo</span>
-                            <span class="categoria-price" id="priceCat_profesion">$&mdash;</span>
-                        </button>
-                        <button class="categoria-btn" data-item="familia">
-                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2302;</span></span>
-                            <span class="categoria-label">Familia y hogar</span>
-                            <span class="categoria-price" id="priceCat_familia">$&mdash;</span>
-                        </button>
-                    </div>
                     <div class="astro-error" id="tiradaPayError" style="display:none"></div>
-                    <div class="astro-error" id="categoriaPayError" style="display:none"></div>
                 </div>
                 <div class="tirada-premium" id="tiradaFullResult" style="display:none">
                     <h3>&#x2726; Tu Lectura Completa &#x2726;</h3>
                     <div class="tirada-spread" id="fullSpread"></div>
                     <div class="ai-report" id="fullAiOut"></div>
                 </div>
+
+                <h3 class="horo-subtitle">&#x2726; Lecturas Especializadas &#x2726;</h3>
+                <p class="subtitle">Eleg&iacute; un &aacute;rea de tu vida para una tirada de 5 cartas enfocada, interpretada por IA</p>
+                <div class="categoria-grid" id="categoriaGrid">
+                    <button class="categoria-btn" data-item="amor">
+                        <span class="categoria-icon">&#x2665;</span><span>Amor y relaciones</span><span class="categoria-price" id="priceCat_amor">$&mdash;</span>
+                    </button>
+                    <button class="categoria-btn" data-item="finanzas">
+                        <span class="categoria-icon">&#x2726;</span><span>Finanzas y dinero</span><span class="categoria-price" id="priceCat_finanzas">$&mdash;</span>
+                    </button>
+                    <button class="categoria-btn" data-item="profesion">
+                        <span class="categoria-icon">&#x2699;</span><span>Profesi&oacute;n y trabajo</span><span class="categoria-price" id="priceCat_profesion">$&mdash;</span>
+                    </button>
+                    <button class="categoria-btn" data-item="familia">
+                        <span class="categoria-icon">&#x2302;</span><span>Familia y hogar</span><span class="categoria-price" id="priceCat_familia">$&mdash;</span>
+                    </button>
+                </div>
+                <div class="astro-error" id="categoriaPayError" style="display:none"></div>
                 <div class="tirada-premium" id="categoriaResult" style="display:none">
                     <h3 id="categoriaTitle">&#x2726; Tu Lectura &#x2726;</h3>
                     <div class="tirada-spread" id="categoriaSpread"></div>
@@ -473,31 +456,6 @@
                 <p class="mp-modal-hint">Si ten&eacute;s la app de Mercado Pago instalada, se va a abrir autom&aacute;ticamente.</p>
                 <div id="mpWalletContainer"></div>
                 <div class="astro-loading" id="mpWalletLoading"><span class="loading-spinner"></span> Preparando el pago...</div>
-            </div>
-        </div>
-        <div class="mp-modal-overlay" id="promoModal" style="display:none">
-            <div class="mp-modal">
-                <button class="mp-modal-close" id="promoModalClose" type="button" aria-label="Cerrar">&times;</button>
-                <h3>&#x2726; Ir m&aacute;s profundo &#x2726;</h3>
-                <p class="mp-modal-hint">Con el plan mensual ten&eacute;s el informe natal completo, 4 tiradas pagas por mes y se&ntilde;ales ilimitadas. O si preferis algo puntual, eleg&iacute; una lectura por categor&iacute;a.</p>
-                <button class="astro-btn" id="promoPlanBtn" type="button" style="width:100%;margin-bottom:0.6rem">Ver el plan mensual &mdash; <span id="promoPlanPrice">$&mdash;</span>/mes</button>
-                <button class="astro-btn" id="promoTiradaBtn" type="button" style="width:100%">Ver lecturas por categor&iacute;a &mdash; <span id="promoCatPrice">$&mdash;</span></button>
-                <button class="birthday-skip-btn" id="promoSkipBtn" type="button">No, gracias</button>
-            </div>
-        </div>
-        <div class="mp-modal-overlay" id="promoDiscountModal" style="display:none">
-            <div class="mp-modal">
-                <button class="mp-modal-close" id="promoDiscountClose" type="button" aria-label="Cerrar">&times;</button>
-                <h3>&#x2726; Antes de que te vayas &#x2726;</h3>
-                <p class="mp-modal-hint">Llevate una lectura por categor&iacute;a con descuento: <strong><span id="promoDiscountOld">$&mdash;</span> &rarr; <span id="promoDiscountNew">$2.500</span></strong>. Eleg&iacute; un &aacute;rea:</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.6rem">
-                    <button class="astro-btn" type="button" data-discount-item="amor">Amor</button>
-                    <button class="astro-btn" type="button" data-discount-item="finanzas">Finanzas</button>
-                    <button class="astro-btn" type="button" data-discount-item="profesion">Profesi&oacute;n</button>
-                    <button class="astro-btn" type="button" data-discount-item="familia">Familia</button>
-                </div>
-                <div class="astro-error" id="promoDiscountError" style="display:none"></div>
-                <button class="birthday-skip-btn" id="promoDiscountSkipBtn" type="button">No, gracias</button>
             </div>
         </div>
         <footer>

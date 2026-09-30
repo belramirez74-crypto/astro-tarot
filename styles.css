@@ -736,7 +736,7 @@
         .signal-advice::before { content: '\2726 '; color: var(--violeta-brillante); }
         .signal-advice::after { content: ' \2726'; color: var(--violeta-brillante); }
         .signal-btn {
-            display: block; margin: 1.5rem auto 0; padding: 0.9rem 2.5rem;
+            margin-top: 1.5rem; padding: 0.9rem 2.5rem;
             background: linear-gradient(135deg, var(--violeta-claro), var(--rojo-claro));
             color: var(--blanco); border: none; border-radius: 50px;
             font-family: 'Marcellus', serif; font-size: 1rem;
@@ -1641,49 +1641,14 @@
 .horo-text p:last-child { margin-bottom: 0; }
 
 /* ===== TIRADA DE TAROT ===== */
-/* ===== TIRADA: diseño más elaborado ===== */
-#tirada .signal-inner { position: relative; }
-
-.tirada-free-badge {
-    display: inline-block; margin-top: 0.5rem; padding: 0.12rem 0.65rem; border-radius: 999px;
-    background: linear-gradient(135deg, rgba(150,255,190,0.25), rgba(90,220,150,0.1));
-    border: 1px solid rgba(150,255,190,0.45); color: #a7f3d0; font-weight: 700;
-    font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle;
-}
-#tiradaBtn { position: relative; }
-#tiradaBtn::before {
-    content: ''; position: absolute; inset: -10px; border-radius: 999px;
-    border: 1px dashed rgba(198,134,221,0.35); animation: lubeSpin 30s linear infinite; pointer-events: none;
-}
-
-.tirada-spread { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem; margin: 2.2rem 0; perspective: 1200px; }
-.tirada-slot {
-    width: 168px; text-align: center; position: relative;
-    opacity: 0; transform: translateY(24px) rotateX(20deg);
-    animation: tiradaReveal 0.7s cubic-bezier(.2,.8,.2,1) forwards;
-}
-@keyframes tiradaReveal { to { opacity: 1; transform: translateY(0) rotateX(0); } }
-.tirada-slot .tirada-num {
-    width: 26px; height: 26px; line-height: 24px; margin: 0 auto 0.5rem; border-radius: 50%;
-    border: 1px solid rgba(220,200,255,0.4); color: #e9d5ff; font-family: 'Marcellus', serif;
-    font-size: 0.8rem; background: radial-gradient(circle, rgba(198,134,221,0.25), transparent 70%);
-}
+.tirada-spread { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin: 2rem 0; }
+.tirada-slot { width: 160px; text-align: center; }
 .tirada-slot .tirada-label { font-family: 'Marcellus', serif; color: var(--violeta-claro); font-size: 0.85rem; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; }
-.tirada-slot .tirada-img-wrap {
-    position: relative; border-radius: 12px; overflow: hidden; border: 1px solid rgba(220,200,255,0.3);
-    background: rgba(168,85,247,0.05); aspect-ratio: 250/429; transition: box-shadow 0.35s, transform 0.35s;
-    box-shadow: 0 0 22px -4px rgba(150,100,255,0.45), 0 18px 34px -20px rgba(8,0,25,0.9);
-}
-.tirada-slot .tirada-img-wrap::after {
-    content: ''; position: absolute; inset: 0; border-radius: 12px; pointer-events: none;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), inset 0 0 0 1px rgba(220,200,255,0.12);
-}
-.tirada-slot:hover .tirada-img-wrap { transform: translateY(-6px) scale(1.03); box-shadow: 0 0 32px -2px rgba(198,134,221,0.75), 0 22px 40px -18px rgba(8,0,25,0.95); }
+.tirada-slot .tirada-img-wrap { border-radius: 10px; overflow: hidden; border: 1px solid rgba(168,85,247,0.3); box-shadow: 0 0 18px rgba(168,85,247,0.25); background: rgba(168,85,247,0.05); aspect-ratio: 250/429; }
 .tirada-slot .tirada-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
 .tirada-slot.reversed .tirada-img-wrap img { transform: rotate(180deg); }
-.tirada-slot.reversed:hover .tirada-img-wrap img { transform: rotate(180deg) scale(1.02); }
-.tirada-slot .tirada-name { margin-top: 0.7rem; font-family: 'Marcellus', serif; color: var(--blanco); font-size: 0.92rem; letter-spacing: 0.02em; }
-.tirada-slot .tirada-rev { color: #C686DD; font-size: 0.72rem; margin-top: 0.15rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.tirada-slot .tirada-name { margin-top: 0.6rem; font-weight: 600; color: var(--blanco); font-size: 0.9rem; }
+.tirada-slot .tirada-rev { color: #fbbf24; font-size: 0.75rem; }
 
 /* ===== TIRADA: PAYWALL Y CATEGORÍAS ===== */
 .paywall-card {
@@ -1693,34 +1658,19 @@
 }
 .paywall-card h3 { font-family: 'Marcellus', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
 .paywall-card p { color: var(--blanco); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
-.paywall-card { max-width: 640px; }
-.promo-or { display: flex; align-items: center; gap: 0.8rem; margin: 1.3rem 0 1rem; color: var(--violeta-claro); font-size: 0.82rem; }
-.promo-or::before, .promo-or::after { content: ''; flex: 1; height: 1px; background: rgba(220,200,255,0.2); }
 .tirada-premium { margin-top: 2rem; }
 .tirada-premium h3 { text-align: center; font-family: 'Marcellus', serif; color: var(--violeta-claro); margin-bottom: 1rem; }
-.categoria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.1rem; max-width: 720px; margin: 1.5rem auto; }
+.categoria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; max-width: 720px; margin: 1.5rem auto; }
 .categoria-btn {
-    position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.55rem;
-    padding: 1.6rem 1rem 1.3rem; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    background: linear-gradient(145deg, rgba(168,85,247,0.08), rgba(168,85,247,0.02));
+    border: 1px solid rgba(168,85,247,0.2); border-radius: 12px; padding: 1.2rem 1rem;
+    color: var(--blanco); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem;
+    transition: transform 0.2s, border-color 0.2s;
 }
-.categoria-btn:hover { transform: translateY(-5px); }
-.categoria-icon-wrap {
-    width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
-    background: radial-gradient(circle, rgba(198,134,221,0.28), rgba(198,134,221,0.04) 70%);
-    border: 1px solid rgba(220,200,255,0.3);
-    box-shadow: 0 0 18px -4px rgba(150,100,255,0.55);
-}
-.categoria-btn .categoria-icon { font-size: 1.5rem; color: #e9d5ff; line-height: 1; }
-.categoria-btn:hover .categoria-icon-wrap { box-shadow: 0 0 26px -2px rgba(198,134,221,0.8); }
-.categoria-btn .categoria-label {
-    font-family: 'Marcellus', serif; font-size: 0.98rem; letter-spacing: 0.02em; color: #f4ecff;
-}
-.categoria-btn .categoria-price {
-    display: inline-block; margin-top: 0.15rem; padding: 0.22rem 0.75rem; border-radius: 999px;
-    background: rgba(198,134,221,0.16); border: 1px solid rgba(220,200,255,0.35); color: #e9d5ff;
-    font-weight: 600; font-size: 0.78rem; letter-spacing: 0.02em;
-}
+.categoria-btn:hover { transform: translateY(-3px); border-color: var(--violeta-brillante); }
+.categoria-btn .categoria-icon { font-size: 1.6rem; color: var(--violeta-brillante); }
+.categoria-btn .categoria-price { color: #fbbf24; font-weight: 600; font-size: 0.85rem; }
 .categoria-btn:disabled { opacity: 0.6; cursor: wait; }
 
 /* ===== MODAL DE PAGO (WALLET DE MERCADO PAGO) ===== */
@@ -1922,13 +1872,7 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
   .intro,.history-section{width:calc(100% - 36px)}
 }
 
-.auth-pass-wrap { position: relative; margin-bottom: 0.4rem; }
-.auth-pass-wrap input {
-    width: 100%; padding: 0.6rem; padding-right: 2.4rem; border-radius: 8px;
-    border: 1px solid rgba(168,85,247,0.3); background: rgba(255,255,255,0.05); color: #fff;
-}
-.auth-pass-wrap button {
-    position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%);
-    background: none; border: none; font-size: 1rem; cursor: pointer; opacity: 0.7; padding: 0.2rem;
-}
-.auth-pass-wrap button:hover { opacity: 1; }
+/* centrado de encabezados (tirada, señal, etc.) */
+.tirada-section,.signal-section,.tirada-section .signal-inner,.signal-section .signal-inner{text-align:center}
+.tirada-section .signal-inner,.signal-section .signal-inner{display:flex;flex-direction:column;align-items:center;margin-left:auto;margin-right:auto}
+.tirada-section h2,.tirada-section .subtitle{text-align:center;margin-left:auto;margin-right:auto;max-width:680px;width:100%}
