@@ -1680,8 +1680,8 @@
 }
 .categoria-btn .categoria-price {
     display: inline-block; margin-top: 0.15rem; padding: 0.22rem 0.75rem; border-radius: 999px;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1a1030;
-    font-weight: 700; font-size: 0.78rem; letter-spacing: 0.02em;
+    background: rgba(198,134,221,0.16); border: 1px solid rgba(220,200,255,0.35); color: #e9d5ff;
+    font-weight: 600; font-size: 0.78rem; letter-spacing: 0.02em;
 }
 .categoria-btn:disabled { opacity: 0.6; cursor: wait; }
 
