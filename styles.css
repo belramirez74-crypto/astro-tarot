@@ -1645,7 +1645,7 @@
 #tirada .signal-inner { position: relative; }
 
 .tirada-free-badge {
-    display: inline-block; margin-left: 0.4rem; padding: 0.12rem 0.65rem; border-radius: 999px;
+    display: inline-block; margin-top: 0.5rem; padding: 0.12rem 0.65rem; border-radius: 999px;
     background: linear-gradient(135deg, rgba(150,255,190,0.25), rgba(90,220,150,0.1));
     border: 1px solid rgba(150,255,190,0.45); color: #a7f3d0; font-weight: 700;
     font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: middle;
