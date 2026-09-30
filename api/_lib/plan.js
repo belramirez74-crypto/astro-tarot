@@ -6,6 +6,21 @@
 
 function monthKey(d) { return d.getUTCFullYear() + '-' + (d.getUTCMonth() + 1); }
 
+// Cuentas de desarrollo: acceso completo sin pasar por ningún pago ni límite. Se verifica
+// contra el email real que Supabase confirma para ese JWT (no algo que el cliente pueda falsear),
+// y se compara contra ADMIN_EMAILS (lista separada por coma en las variables de entorno).
+async function isAdminJwt(jwt) {
+  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_ANON_KEY;
+  const admins = (process.env.ADMIN_EMAILS || '').split(',').map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean);
+  if (!url || !key || !jwt || !admins.length) return false;
+  try {
+    const res = await fetch(url + '/auth/v1/user', { headers: { apikey: key, authorization: 'Bearer ' + jwt } });
+    if (!res.ok) return false;
+    const user = await res.json();
+    return !!(user && user.email && admins.indexOf(String(user.email).toLowerCase()) !== -1);
+  } catch (e) { return false; }
+}
+
 async function getProfileForJwt(jwt) {
   const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_ANON_KEY;
   if (!url || !key || !jwt) return null;
@@ -29,6 +44,7 @@ async function patchProfile(jwt, id, patch) {
 // Verifica que el usuario tenga el plan activo. No consume cupo (se usa para el informe natal,
 // que es ilimitado dentro del plan).
 async function requirePlan(jwt) {
+  if (await isAdminJwt(jwt)) return { admin: true, plan_active: true };
   const prof = await getProfileForJwt(jwt);
   if (!prof || !prof.plan_active) return null;
   return prof;
@@ -36,6 +52,7 @@ async function requirePlan(jwt) {
 
 // Verifica plan activo Y cupo de tiradas del mes (4). Si hay cupo, lo descuenta y devuelve el perfil.
 async function consumeTiradaQuota(jwt) {
+  if (await isAdminJwt(jwt)) return { prof: { admin: true }, quotaLeft: true };
   const prof = await getProfileForJwt(jwt);
   if (!prof || !prof.plan_active) return null;
   const now = new Date();
