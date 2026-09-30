@@ -490,7 +490,8 @@
             }
             function renderSpread(el, picks, labels) {
                 el.innerHTML = picks.map(function(p, i) {
-                    return '<div class="tirada-slot' + (p.reversed ? ' reversed' : '') + '">' +
+                    return '<div class="tirada-slot' + (p.reversed ? ' reversed' : '') + '" style="animation-delay:' + (i * 0.15) + 's">' +
+                        '<div class="tirada-num">' + (i + 1) + '</div>' +
                         '<div class="tirada-label">' + labels[i] + '</div>' +
                         '<div class="tirada-img-wrap"><img src="' + p.card.img + '" alt="' + p.card.name + '"></div>' +
                         '<div class="tirada-name">' + p.card.name + '</div>' +
