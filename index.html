@@ -426,39 +426,37 @@
                     <h3>&#x2726; &#191;Quer&eacute;s ir m&aacute;s profundo? &#x2726;</h3>
                     <p>Desbloque&aacute; una tirada de <strong>7 cartas</strong> con una lectura completa que conecta todas las cartas en un relato &uacute;nico.</p>
                     <button class="astro-btn" id="unlockFullBtn" data-item="full">Lectura completa &mdash; <span id="priceFull">$&mdash;</span></button>
+                    <div class="promo-or"><span>o eleg&iacute; una lectura enfocada en un &aacute;rea</span></div>
+                    <div class="categoria-grid" id="categoriaGrid">
+                        <button class="categoria-btn" data-item="amor">
+                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2665;</span></span>
+                            <span class="categoria-label">Amor y relaciones</span>
+                            <span class="categoria-price" id="priceCat_amor">$&mdash;</span>
+                        </button>
+                        <button class="categoria-btn" data-item="finanzas">
+                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2726;</span></span>
+                            <span class="categoria-label">Finanzas y dinero</span>
+                            <span class="categoria-price" id="priceCat_finanzas">$&mdash;</span>
+                        </button>
+                        <button class="categoria-btn" data-item="profesion">
+                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2699;</span></span>
+                            <span class="categoria-label">Profesi&oacute;n y trabajo</span>
+                            <span class="categoria-price" id="priceCat_profesion">$&mdash;</span>
+                        </button>
+                        <button class="categoria-btn" data-item="familia">
+                            <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2302;</span></span>
+                            <span class="categoria-label">Familia y hogar</span>
+                            <span class="categoria-price" id="priceCat_familia">$&mdash;</span>
+                        </button>
+                    </div>
                     <div class="astro-error" id="tiradaPayError" style="display:none"></div>
+                    <div class="astro-error" id="categoriaPayError" style="display:none"></div>
                 </div>
                 <div class="tirada-premium" id="tiradaFullResult" style="display:none">
                     <h3>&#x2726; Tu Lectura Completa &#x2726;</h3>
                     <div class="tirada-spread" id="fullSpread"></div>
                     <div class="ai-report" id="fullAiOut"></div>
                 </div>
-
-                <h3 class="horo-subtitle">&#x2726; Lecturas Especializadas &#x2726;</h3>
-                <p class="subtitle">Eleg&iacute; un &aacute;rea de tu vida para una tirada de 5 cartas enfocada y personalizada</p>
-                <div class="categoria-grid" id="categoriaGrid">
-                    <button class="categoria-btn" data-item="amor">
-                        <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2665;</span></span>
-                        <span class="categoria-label">Amor y relaciones</span>
-                        <span class="categoria-price" id="priceCat_amor">$&mdash;</span>
-                    </button>
-                    <button class="categoria-btn" data-item="finanzas">
-                        <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2726;</span></span>
-                        <span class="categoria-label">Finanzas y dinero</span>
-                        <span class="categoria-price" id="priceCat_finanzas">$&mdash;</span>
-                    </button>
-                    <button class="categoria-btn" data-item="profesion">
-                        <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2699;</span></span>
-                        <span class="categoria-label">Profesi&oacute;n y trabajo</span>
-                        <span class="categoria-price" id="priceCat_profesion">$&mdash;</span>
-                    </button>
-                    <button class="categoria-btn" data-item="familia">
-                        <span class="categoria-icon-wrap"><span class="categoria-icon">&#x2302;</span></span>
-                        <span class="categoria-label">Familia y hogar</span>
-                        <span class="categoria-price" id="priceCat_familia">$&mdash;</span>
-                    </button>
-                </div>
-                <div class="astro-error" id="categoriaPayError" style="display:none"></div>
                 <div class="tirada-premium" id="categoriaResult" style="display:none">
                     <h3 id="categoriaTitle">&#x2726; Tu Lectura &#x2726;</h3>
                     <div class="tirada-spread" id="categoriaSpread"></div>

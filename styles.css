@@ -1658,6 +1658,9 @@
 }
 .paywall-card h3 { font-family: 'Marcellus', serif; color: var(--violeta-brillante); margin-bottom: 0.6rem; }
 .paywall-card p { color: var(--blanco); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
+.paywall-card { max-width: 640px; }
+.promo-or { display: flex; align-items: center; gap: 0.8rem; margin: 1.3rem 0 1rem; color: var(--violeta-claro); font-size: 0.82rem; }
+.promo-or::before, .promo-or::after { content: ''; flex: 1; height: 1px; background: rgba(220,200,255,0.2); }
 .tirada-premium { margin-top: 2rem; }
 .tirada-premium h3 { text-align: center; font-family: 'Marcellus', serif; color: var(--violeta-claro); margin-bottom: 1rem; }
 .categoria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.1rem; max-width: 720px; margin: 1.5rem auto; }
