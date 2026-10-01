@@ -9,6 +9,7 @@ exports.handler = async () => {
       category: Number(process.env.MP_PRICE_CATEGORY) || 1200,
       plan: Number(process.env.MP_PRICE_PLAN) || 7500,
       categoryDiscount: Number(process.env.MP_PRICE_CATEGORY_DISCOUNT) || 2500,
+      oraculo: Number(process.env.MP_PRICE_ORACULO) || 1000,
       currency: 'ARS',
       mpPublicKey: process.env.MP_PUBLIC_KEY || null
     })

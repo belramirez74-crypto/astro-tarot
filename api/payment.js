@@ -7,7 +7,8 @@ const ITEMS = {
   amor: { title: 'Lectura de Tarot — Amor y relaciones', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
   finanzas: { title: 'Lectura de Tarot — Finanzas y dinero', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
   profesion: { title: 'Lectura de Tarot — Profesión y trabajo', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
-  familia: { title: 'Lectura de Tarot — Familia y hogar', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 }
+  familia: { title: 'Lectura de Tarot — Familia y hogar', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
+  oraculo: { title: 'Consulta al Oráculo (I Ching)', envPrice: 'MP_PRICE_ORACULO', fallback: 1000 }
 };
 
 module.exports = async function handler(req, res) {

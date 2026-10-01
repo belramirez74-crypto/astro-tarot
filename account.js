@@ -6,7 +6,7 @@
     var currentUser = null;
     var currentProfile = null;
     var pendingBirth = null; // datos de nacimiento a guardar apenas se confirme el login
-    var FREE_SENAL_LIMIT = 3;
+    var FREE_SENAL_LIMIT = 1; // el oráculo da 1 consulta gratis; el resto es pago o con el plan
 
     function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
 

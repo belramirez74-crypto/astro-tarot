@@ -534,6 +534,7 @@
                 });
                 mpPublicKey = p.mpPublicKey;
                 window.__planPrice = p.plan;
+                window.__oraculoPrice = p.oraculo;
                 setupPromoModals(p);
             }).catch(function() {});
 
@@ -691,7 +692,8 @@
                                 try { sessionStorage.removeItem('tarot_pending_item'); sessionStorage.removeItem('tarot_pending_ref'); } catch (e) {}
                                 document.getElementById('mpModalOverlay').style.display = 'none';
                                 saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
-                                runPremiumReading(data.item, data.token);
+                                if (data.item === 'oraculo') doOracleConsult();
+                                else runPremiumReading(data.item, data.token);
                             } else if (attempts < 20) {
                                 pollTimer = setTimeout(tick, 3000);
                             }
@@ -783,18 +785,20 @@
                 history.replaceState({}, '', location.pathname);
                 if (pago !== 'exito' || !paymentId || !item) return;
                 (async function() {
-                    var errEl = document.getElementById(item === 'full' ? 'tiradaPayError' : 'categoriaPayError');
+                    var isOraculo = item === 'oraculo';
+                    var errEl = document.getElementById(isOraculo ? 'signalLimitMsg' : (item === 'full' ? 'tiradaPayError' : 'categoriaPayError'));
                     // Se espera al siguiente tick: recién ahí ya está armado el resto de la página
-                    // (el link "Tirada" del menú todavía no tiene su listener en este punto del script).
+                    // (el link de menú todavía no tiene su listener en este punto del script).
                     await new Promise(function(r) { setTimeout(r, 0); });
-                    var tiradaLink = document.querySelector('[data-view="tirada"]');
-                    if (tiradaLink) tiradaLink.click();
+                    var destLink = document.querySelector('[data-view="' + (isOraculo ? 'signal' : 'tirada') + '"]');
+                    if (destLink) destLink.click();
                     try {
                         var res = await fetch('/api/verify-payment?payment_id=' + encodeURIComponent(paymentId));
                         var data = await res.json();
                         if (!res.ok || !data.approved) throw new Error((data && data.error) || 'El pago no se pudo confirmar todavía. Si ya pagaste, esperá un minuto y volvé a intentar.');
                         saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
-                        runPremiumReading(data.item, data.token);
+                        if (data.item === 'oraculo') doOracleConsult();
+                        else runPremiumReading(data.item, data.token);
                     } catch (err) {
                         if (errEl) tShowError(errEl, err.message);
                     }
@@ -1029,19 +1033,7 @@ elementsSection.classList.add('view-hidden');
             }
         }
 
-        signalBtn.addEventListener('click', async function() {
-            var limitMsg = document.getElementById('signalLimitMsg');
-            if (window.Account) {
-                var quota = await Account.checkAndCountSenal();
-                if (!quota.allowed) {
-                    limitMsg.innerHTML = 'Ya usaste tus 3 consultas gratis. Con el <a href="#" id="signalPlanLink">plan mensual</a> las tenés ilimitadas.';
-                    limitMsg.style.display = '';
-                    var link = document.getElementById('signalPlanLink');
-                    if (link) link.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
-                    return;
-                }
-                limitMsg.style.display = 'none';
-            }
+        function doOracleConsult() {
             if (!window.IChing) return;
             var r = IChing.cast();
             renderHexLines(document.getElementById('hexLines'), r.primary.lines, r.moving);
@@ -1069,6 +1061,30 @@ elementsSection.classList.add('view-hidden');
                 signalResult.style.opacity = '1';
                 signalResult.style.transform = 'scale(1)';
             }, 50);
+        }
+
+        // El I Ching da 1 consulta gratis; de ahí en más hace falta pagar (o tener el plan).
+        var ORACULO_PRICE_ID = 'oraculo';
+        signalBtn.addEventListener('click', async function() {
+            var limitMsg = document.getElementById('signalLimitMsg');
+            var unlocked = (window.Account && Account.hasActivePlan()) || !!getToken(ORACULO_PRICE_ID);
+            if (!unlocked && window.Account) {
+                var quota = await Account.checkAndCountSenal();
+                unlocked = quota.allowed;
+            }
+            if (!unlocked) {
+                var priceTxt = window.__oraculoPrice ? (' ($' + window.__oraculoPrice + ')') : '';
+                limitMsg.innerHTML = 'Ya usaste tu consulta gratis al or&aacute;culo. ' +
+                    '<a href="#" id="signalPayLink">Pag&aacute; una consulta' + priceTxt + '</a> o conseguí el <a href="#" id="signalPlanLink">plan mensual</a> para consultas ilimitadas.';
+                limitMsg.style.display = '';
+                var payLink = document.getElementById('signalPayLink');
+                if (payLink) payLink.addEventListener('click', function(e) { e.preventDefault(); startCheckout(ORACULO_PRICE_ID, signalBtn, limitMsg); });
+                var planLink = document.getElementById('signalPlanLink');
+                if (planLink) planLink.addEventListener('click', function(e) { e.preventDefault(); Account.openSubscribeModal(); });
+                return;
+            }
+            limitMsg.style.display = 'none';
+            doOracleConsult();
         });
 
         // === Modal de bienvenida: iniciar sesión (opcional) u omitir ===
