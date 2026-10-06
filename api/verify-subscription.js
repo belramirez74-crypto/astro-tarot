@@ -1,12 +1,16 @@
-// Confirma el estado de una suscripción (preapproval) de Mercado Pago. El cliente, ya logueado,
-// es quien actualiza su propio perfil (plan_active, etc.) usando esta respuesta; acá solo se
-// consulta a Mercado Pago, nunca se toca la base de datos directamente.
-const { handlePreflight, reply } = require('./_lib/http.js');
+// Confirma una suscripción (preapproval) de Mercado Pago y, si está autorizada Y pertenece al
+// usuario logueado (external_reference = su id), activa el plan en su perfil con la service_role key.
+// El navegador nunca escribe las columnas del plan: las protege un trigger en la base.
+const { handlePreflight, reply, getAuthJwt } = require('./_lib/http.js');
+const { authUser, adminPatchProfile } = require('./_lib/supa.js');
 
 module.exports = async function handler(req, res) {
   const c = handlePreflight(req, res, 'GET, OPTIONS');
   if (!c) return;
   if (!process.env.MP_ACCESS_TOKEN) return reply(res, 500, c.headers, { error: 'Pagos no configurados' });
+
+  const user = await authUser(getAuthJwt(req));
+  if (!user) return reply(res, 401, c.headers, { error: 'Iniciá sesión para confirmar tu suscripción.' });
 
   const id = (req.query || {}).preapproval_id;
   if (!id) return reply(res, 400, c.headers, { error: 'preapproval_id inválido' });
@@ -17,7 +21,14 @@ module.exports = async function handler(req, res) {
     });
     const out = await mpRes.json();
     if (!mpRes.ok) return reply(res, 502, c.headers, { error: 'No se pudo verificar la suscripción' });
-    return reply(res, 200, c.headers, { active: out.status === 'authorized', status: out.status, preapprovalId: id });
+    if (out.external_reference !== user.id) return reply(res, 403, c.headers, { error: 'Esa suscripción no pertenece a tu cuenta.' });
+    if (out.status !== 'authorized') return reply(res, 200, c.headers, { active: false, status: out.status });
+
+    const now = new Date().toISOString();
+    await adminPatchProfile(user.id, {
+      plan_active: true, plan_preapproval_id: id, plan_started_at: now, plan_period_start: now, plan_tiradas_used: 0
+    });
+    return reply(res, 200, c.headers, { active: true, status: out.status });
   } catch (err) {
     return reply(res, 500, c.headers, { error: 'error interno' });
   }

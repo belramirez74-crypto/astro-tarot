@@ -152,9 +152,10 @@
         if (btn) btn.disabled = true;
         if (errEl) errEl.style.display = 'none';
         try {
+            var jwt = await getAccessToken();
             var res = await fetch('/api/subscribe', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: currentUser.email })
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
+                body: JSON.stringify({})
             });
             var data = await res.json();
             if (!res.ok || !data.url) throw new Error(data.error || 'No se pudo iniciar la suscripción');
@@ -175,13 +176,13 @@
         for (var i = 0; i < 20 && !currentUser; i++) await new Promise(function (r) { setTimeout(r, 300); });
         if (!currentUser) return;
         try {
-            var res = await fetch('/api/verify-subscription?preapproval_id=' + encodeURIComponent(preapprovalId));
+            var jwt = await getAccessToken();
+            var res = await fetch('/api/verify-subscription?preapproval_id=' + encodeURIComponent(preapprovalId), {
+                headers: { 'Authorization': 'Bearer ' + jwt }
+            });
             var data = await res.json();
             if (res.ok && data.active) {
-                await sb.from('profiles').update({
-                    plan_active: true, plan_preapproval_id: preapprovalId,
-                    plan_started_at: new Date().toISOString(), plan_period_start: new Date().toISOString(), plan_tiradas_used: 0
-                }).eq('id', currentUser.id);
+                // El servidor ya activó el plan en la base (el navegador no puede escribirlo).
                 await refreshProfile();
                 document.getElementById('accountModal').style.display = 'flex';
                 renderAccountModal();

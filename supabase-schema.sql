@@ -51,3 +51,33 @@ alter table profiles add column if not exists plan_started_at timestamptz;
 alter table profiles add column if not exists plan_period_start timestamptz;
 alter table profiles add column if not exists plan_tiradas_used int default 0;
 alter table profiles add column if not exists senal_count int default 0;
+
+-- SEGURIDAD: el navegador (roles authenticated/anon) NO puede cambiar las columnas del plan.
+-- Solo el servidor, con la service_role key, o el SQL Editor. Si lo intentan, el valor se revierte en silencio.
+create or replace function protect_plan_columns() returns trigger
+language plpgsql as $$
+begin
+  if coalesce(auth.role(), '') in ('authenticated', 'anon') then
+    if tg_op = 'INSERT' then
+      new.plan_active := false;
+      new.plan_preapproval_id := null;
+      new.plan_started_at := null;
+      new.plan_period_start := null;
+      new.plan_tiradas_used := 0;
+    else
+      new.plan_active := old.plan_active;
+      new.plan_preapproval_id := old.plan_preapproval_id;
+      new.plan_started_at := old.plan_started_at;
+      new.plan_period_start := old.plan_period_start;
+      new.plan_tiradas_used := old.plan_tiradas_used;
+    end if;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists protect_plan_columns_trg on profiles;
+create trigger protect_plan_columns_trg before insert or update on profiles
+  for each row execute function protect_plan_columns();
+
+-- Limpieza: quitar el plan a las cuentas de prueba de seguridad.
+update profiles set plan_active = false where email like 'test_sec_%';
