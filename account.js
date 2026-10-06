@@ -170,7 +170,7 @@
         var qs = new URLSearchParams(location.search);
         var plan = qs.get('plan');
         var preapprovalId = qs.get('preapproval_id');
-        if (plan !== 'exito' || !preapprovalId) return;
+        if (!preapprovalId) return;
         history.replaceState({}, '', location.pathname);
         // Puede volver antes de que termine de cargar la sesión; se espera un instante.
         for (var i = 0; i < 20 && !currentUser; i++) await new Promise(function (r) { setTimeout(r, 300); });

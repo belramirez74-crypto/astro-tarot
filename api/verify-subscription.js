@@ -21,8 +21,16 @@ module.exports = async function handler(req, res) {
     });
     const out = await mpRes.json();
     if (!mpRes.ok) return reply(res, 502, c.headers, { error: 'No se pudo verificar la suscripción' });
-    if (out.external_reference !== user.id) return reply(res, 403, c.headers, { error: 'Esa suscripción no pertenece a tu cuenta.' });
+    if (!process.env.MP_PLAN_ID || out.preapproval_plan_id !== process.env.MP_PLAN_ID) return reply(res, 403, c.headers, { error: 'Suscripción inválida.' });
     if (out.status !== 'authorized') return reply(res, 200, c.headers, { active: false, status: out.status });
+
+    // Una suscripción solo puede estar asociada a una cuenta.
+    const sUrl = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const dup = await fetch(sUrl + '/rest/v1/profiles?select=id&plan_preapproval_id=eq.' + encodeURIComponent(id), {
+      headers: { apikey: sk, authorization: 'Bearer ' + sk }
+    });
+    const rows = dup.ok ? await dup.json() : [];
+    if (rows.some(function (r) { return r.id !== user.id; })) return reply(res, 403, c.headers, { error: 'Esa suscripción ya está en uso.' });
 
     const now = new Date().toISOString();
     await adminPatchProfile(user.id, {
