@@ -2,8 +2,11 @@
 // Todas las escrituras usan la service_role key; el navegador nunca escribe en la tabla products.
 const { handlePreflight, reply, parseBody, getAuthJwt } = require('../http.js');
 const { authUser } = require('../supa.js');
+const { getCategories } = require('../store.js');
 
-const CATEGORIES = ['mazos-tarot', 'mazos-oraculo', 'accesorios', 'velas-inciensos', 'cristales', 'libros'];
+function slugify(t) {
+  return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+}
 
 function adminEmail() { return (process.env.STORE_ADMIN_EMAIL || 'belramirez74@gmail.com').trim().toLowerCase(); }
 
@@ -33,7 +36,8 @@ module.exports = async function handler(req, res) {
     if (data.action === 'list') {
       const r = await fetch(url + '/rest/v1/products?select=*&order=created_at.desc', { headers: sbHeaders() });
       if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo leer. ¿Creaste la tabla products en Supabase?' });
-      return reply(res, 200, c.headers, { products: await r.json(), categories: CATEGORIES });
+      const cats = await getCategories(sbHeaders(), false);
+      return reply(res, 200, c.headers, { products: await r.json(), categories: cats.cats, categoriesEditable: cats.fromDb });
     }
 
     if (data.action === 'orders') {
@@ -51,6 +55,47 @@ module.exports = async function handler(req, res) {
       });
       if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo actualizar el pedido.' });
       return reply(res, 200, c.headers, { order: (await r.json())[0] });
+    }
+
+    if (data.action === 'category_save') {
+      const name = String(data.name || '').trim().slice(0, 40);
+      if (!name) return reply(res, 400, c.headers, { error: 'El nombre es obligatorio.' });
+      const cur = await getCategories(sbHeaders(), false);
+      if (!cur.fromDb) return reply(res, 502, c.headers, { error: 'Falta crear la tabla de categorías: ejecutá supabase-categories.sql en Supabase.' });
+      let row;
+      if (data.slug) {
+        row = { slug: String(data.slug), name: name, active: data.active !== false };
+      } else {
+        let slug = slugify(name) || 'categoria', n = 2;
+        const taken = cur.cats.map(function (x) { return x.slug; });
+        while (taken.indexOf(slug) !== -1) slug = slugify(name) + '-' + (n++);
+        row = { slug: slug, name: name, active: true, position: cur.cats.reduce(function (m, x) { return Math.max(m, x.position); }, -1) + 1 };
+      }
+      const r = await fetch(url + '/rest/v1/store_categories', { method: 'POST', headers: sbHeaders({ prefer: 'resolution=merge-duplicates,return=minimal' }), body: JSON.stringify(row) });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo guardar la categoría.' });
+      return reply(res, 200, c.headers, { ok: true });
+    }
+
+    if (data.action === 'category_move') {
+      const cur = (await getCategories(sbHeaders(), false)).cats.slice().sort(function (a, b) { return a.position - b.position; });
+      const i = cur.findIndex(function (x) { return x.slug === data.slug; });
+      const j = i + (data.dir === 'up' ? -1 : 1);
+      if (i < 0 || j < 0 || j >= cur.length) return reply(res, 200, c.headers, { ok: true });
+      const tmp = cur[i]; cur[i] = cur[j]; cur[j] = tmp;
+      const rows = cur.map(function (x, k) { return { slug: x.slug, name: x.name, active: x.active, position: k }; });
+      const r = await fetch(url + '/rest/v1/store_categories', { method: 'POST', headers: sbHeaders({ prefer: 'resolution=merge-duplicates,return=minimal' }), body: JSON.stringify(rows) });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo reordenar.' });
+      return reply(res, 200, c.headers, { ok: true });
+    }
+
+    if (data.action === 'category_delete') {
+      const slug = String(data.slug || '');
+      const g = await fetch(url + '/rest/v1/products?select=id&limit=1&category=eq.' + encodeURIComponent(slug), { headers: sbHeaders() });
+      const used = g.ok ? await g.json() : [];
+      if (used.length) return reply(res, 409, c.headers, { error: 'Esa categoría tiene productos. Movelos a otra categoría antes de eliminarla.' });
+      const r = await fetch(url + '/rest/v1/store_categories?slug=eq.' + encodeURIComponent(slug), { method: 'DELETE', headers: sbHeaders() });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo eliminar.' });
+      return reply(res, 200, c.headers, { ok: true });
     }
 
     if (data.action === 'coupons') {
@@ -92,10 +137,11 @@ module.exports = async function handler(req, res) {
       const hasCmp = p.compare_price !== '' && p.compare_price != null;
       const cmp = hasCmp ? num(p.compare_price, 0, 100000000) : null;
       if (hasCmp && cmp === null) return reply(res, 400, c.headers, { error: 'Precio anterior inválido.' });
+      const validSlugs = (await getCategories(sbHeaders(), false)).cats.map(function (x) { return x.slug; });
       const row = {
         name: name,
         description: String(p.description || '').slice(0, 4000),
-        category: CATEGORIES.indexOf(p.category) !== -1 ? p.category : 'accesorios',
+        category: validSlugs.indexOf(p.category) !== -1 ? p.category : validSlugs[0],
         price: price, compare_price: cmp, stock: Math.floor(stock), low_stock_threshold: Math.floor(low),
         sku: String(p.sku || '').trim().slice(0, 60) || null,
         image_url: /^https:\/\//.test(p.image_url || '') ? p.image_url : null,

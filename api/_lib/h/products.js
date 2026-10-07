@@ -1,5 +1,6 @@
 // Catálogo público de la tienda: solo productos activos. Lee con la anon key (RLS filtra los activos).
 const { handlePreflight, reply } = require('../http.js');
+const { getCategories } = require('../store.js');
 
 module.exports = async function handler(req, res) {
   const c = handlePreflight(req, res, 'GET, OPTIONS');
@@ -10,6 +11,7 @@ module.exports = async function handler(req, res) {
     const r = await fetch(url + '/rest/v1/products?select=id,name,description,category,price,compare_price,stock,image_url,featured&active=eq.true&order=featured.desc,created_at.desc',
       { headers: { apikey: key, authorization: 'Bearer ' + key } });
     if (!r.ok) return reply(res, 200, c.headers, { products: [] });
-    return reply(res, 200, c.headers, { products: await r.json(), shipping: Number(process.env.STORE_SHIPPING) || 0 });
+    const cats = await getCategories({ apikey: key, authorization: 'Bearer ' + key }, true);
+    return reply(res, 200, c.headers, { products: await r.json(), categories: cats.cats.map(function (x) { return { slug: x.slug, name: x.name }; }) });
   } catch (e) { return reply(res, 500, c.headers, { error: 'error interno' }); }
 };

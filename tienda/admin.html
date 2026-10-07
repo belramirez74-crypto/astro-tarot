@@ -88,7 +88,15 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div><h1>&#x2726; Panel de la tienda</h1><small id="who"></small></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sec" href="/tienda/" target="_blank" style="text-decoration:none">Ver tienda</a><button class="btn" id="newBtn">+ Nuevo producto</button><button class="btn sec" id="outBtn">Salir</button></div>
   </div>
-  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button><button class="btn sec" id="tabCup">Cupones</button></div>
+  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button><button class="btn sec" id="tabCup">Cupones</button><button class="btn sec" id="tabCat">Categorías</button></div>
+  <div id="catView" style="display:none">
+    <div class="ord"><strong>Nueva categoría</strong>
+      <div class="f" style="margin-top:8px"><span>Nombre</span><input id="catName" maxlength="40" placeholder="Ej: Inciensos y sahumerios"></div>
+      <button class="btn" id="catAdd">Agregar categoría</button>
+      <small style="display:block;margin-top:8px">Aparecen en el menú y en los filtros de la tienda, en este orden. Usá las flechas para ordenarlas.</small>
+    </div>
+    <div class="err" id="catErr"></div><div id="catList"></div>
+  </div>
   <div id="cupView" style="display:none">
     <div class="ord"><strong>Nuevo cupón</strong>
       <div class="row" style="margin-top:8px">
@@ -148,7 +156,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 <script>
 (function () {
   var sb, session, products = [], CATS = [], editing = null, pendingImage = null;
-  var CAT_NAME = { 'mazos-tarot': 'Mazos de tarot', 'mazos-oraculo': 'Mazos oráculo', 'accesorios': 'Accesorios', 'velas-inciensos': 'Velas e inciensos', 'cristales': 'Cristales y piedras', 'libros': 'Libros y guías' };
+  var CAT_NAME = {}, catObjs = [], catsEditable = true;
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return '$' + Number(n).toLocaleString('es-AR'); }
@@ -173,7 +181,7 @@ button,input,select,textarea{font:inherit;color:inherit}
     $('loginView').style.display = 'none';
     try {
       var d = await api({ action: 'list' });
-      products = d.products; CATS = d.categories;
+      products = d.products; setCats(d);
       $('who').textContent = session.user.email;
       $('app').style.display = '';
       fillSelects(); render();
@@ -195,6 +203,11 @@ button,input,select,textarea{font:inherit;color:inherit}
   $('lPass').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('lBtn').click(); });
   $('outBtn').addEventListener('click', async function () { await sb.auth.signOut(); location.reload(); });
 
+  function setCats(d) {
+    catObjs = d.categories || []; catsEditable = d.categoriesEditable !== false;
+    CATS = catObjs.map(function (c) { return c.slug; });
+    CAT_NAME = {}; catObjs.forEach(function (c) { CAT_NAME[c.slug] = c.name; });
+  }
   function fillSelects() {
     $('fCat').innerHTML = '<option value="">Todas las categorías</option>' + CATS.map(function (c) { return '<option value="' + c + '">' + esc(CAT_NAME[c] || c) + '</option>'; }).join('');
     $('mCat').innerHTML = CATS.map(function (c) { return '<option value="' + c + '">' + esc(CAT_NAME[c] || c) + '</option>'; }).join('');
@@ -331,14 +344,16 @@ button,input,select,textarea{font:inherit;color:inherit}
     try { orders = (await api({ action: 'orders' })).orders; renderOrders(); } catch (e) { $('ordErr').textContent = e.message; }
   }
   function tab(which) {
-    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none'; $('cupView').style.display = which === 'c' ? '' : 'none';
-    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec'); $('tabCup').className = 'btn' + (which === 'c' ? '' : ' sec');
+    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none'; $('cupView').style.display = which === 'c' ? '' : 'none'; $('catView').style.display = which === 'k' ? '' : 'none';
+    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec'); $('tabCup').className = 'btn' + (which === 'c' ? '' : ' sec'); $('tabCat').className = 'btn' + (which === 'k' ? '' : ' sec');
     if (which === 'o') loadOrders();
     if (which === 'c') loadCoupons();
+    if (which === 'k') renderCats();
   }
   $('tabProd').addEventListener('click', function () { tab('p'); });
   $('tabOrd').addEventListener('click', function () { tab('o'); });
   $('tabCup').addEventListener('click', function () { tab('c'); });
+  $('tabCat').addEventListener('click', function () { tab('k'); });
   $('ordList').addEventListener('click', async function (e) {
     var cp = e.target.closest('button[data-copy]');
     if (cp) {
@@ -352,6 +367,35 @@ button,input,select,textarea{font:inherit;color:inherit}
     var trkEl = b.closest('.ord').querySelector('.trk');
     try { var r = await api({ action: 'order_status', id: id, status: b.getAttribute('data-s'), tracking: trkEl ? trkEl.value : undefined }); orders = orders.map(function (o) { return o.id === id ? r.order : o; }); renderOrders(); }
     catch (err) { $('ordErr').textContent = err.message; }
+  });
+
+  // ---- Categorías ----
+  function renderCats() {
+    $('catErr').textContent = catsEditable ? '' : 'Para editar categorías falta crear su tabla: ejecutá supabase-categories.sql en el SQL Editor de Supabase. Mientras tanto se usan las categorías por defecto.';
+    var counts = {}; products.forEach(function (p) { counts[p.category] = (counts[p.category] || 0) + 1; });
+    $('catList').innerHTML = catObjs.map(function (c, i) {
+      return '<div class="ord" data-slug="' + esc(c.slug) + '"><header><strong>' + esc(c.name) + '</strong><span class="st ' + (c.active ? 'paid' : 'cancelled') + '">' + (c.active ? 'Visible' : 'Oculta') + '</span></header>' +
+        '<small>' + (counts[c.slug] || 0) + ' producto(s)</small>' +
+        '<div class="f" style="margin-top:6px"><span>Nombre</span><input class="cn" value="' + esc(c.name) + '" maxlength="40"></div>' +
+        '<div class="act"><button class="btn sec" data-k="save">Guardar nombre</button><button class="btn sec" data-k="up"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button><button class="btn sec" data-k="down"' + (i === catObjs.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+        '<button class="btn sec" data-k="toggle">' + (c.active ? 'Ocultar' : 'Mostrar') + '</button><button class="btn bad" data-k="del">Eliminar</button></div></div>';
+    }).join('') || '<div class="empty">No hay categorías.</div>';
+  }
+  async function reloadCats() { var d = await api({ action: 'list' }); products = d.products; setCats(d); fillSelects(); renderCats(); render(); }
+  $('catAdd').addEventListener('click', async function () {
+    try { await api({ action: 'category_save', name: $('catName').value }); $('catName').value = ''; toast('Categoría agregada'); await reloadCats(); }
+    catch (e) { $('catErr').textContent = e.message; }
+  });
+  $('catList').addEventListener('click', async function (e) {
+    var b = e.target.closest('button[data-k]'); if (!b) return;
+    var card = b.closest('.ord'), slug = card.getAttribute('data-slug'), c = catObjs.filter(function (x) { return x.slug === slug; })[0], k = b.getAttribute('data-k');
+    try {
+      if (k === 'save') await api({ action: 'category_save', slug: slug, name: card.querySelector('.cn').value, active: c.active });
+      else if (k === 'toggle') await api({ action: 'category_save', slug: slug, name: c.name, active: !c.active });
+      else if (k === 'up' || k === 'down') await api({ action: 'category_move', slug: slug, dir: k });
+      else if (k === 'del') { if (!confirm('¿Eliminar la categoría "' + c.name + '"?')) return; await api({ action: 'category_delete', slug: slug }); }
+      await reloadCats(); toast('Listo');
+    } catch (err) { $('catErr').textContent = err.message; }
   });
 
   // ---- Cupones ----

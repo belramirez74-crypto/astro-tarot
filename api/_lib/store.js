@@ -40,6 +40,26 @@ async function findApprovedPayment(ref) {
   return { payment: ok || null, status: list[0] ? list[0].status : 'pending' };
 }
 
+// Categorías editables desde el panel (tabla store_categories). Si la tabla todavía no existe, se usan las de siempre.
+const DEFAULT_CATS = [
+  { slug: 'mazos-tarot', name: 'Mazos de tarot' }, { slug: 'mazos-oraculo', name: 'Mazos oráculo' }, { slug: 'accesorios', name: 'Accesorios' },
+  { slug: 'velas-inciensos', name: 'Velas e inciensos' }, { slug: 'cristales', name: 'Cristales y piedras' }, { slug: 'libros', name: 'Libros y guías' }
+].map(function (c, i) { return { slug: c.slug, name: c.name, position: i, active: true }; });
+
+// { cats, fromDb }: fromDb=false si la tabla no existe (no se pueden editar categorías hasta crearla)
+async function getCategories(headers, onlyActive) {
+  try {
+    const r = await fetch(base() + '/store_categories?select=slug,name,position,active&order=position.asc' + (onlyActive ? '&active=eq.true' : ''), { headers: headers });
+    if (r.ok) {
+      const rows = await r.json();
+      if (rows.length || onlyActive === false) return { cats: rows, fromDb: true };
+      // tabla creada pero vacía: se muestran las de siempre
+      return { cats: DEFAULT_CATS, fromDb: true };
+    }
+  } catch (e) {}
+  return { cats: DEFAULT_CATS, fromDb: false };
+}
+
 // Cupones: devuelve el cupón si existe, está activo, no venció y no agotó sus usos.
 async function findCoupon(code) {
   const c = String(code || '').trim().toUpperCase();
@@ -109,4 +129,4 @@ function quoteShipping(zip, subtotal) {
   return Number(z.price);
 }
 
-module.exports = { findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+module.exports = { getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
