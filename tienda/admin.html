@@ -9,6 +9,7 @@
 <style>
 :root{--bg:#120726;--card:rgba(255,255,255,.06);--line:rgba(198,134,221,.28);--txt:#f4ecff;--mut:#cdbde6;--acc:#C686DD;--acc2:#7b337e;--ok:#4ade80;--warn:#fbbf24;--bad:#f87171}
 *{box-sizing:border-box}
+html,body{overflow-x:hidden}
 body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#4B1F6F 0%,#2A123F 36%,#121F50 78%,#2B0128 118%) fixed;color:var(--txt);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100vh}
 h1,h2,h3{font-family:'Marcellus',serif;font-weight:400;margin:0}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -56,7 +57,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .preview{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:8px;display:none}
 .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#2a1457;border:1px solid var(--acc);padding:10px 18px;border-radius:12px;display:none;z-index:99}
-.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tabs .btn{padding:8px 13px;font-size:.88rem}
 .ord{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
 .ord header{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .st{font-size:.75rem;padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
