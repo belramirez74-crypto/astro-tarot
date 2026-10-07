@@ -56,6 +56,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .preview{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:8px;display:none}
 .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#2a1457;border:1px solid var(--acc);padding:10px 18px;border-radius:12px;display:none;z-index:99}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.ord{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.ord header{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.st{font-size:.75rem;padding:3px 10px;border-radius:99px;border:1px solid var(--line)}
+.st.paid{color:var(--ok);border-color:var(--ok)}.st.pending{color:var(--warn);border-color:var(--warn)}.st.shipped{color:var(--acc)}.st.cancelled{color:var(--bad);border-color:var(--bad)}
+.ord ul{margin:6px 0;padding-left:18px}.ord small{color:var(--mut)}
 @media(max-width:520px){.row{grid-template-columns:1fr}}
 </style>
 </head>
@@ -74,6 +80,9 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div><h1>&#x2726; Panel de la tienda</h1><small id="who"></small></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sec" href="/tienda/" target="_blank" style="text-decoration:none">Ver tienda</a><button class="btn" id="newBtn">+ Nuevo producto</button><button class="btn sec" id="outBtn">Salir</button></div>
   </div>
+  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button></div>
+  <div id="ordView" style="display:none"><div class="err" id="ordErr"></div><div id="ordList"></div></div>
+  <div id="prodView">
   <div class="stats" id="stats"></div>
   <div class="bar">
     <input id="q" placeholder="Buscar por nombre o SKU">
@@ -82,6 +91,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   </div>
   <div class="err" id="appErr"></div>
   <div class="grid" id="grid"></div>
+  </div>
 </div>
 
 <div class="ov" id="ov"><div class="modal">
@@ -270,6 +280,39 @@ button,input,select,textarea{font:inherit;color:inherit}
       $('ov').classList.remove('show'); toast('Producto guardado');
     } catch (e) { $('mErr').textContent = e.message; }
     btn.disabled = false;
+  });
+
+  // ---- Pedidos ----
+  var orders = [];
+  var ST = { pending: 'Pendiente de pago', paid: 'Pagado', shipped: 'Enviado', cancelled: 'Cancelado' };
+  function renderOrders() {
+    var paid = orders.filter(function (o) { return o.status === 'paid'; }).length;
+    $('ordBadge').textContent = paid ? '(' + paid + ' por enviar)' : '';
+    $('ordList').innerHTML = orders.length ? orders.map(function (o) {
+      var b = o.buyer || {};
+      return '<div class="ord" data-id="' + o.id + '"><header><strong>' + esc(b.name) + ' · ' + money(o.total) + '</strong><span class="st ' + o.status + '">' + (ST[o.status] || o.status) + '</span></header>' +
+        '<small>' + new Date(o.created_at).toLocaleString('es-AR') + '</small><ul>' + (o.items || []).map(function (i) { return '<li>' + i.qty + ' × ' + esc(i.name) + ' (' + money(i.price) + ')</li>'; }).join('') + '</ul>' +
+        (Number(o.shipping) ? '<small>Envío: ' + money(o.shipping) + '</small><br>' : '') +
+        '<small>' + esc(b.email) + ' · ' + esc(b.phone) + '<br>' + esc(b.address) + ', ' + esc(b.city) + ', ' + esc(b.province) + ' (' + esc(b.zip) + ')' + (b.notes ? '<br>Nota: ' + esc(b.notes) : '') + '</small>' +
+        '<div class="act">' + (o.status === 'paid' ? '<button class="btn" data-s="shipped">Marcar enviado</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
+    }).join('') : '<div class="empty">Todavía no hay pedidos.</div>';
+  }
+  async function loadOrders() {
+    $('ordErr').textContent = '';
+    try { orders = (await api({ action: 'orders' })).orders; renderOrders(); } catch (e) { $('ordErr').textContent = e.message; }
+  }
+  function tab(which) {
+    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none';
+    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec');
+    if (which === 'o') loadOrders();
+  }
+  $('tabProd').addEventListener('click', function () { tab('p'); });
+  $('tabOrd').addEventListener('click', function () { tab('o'); });
+  $('ordList').addEventListener('click', async function (e) {
+    var b = e.target.closest('button[data-s]'); if (!b) return;
+    var id = b.closest('.ord').getAttribute('data-id');
+    try { var r = await api({ action: 'order_status', id: id, status: b.getAttribute('data-s') }); orders = orders.map(function (o) { return o.id === id ? r.order : o; }); renderOrders(); }
+    catch (err) { $('ordErr').textContent = err.message; }
   });
 
   boot();

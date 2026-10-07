@@ -36,6 +36,21 @@ module.exports = async function handler(req, res) {
       return reply(res, 200, c.headers, { products: await r.json(), categories: CATEGORIES });
     }
 
+    if (data.action === 'orders') {
+      const r = await fetch(url + '/rest/v1/orders?select=*&order=created_at.desc&limit=200', { headers: sbHeaders() });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo leer los pedidos. ¿Creaste la tabla orders en Supabase?' });
+      return reply(res, 200, c.headers, { orders: await r.json() });
+    }
+
+    if (data.action === 'order_status') {
+      if (!data.id || ['paid', 'shipped', 'cancelled'].indexOf(data.status) === -1) return reply(res, 400, c.headers, { error: 'datos inválidos' });
+      const r = await fetch(url + '/rest/v1/orders?id=eq.' + encodeURIComponent(data.id), {
+        method: 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify({ status: data.status })
+      });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo actualizar el pedido.' });
+      return reply(res, 200, c.headers, { order: (await r.json())[0] });
+    }
+
     if (data.action === 'save') {
       const p = data.product || {};
       const name = String(p.name || '').trim().slice(0, 120);

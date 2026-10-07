@@ -6,15 +6,18 @@
 <title>Tienda esotérica</title>
 <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--card:rgba(255,255,255,.06);--line:rgba(198,134,221,.28);--txt:#f4ecff;--mut:#cdbde6;--acc:#C686DD}
+:root{--card:rgba(255,255,255,.06);--line:rgba(198,134,221,.28);--txt:#f4ecff;--mut:#cdbde6;--acc:#C686DD;--bad:#f87171;--ok:#4ade80}
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#4B1F6F 0%,#2A123F 36%,#121F50 78%,#2B0128 118%) fixed;color:var(--txt);font-family:'Plus Jakarta Sans',system-ui,sans-serif;min-height:100vh}
 h1,h2,h3{font-family:'Marcellus',serif;font-weight:400;margin:0}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
-header{text-align:center;margin-bottom:22px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 80px}
+header{text-align:center;margin-bottom:22px;position:relative}
 header h1{font-size:2.2rem}header p{color:var(--mut);margin:.4rem 0 0}
+.cartbtn{position:fixed;top:14px;right:14px;z-index:30;background:linear-gradient(135deg,#7b337e,#4B1F6F);border:1px solid var(--line);color:#fff;border-radius:99px;padding:10px 16px;cursor:pointer;font-weight:600}
+.cartbtn b{background:#b8283a;border-radius:99px;padding:1px 8px;margin-left:6px;font-size:.8rem}
 .cats{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
-.cats button{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:99px;padding:8px 16px;cursor:pointer;font:inherit;font-size:.9rem}
+.cats button{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:99px;padding:8px 16px;cursor:pointer;font-size:.9rem}
 .cats button.on{background:#7b337e;border-color:var(--acc)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
 .pc{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
@@ -25,37 +28,166 @@ header h1{font-size:2.2rem}header p{color:var(--mut);margin:.4rem 0 0}
 .pb{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
 .pb h3{font-size:1.1rem}.pb p{margin:0;color:var(--mut);font-size:.86rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .price{font-weight:700;font-size:1.1rem;margin-top:auto}.price s{color:var(--mut);font-weight:400;font-size:.88rem;margin-left:6px}
-.soon{color:var(--mut);font-size:.8rem}
+.btn{background:linear-gradient(135deg,#7b337e,#4B1F6F);border:1px solid var(--line);color:#fff;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600;width:100%}
+.btn:hover{filter:brightness(1.15)}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.sec{background:transparent}
 .empty{text-align:center;color:var(--mut);padding:50px 10px}
+.ov{position:fixed;inset:0;background:rgba(10,4,24,.75);display:none;justify-content:flex-end;z-index:50}
+.ov.show{display:flex}
+.drawer{background:#1d0f3a;border-left:1px solid var(--line);width:100%;max-width:430px;height:100%;overflow-y:auto;padding:18px}
+.drawer h2{text-align:center;margin-bottom:10px}
+.close{float:right;background:none;border:0;color:var(--mut);font-size:1.6rem;cursor:pointer}
+.li{display:grid;grid-template-columns:56px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.li img,.li .ph{width:56px;height:56px;border-radius:10px;object-fit:cover;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:var(--mut)}
+.li .nm{font-size:.9rem}.li .q{display:flex;align-items:center;gap:6px;margin-top:4px}
+.li .q button{background:var(--card);border:1px solid var(--line);border-radius:8px;width:26px;height:26px;cursor:pointer;color:#fff}
+.li .rm{background:none;border:0;color:var(--bad);cursor:pointer;font-size:.8rem}
+.tot{display:flex;justify-content:space-between;padding:6px 0;color:var(--mut)}.tot.big{color:var(--txt);font-weight:700;font-size:1.15rem;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.f{display:flex;flex-direction:column;gap:3px;margin:8px 0;font-size:.82rem;color:var(--mut)}
+.f input,.f textarea{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.err{color:var(--bad);font-size:.88rem;margin:8px 0;min-height:1em}
+.msg{background:rgba(74,222,128,.12);border:1px solid var(--ok);border-radius:14px;padding:14px;margin:0 0 18px;text-align:center}
+.msg.w{background:rgba(251,191,36,.1);border-color:#fbbf24}
+footer{text-align:center;color:var(--mut);font-size:.8rem;margin-top:36px}
+footer a{color:var(--acc)}
+@media(max-width:520px){.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<button class="cartbtn" id="cartBtn" type="button">&#128722; Carrito <b id="cartCount">0</b></button>
 <div class="wrap">
   <header><h1>&#x2726; Tienda esotérica &#x2726;</h1><p>Mazos de tarot, oráculos y accesorios</p></header>
+  <div id="notice"></div>
   <div class="cats" id="cats"></div>
   <div class="grid" id="grid"></div>
+  <footer>Pagos seguros con Mercado Pago &middot; <a href="/legal.html#arrepentimiento">Arrepentimiento y cambios</a> &middot; <a href="/legal.html#terminos">Términos</a></footer>
 </div>
+
+<div class="ov" id="ov"><div class="drawer">
+  <button class="close" id="closeCart" type="button" aria-label="Cerrar">&times;</button>
+  <h2>&#x2726; Tu carrito &#x2726;</h2>
+  <div id="cartItems"></div>
+  <div id="cartTotals"></div>
+  <div id="checkout" style="display:none">
+    <h3 style="margin:14px 0 4px">Datos de contacto y envío</h3>
+    <div class="f"><span>Nombre y apellido</span><input id="bName" autocomplete="name"></div>
+    <div class="row"><div class="f"><span>Email</span><input id="bEmail" type="email" autocomplete="email"></div><div class="f"><span>Teléfono</span><input id="bPhone" type="tel" autocomplete="tel"></div></div>
+    <div class="f"><span>Dirección (calle y número, piso/depto)</span><input id="bAddr" autocomplete="street-address"></div>
+    <div class="row"><div class="f"><span>Ciudad</span><input id="bCity"></div><div class="f"><span>Provincia</span><input id="bProv"></div></div>
+    <div class="f"><span>Código postal</span><input id="bZip"></div>
+    <div class="f"><span>Notas para el envío (opcional)</span><textarea id="bNotes" rows="2"></textarea></div>
+    <div class="err" id="cErr"></div>
+    <button class="btn" id="payBtn" type="button">Pagar con Mercado Pago</button>
+  </div>
+  <button class="btn" id="goCheckout" type="button" style="display:none;margin-top:10px">Continuar con la compra</button>
+</div></div>
+
 <script>
 (function () {
   var CAT = { 'mazos-tarot': 'Mazos de tarot', 'mazos-oraculo': 'Mazos oráculo', 'accesorios': 'Accesorios', 'velas-inciensos': 'Velas e inciensos', 'cristales': 'Cristales y piedras', 'libros': 'Libros y guías' };
-  var all = [], cur = '';
+  var all = [], cur = '', cart = {}, shipping = 0;
+  var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return '$' + Number(n).toLocaleString('es-AR'); }
+  function load() { try { cart = JSON.parse(localStorage.getItem('store_cart') || '{}') || {}; } catch (e) { cart = {}; } }
+  function save() { try { localStorage.setItem('store_cart', JSON.stringify(cart)); } catch (e) {} }
+  function prod(id) { return all.filter(function (p) { return p.id === id; })[0]; }
+
   function render() {
     var present = Object.keys(CAT).filter(function (k) { return all.some(function (p) { return p.category === k; }); });
-    document.getElementById('cats').innerHTML = all.length ? ['<button data-c="" class="' + (cur === '' ? 'on' : '') + '">Todo</button>'].concat(present.map(function (k) {
+    $('cats').innerHTML = all.length ? ['<button data-c="" class="' + (cur === '' ? 'on' : '') + '">Todo</button>'].concat(present.map(function (k) {
       return '<button data-c="' + k + '" class="' + (cur === k ? 'on' : '') + '">' + CAT[k] + '</button>'; })).join('') : '';
     var list = all.filter(function (p) { return !cur || p.category === cur; });
-    document.getElementById('grid').innerHTML = list.length ? list.map(function (p) {
+    $('grid').innerHTML = list.length ? list.map(function (p) {
       return '<div class="pc"><div class="pimg">' + (p.image_url ? '<img src="' + esc(p.image_url) + '" alt="' + esc(p.name) + '" loading="lazy">' : '&#x2726;') +
         (p.stock === 0 ? '<span class="badge">Sin stock</span>' : '') + (p.featured ? '<span class="badge f">&#9733; Destacado</span>' : '') + '</div>' +
         '<div class="pb"><h3>' + esc(p.name) + '</h3>' + (p.description ? '<p>' + esc(p.description) + '</p>' : '') +
         '<div class="price">' + money(p.price) + (p.compare_price ? '<s>' + money(p.compare_price) + '</s>' : '') + '</div>' +
-        '<div class="soon">' + (p.stock === 0 ? 'Agotado por ahora' : 'Compra online muy pronto') + '</div></div></div>';
+        '<button class="btn" data-add="' + p.id + '"' + (p.stock === 0 ? ' disabled' : '') + '>' + (p.stock === 0 ? 'Agotado' : 'Agregar al carrito') + '</button></div></div>';
     }).join('') : '<div class="empty" style="grid-column:1/-1">Pronto vas a encontrar acá nuestros productos.</div>';
   }
-  document.getElementById('cats').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; cur = b.getAttribute('data-c'); render(); });
-  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; render(); }).catch(function () { render(); });
+  $('cats').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; cur = b.getAttribute('data-c'); render(); });
+
+  // ---- Carrito ----
+  function clean() { // saca productos que ya no existen o sin stock, y ajusta cantidades
+    Object.keys(cart).forEach(function (id) {
+      var p = prod(id);
+      if (!p || p.stock === 0) delete cart[id]; else cart[id] = Math.min(cart[id], p.stock, 20);
+    });
+  }
+  function renderCart() {
+    clean(); save();
+    var ids = Object.keys(cart), count = 0, sub = 0;
+    ids.forEach(function (id) { count += cart[id]; sub += cart[id] * Number(prod(id).price); });
+    $('cartCount').textContent = count;
+    $('cartItems').innerHTML = ids.length ? ids.map(function (id) {
+      var p = prod(id);
+      return '<div class="li" data-id="' + id + '">' + (p.image_url ? '<img src="' + esc(p.image_url) + '" alt="">' : '<div class="ph">&#x2726;</div>') +
+        '<div><div class="nm">' + esc(p.name) + '</div><div class="q"><button data-q="-1">&minus;</button><span>' + cart[id] + '</span><button data-q="1">+</button><button class="rm" data-q="rm" style="width:auto;border:0;background:none">Quitar</button></div></div>' +
+        '<div>' + money(p.price * cart[id]) + '</div></div>';
+    }).join('') : '<div class="empty">Tu carrito está vacío.</div>';
+    $('cartTotals').innerHTML = ids.length ?
+      '<div class="tot"><span>Subtotal</span><span>' + money(sub) + '</span></div>' +
+      '<div class="tot"><span>Envío</span><span>' + (shipping ? money(shipping) : 'A coordinar') + '</span></div>' +
+      '<div class="tot big"><span>Total</span><span>' + money(sub + shipping) + '</span></div>' : '';
+    $('goCheckout').style.display = ids.length && $('checkout').style.display === 'none' ? '' : 'none';
+    if (!ids.length) $('checkout').style.display = 'none';
+  }
+  function openCart() { renderCart(); $('ov').classList.add('show'); }
+  $('cartBtn').addEventListener('click', openCart);
+  $('closeCart').addEventListener('click', function () { $('ov').classList.remove('show'); });
+  $('ov').addEventListener('click', function (e) { if (e.target === $('ov')) $('ov').classList.remove('show'); });
+  $('goCheckout').addEventListener('click', function () { $('checkout').style.display = ''; this.style.display = 'none'; });
+
+  $('grid').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-add]'); if (!b) return;
+    var id = b.getAttribute('data-add'), p = prod(id);
+    cart[id] = Math.min((cart[id] || 0) + 1, p.stock, 20);
+    renderCart(); b.textContent = 'Agregado ✓'; setTimeout(function () { render(); }, 700);
+  });
+  $('cartItems').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q]'); if (!b) return;
+    var id = b.closest('.li').getAttribute('data-id'), q = b.getAttribute('data-q');
+    if (q === 'rm') delete cart[id]; else cart[id] = Math.max(1, Math.min(cart[id] + (+q), prod(id).stock, 20));
+    renderCart();
+  });
+
+  $('payBtn').addEventListener('click', async function () {
+    var btn = this; $('cErr').textContent = '';
+    var items = Object.keys(cart).map(function (id) { return { id: id, qty: cart[id] }; });
+    var buyer = { name: $('bName').value, email: $('bEmail').value, phone: $('bPhone').value, address: $('bAddr').value, city: $('bCity').value, province: $('bProv').value, zip: $('bZip').value, notes: $('bNotes').value };
+    btn.disabled = true; btn.textContent = 'Un momento…';
+    try {
+      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer }) });
+      var d = await r.json();
+      if (!r.ok || !d.url) throw new Error(d.error || 'No se pudo iniciar el pago');
+      try { sessionStorage.setItem('store_pending_ref', d.ref); } catch (e) {}
+      location.href = d.url;
+    } catch (err) { $('cErr').textContent = err.message; btn.disabled = false; btn.textContent = 'Pagar con Mercado Pago'; }
+  });
+
+  // ---- Vuelta de Mercado Pago ----
+  function notice(html, warn) { $('notice').innerHTML = '<div class="msg' + (warn ? ' w' : '') + '">' + html + '</div>'; window.scrollTo(0, 0); }
+  async function checkReturn() {
+    var qs = new URLSearchParams(location.search), pago = qs.get('pago'), ref = qs.get('ref');
+    if (!pago) return;
+    history.replaceState({}, '', location.pathname);
+    if (pago === 'error') { notice('El pago no se completó. Tu carrito sigue guardado: podés intentarlo de nuevo.', true); return; }
+    if (!ref) return;
+    notice('Confirmando tu pago…', true);
+    for (var i = 0; i < 12; i++) {
+      try {
+        var d = await fetch('/api/store-verify?ref=' + encodeURIComponent(ref)).then(function (r) { return r.json(); });
+        if (d.paid) { cart = {}; save(); renderCart(); notice('<strong>¡Gracias por tu compra!</strong> Recibimos tu pago y vamos a preparar tu pedido. Te contactamos por email o teléfono para coordinar el envío.'); return; }
+      } catch (e) {}
+      await new Promise(function (r) { setTimeout(r, 3000); });
+    }
+    notice('Todavía no recibimos la confirmación del pago. Si ya pagaste, quedate tranquilo/a: se acredita en unos minutos y nos va a llegar tu pedido.', true);
+  }
+
+  load();
+  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; shipping = Number(d.shipping) || 0; render(); renderCart(); checkReturn(); })
+    .catch(function () { render(); renderCart(); });
 })();
 </script>
 </body>

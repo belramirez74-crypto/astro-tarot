@@ -10,6 +10,6 @@ module.exports = async function handler(req, res) {
     const r = await fetch(url + '/rest/v1/products?select=id,name,description,category,price,compare_price,stock,image_url,featured&active=eq.true&order=featured.desc,created_at.desc',
       { headers: { apikey: key, authorization: 'Bearer ' + key } });
     if (!r.ok) return reply(res, 200, c.headers, { products: [] });
-    return reply(res, 200, c.headers, { products: await r.json() });
+    return reply(res, 200, c.headers, { products: await r.json(), shipping: Number(process.env.STORE_SHIPPING) || 0 });
   } catch (e) { return reply(res, 500, c.headers, { error: 'error interno' }); }
 };
