@@ -95,6 +95,7 @@
         }
         return '<div class="reading-card"><h4>Plan Astro Tarot</h4>' +
             '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas generales por mes incluidas (no se renuevan antes del mes siguiente; las lecturas por categoría se pagan aparte) y consultas al oráculo ilimitadas.</p>' +
+            '<p class="auth-note">El plan queda asociado a esta cuenta. Se paga con Mercado Pago, se renueva solo cada mes y podés cancelarlo cuando quieras desde tu cuenta de Mercado Pago (Suscripciones).</p>' +
             '<button class="astro-btn" id="subscribeBtn" type="button">Suscribirme — $' + (window.__planPrice || 7500) + ' ARS/mes</button>' +
             '<div class="astro-error" id="subscribeError" style="display:none"></div></div>';
     }
@@ -401,7 +402,13 @@
     function isLoggedIn() { return !!currentUser; }
     function hasActivePlan() { return !!(currentProfile && currentProfile.plan_active); }
     function openSubscribeModal() {
-        if (!currentUser) { document.getElementById('authModal').style.display = 'flex'; return; }
+        if (!currentUser) {
+            document.getElementById('authModal').style.display = 'flex';
+            setAuthTab(true);
+            var h = document.getElementById('authModalHint');
+            if (h) h.textContent = 'Para suscribirte primero creá tu cuenta (o iniciá sesión): el plan se activa en tu cuenta. Después elegís el plan y pagás con Mercado Pago.';
+            return;
+        }
         document.getElementById('accountModal').style.display = 'flex';
         refreshProfile().then(renderAccountModal);
     }
