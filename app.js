@@ -1887,6 +1887,13 @@ elementsSection.classList.add('view-hidden');
                                     '<td>' + deg + '</td><td>Casa ' + p.house_number + '</td><td>' + retro + '</td>';
                                 tbody.appendChild(tr);
                             });
+                            [['Ascendente', calc.asc, 'Casa 1'], ['Medio Cielo', calc.mc, 'Casa 10']].forEach(function(a) {
+                                var tr = document.createElement('tr');
+                                tr.className = 'axis-row';
+                                var deg = Math.floor(a[1].degree) + '°' + Math.floor((a[1].degree % 1) * 60) + "'";
+                                tr.innerHTML = '<td><strong>' + a[0] + (profile.unknown ? ' (aprox.)' : '') + '</strong></td><td>' + a[1].sign + '</td><td>' + deg + '</td><td>' + a[2] + '</td><td></td>';
+                                tbody.appendChild(tr);
+                            });
                             buildReading(list);
                             var aspList = computeAspects(list);
                             var syn = Reading.build(calc, aspList);
