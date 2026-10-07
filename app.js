@@ -455,6 +455,14 @@
             e.preventDefault();
             document.querySelector('[data-view="all"]').click();
         });
+        // === BOTONES CTA DEL HOME (van directo a Tirada / Carta Natal) ===
+        document.querySelectorAll('[data-goto]').forEach(function(b) {
+            b.addEventListener('click', function(e) {
+                e.preventDefault();
+                var link = document.querySelector('.nav-links [data-view="' + b.getAttribute('data-goto') + '"]');
+                if (link) link.click();
+            });
+        });
         // === EXPLORAR BUTTON ===
         document.getElementById('btnExplorar').addEventListener('click', function(e) {
             e.preventDefault();

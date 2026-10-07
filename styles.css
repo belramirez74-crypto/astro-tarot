@@ -1962,3 +1962,8 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
 .tirada-section,.signal-section,.tirada-section .signal-inner,.signal-section .signal-inner{text-align:center}
 .tirada-section .signal-inner,.signal-section .signal-inner{display:flex;flex-direction:column;align-items:center;margin-left:auto;margin-right:auto}
 .tirada-section h2,.tirada-section .subtitle{text-align:center;margin-left:auto;margin-right:auto;max-width:680px;width:100%}
+
+.hero-ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;margin-top:8px}
+.hero-ctas .btn-scroll{margin:0}
+.hero-cta-sec{background:transparent !important;border:1px solid rgba(198,134,221,.6) !important;color:#e6d5ff !important}
+@media(max-width:560px){.hero-ctas{flex-direction:column;gap:10px}.hero-ctas .btn-scroll{width:min(280px,86%);text-align:center}}
