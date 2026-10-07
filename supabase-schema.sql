@@ -81,3 +81,10 @@ create trigger protect_plan_columns_trg before insert or update on profiles
 
 -- Limpieza: quitar el plan a las cuentas de prueba de seguridad.
 update profiles set plan_active = false where email like 'test_sec_%';
+
+-- Pagos ya usados (un pago = una lectura). Solo el servidor (service_role) accede.
+create table if not exists used_payments (
+    ref text primary key,
+    used_at timestamptz default now()
+);
+alter table used_payments enable row level security;

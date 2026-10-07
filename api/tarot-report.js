@@ -16,6 +16,26 @@ const CATEGORY_FOCUS = {
   familia: 'la familia, el hogar y los vínculos cercanos; enfocate solo en eso'
 };
 
+// Registra el pago como usado (tabla used_payments). Devuelve 'ok', 'used' o 'error' (si la tabla
+// no existe o falla, no se bloquea al cliente que pagó).
+async function claimPayment(ref) {
+  const url = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !sk) return 'error';
+  try {
+    const r = await fetch(url + '/rest/v1/used_payments', {
+      method: 'POST',
+      headers: { apikey: sk, authorization: 'Bearer ' + sk, 'content-type': 'application/json', prefer: 'return=minimal' },
+      body: JSON.stringify({ ref: ref })
+    });
+    if (r.ok) return 'ok';
+    return r.status === 409 ? 'used' : 'error';
+  } catch (e) { return 'error'; }
+}
+async function releasePayment(ref) {
+  const url = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  try { await fetch(url + '/rest/v1/used_payments?ref=eq.' + encodeURIComponent(ref), { method: 'DELETE', headers: { apikey: sk, authorization: 'Bearer ' + sk } }); } catch (e) {}
+}
+
 module.exports = async function handler(req, res) {
   const c = handlePreflight(req, res, 'POST, OPTIONS');
   if (!c) return;
@@ -30,6 +50,13 @@ module.exports = async function handler(req, res) {
   // Se acepta un pago único ya confirmado (token) o, si el usuario está logueado y suscripto,
   // un cupo de su plan mensual (4 tiradas pagas por mes, se descuenta acá mismo).
   const payload = verifyToken(data.token, item);
+  let usedRef = null;
+  if (payload && payload.ref) {
+    // Un pago, una lectura: se anota el pago como usado; si ya estaba anotado, se rechaza.
+    const claim = await claimPayment(payload.ref);
+    if (claim === 'used') return reply(res, 402, c.headers, { error: 'Este pago ya se usó para una lectura. Para otra tirada hay que pagar de nuevo.' });
+    if (claim === 'ok') usedRef = payload.ref;
+  }
   if (!payload) {
     const jwt = getAuthJwt(req);
     // El cupo del plan cubre solo la tirada general; las categorías se pagan aparte.
@@ -58,11 +85,13 @@ module.exports = async function handler(req, res) {
 
   try {
     const { text, limited, configured } = await generateText(SYSTEM, prompt);
-    if (!configured) return reply(res, 500, c.headers, { error: 'API de IA no configurada' });
+    if (!configured) { if (usedRef) await releasePayment(usedRef); return reply(res, 500, c.headers, { error: 'API de IA no configurada' }); }
+    if (!text && usedRef) await releasePayment(usedRef);
     if (!text && limited) return reply(res, 429, c.headers, { error: 'Se alcanzó el límite gratuito de la IA por ahora. Probá de nuevo en unos minutos.' });
     if (!text) return reply(res, 502, c.headers, { error: 'La IA está saturada en este momento. Probá de nuevo en unos minutos.' });
     return reply(res, 200, c.headers, { report: text });
   } catch (err) {
+    if (usedRef) await releasePayment(usedRef);
     return reply(res, 500, c.headers, { error: 'error interno' });
   }
 };

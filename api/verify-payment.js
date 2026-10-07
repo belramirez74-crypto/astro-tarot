@@ -23,7 +23,7 @@ module.exports = async function handler(req, res) {
   function ok(externalRef) {
     const item = String(externalRef || '').split(':')[0];
     if (!item) return reply(res, 502, c.headers, { error: 'Pago sin referencia de ítem' });
-    const token = sign({ item: item, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
+    const token = sign({ item: item, ref: String(externalRef), exp: Date.now() + 1000 * 60 * 60 * 24 * 30 });
     return reply(res, 200, c.headers, { approved: true, item: item, token: token });
   }
 
