@@ -80,7 +80,25 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div><h1>&#x2726; Panel de la tienda</h1><small id="who"></small></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sec" href="/tienda/" target="_blank" style="text-decoration:none">Ver tienda</a><button class="btn" id="newBtn">+ Nuevo producto</button><button class="btn sec" id="outBtn">Salir</button></div>
   </div>
-  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button></div>
+  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button><button class="btn sec" id="tabCup">Cupones</button></div>
+  <div id="cupView" style="display:none">
+    <div class="ord"><strong>Nuevo cupón</strong>
+      <div class="row" style="margin-top:8px">
+        <div class="f"><span>Código</span><input id="cCode" maxlength="30" placeholder="LUBE10" style="text-transform:uppercase"></div>
+        <div class="f"><span>Tipo</span><select id="cKind"><option value="percent">Porcentaje (%)</option><option value="fixed">Monto fijo ($)</option></select></div>
+      </div>
+      <div class="row">
+        <div class="f"><span>Valor</span><input id="cVal" type="number" min="1" step="1"></div>
+        <div class="f"><span>Vence (opcional)</span><input id="cExp" type="date"></div>
+      </div>
+      <div class="row">
+        <div class="f"><span>Límite de usos (opcional)</span><input id="cMax" type="number" min="1" step="1"></div>
+        <div class="f"><span>Nota (ej: influencer)</span><input id="cNote" maxlength="120"></div>
+      </div>
+      <button class="btn" id="cSave">Guardar cupón</button>
+    </div>
+    <div class="err" id="cupErr"></div><div id="cupList"></div>
+  </div>
   <div id="ordView" style="display:none"><div class="err" id="ordErr"></div><div id="ordList"></div></div>
   <div id="prodView">
   <div class="stats" id="stats"></div>
@@ -294,7 +312,10 @@ button,input,select,textarea{font:inherit;color:inherit}
         '<small>' + new Date(o.created_at).toLocaleString('es-AR') + '</small><ul>' + (o.items || []).map(function (i) { return '<li>' + i.qty + ' × ' + esc(i.name) + ' (' + money(i.price) + ')</li>'; }).join('') + '</ul>' +
         (Number(o.shipping) ? '<small>Envío: ' + money(o.shipping) + '</small><br>' : '') +
         '<small>' + esc(b.email) + ' · ' + esc(b.phone) + '<br>' + (b.delivery === 'pickup' ? '<strong>RETIRO: coordinar por WhatsApp</strong>' : esc(b.address) + ', ' + esc(b.city) + ', ' + esc(b.province) + ' (' + esc(b.zip) + ')') + (b.notes ? '<br>Nota: ' + esc(b.notes) : '') + '</small>' +
-        '<div class="act">' + (o.status === 'paid' ? '<button class="btn" data-s="shipped">Marcar enviado</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
+        (o.coupon_code ? '<br><small>Cupón ' + esc(o.coupon_code) + ' (−' + money(o.discount) + ')</small>' : '') + (b.newsletter ? '<br><small>✉ Acepta novedades por email</small>' : '') +
+        (o.tracking ? '<br><small>Seguimiento: <strong>' + esc(o.tracking) + '</strong></small>' : '') +
+        (o.status === 'paid' && b.delivery !== 'pickup' ? '<div class="f" style="margin-top:8px"><span>Nº de seguimiento</span><input class="trk" placeholder="Ej: AB123456789AR"></div>' : '') +
+        '<div class="act">' + (o.status === 'paid' ? '<button class="btn" data-s="shipped">Marcar enviado</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-copy="1">Copiar mensaje para el cliente</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
     }).join('') : '<div class="empty">Todavía no hay pedidos.</div>';
   }
   async function loadOrders() {
@@ -302,17 +323,54 @@ button,input,select,textarea{font:inherit;color:inherit}
     try { orders = (await api({ action: 'orders' })).orders; renderOrders(); } catch (e) { $('ordErr').textContent = e.message; }
   }
   function tab(which) {
-    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none';
-    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec');
+    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none'; $('cupView').style.display = which === 'c' ? '' : 'none';
+    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec'); $('tabCup').className = 'btn' + (which === 'c' ? '' : ' sec');
     if (which === 'o') loadOrders();
+    if (which === 'c') loadCoupons();
   }
   $('tabProd').addEventListener('click', function () { tab('p'); });
   $('tabOrd').addEventListener('click', function () { tab('o'); });
+  $('tabCup').addEventListener('click', function () { tab('c'); });
   $('ordList').addEventListener('click', async function (e) {
+    var cp = e.target.closest('button[data-copy]');
+    if (cp) {
+      var oo = orders.filter(function (x) { return x.id === cp.closest('.ord').getAttribute('data-id'); })[0], first = String((oo.buyer || {}).name || '').split(' ')[0];
+      var msg = '¡Hola ' + first + '! Tu pedido salió. Tu número de seguimiento de Correo Argentino es ' + oo.tracking + '. Lo podés seguir en correoargentino.com.ar. ¡Gracias por tu compra!';
+      try { await navigator.clipboard.writeText(msg); toast('Mensaje copiado'); } catch (er) { prompt('Copiá el mensaje:', msg); }
+      return;
+    }
     var b = e.target.closest('button[data-s]'); if (!b) return;
     var id = b.closest('.ord').getAttribute('data-id');
-    try { var r = await api({ action: 'order_status', id: id, status: b.getAttribute('data-s') }); orders = orders.map(function (o) { return o.id === id ? r.order : o; }); renderOrders(); }
+    var trkEl = b.closest('.ord').querySelector('.trk');
+    try { var r = await api({ action: 'order_status', id: id, status: b.getAttribute('data-s'), tracking: trkEl ? trkEl.value : undefined }); orders = orders.map(function (o) { return o.id === id ? r.order : o; }); renderOrders(); }
     catch (err) { $('ordErr').textContent = err.message; }
+  });
+
+  // ---- Cupones ----
+  var coupons = [];
+  function renderCoupons() {
+    $('cupList').innerHTML = coupons.length ? coupons.map(function (k) {
+      var exp = k.expires_at ? new Date(k.expires_at) : null, dead = !k.active || (exp && exp < new Date()) || (k.max_uses != null && k.used_count >= k.max_uses);
+      return '<div class="ord" data-code="' + esc(k.code) + '"><header><strong>' + esc(k.code) + ' · ' + (k.kind === 'percent' ? k.value + '%' : money(k.value)) + '</strong><span class="st ' + (dead ? 'cancelled' : 'paid') + '">' + (dead ? 'Inactivo' : 'Activo') + '</span></header>' +
+        '<small>Usos: ' + k.used_count + (k.max_uses != null ? ' / ' + k.max_uses : '') + (exp ? ' · Vence ' + exp.toLocaleDateString('es-AR') : '') + (k.note ? ' · ' + esc(k.note) : '') + '</small>' +
+        '<div class="act"><button class="btn sec" data-ct="1">' + (k.active ? 'Desactivar' : 'Activar') + '</button><button class="btn bad" data-cd="1">Eliminar</button></div></div>';
+    }).join('') : '<div class="empty">Todavía no creaste cupones.</div>';
+  }
+  async function loadCoupons() { $('cupErr').textContent = ''; try { coupons = (await api({ action: 'coupons' })).coupons; renderCoupons(); } catch (e) { $('cupErr').textContent = e.message; } }
+  $('cSave').addEventListener('click', async function () {
+    $('cupErr').textContent = '';
+    try {
+      await api({ action: 'coupon_save', coupon: { code: $('cCode').value, kind: $('cKind').value, value: $('cVal').value, expires_at: $('cExp').value, max_uses: $('cMax').value, note: $('cNote').value, active: true } });
+      ['cCode', 'cVal', 'cExp', 'cMax', 'cNote'].forEach(function (i) { $(i).value = ''; }); toast('Cupón guardado'); loadCoupons();
+    } catch (e) { $('cupErr').textContent = e.message; }
+  });
+  $('cupList').addEventListener('click', async function (e) {
+    var card = e.target.closest('.ord'); if (!card) return;
+    var k = coupons.filter(function (x) { return x.code === card.getAttribute('data-code'); })[0];
+    try {
+      if (e.target.closest('[data-ct]')) { await api({ action: 'coupon_save', coupon: { code: k.code, kind: k.kind, value: k.value, expires_at: k.expires_at ? k.expires_at.slice(0, 10) : '', max_uses: k.max_uses, note: k.note, active: !k.active } }); loadCoupons(); }
+      else if (e.target.closest('[data-cd]')) { if (!confirm('¿Eliminar el cupón ' + k.code + '?')) return; await api({ action: 'coupon_delete', code: k.code }); loadCoupons(); }
+    } catch (er) { $('cupErr').textContent = er.message; }
   });
 
   boot();

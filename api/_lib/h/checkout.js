@@ -2,7 +2,7 @@
 // Los precios y el stock se leen de la base: del navegador solo llegan ids y cantidades.
 const crypto = require('crypto');
 const { handlePreflight, reply, parseBody } = require('../http.js');
-const { sbHeaders, base, quoteShipping } = require('../store.js');
+const { sbHeaders, base, quoteShipping, findCoupon, couponDiscount } = require('../store.js');
 
 function clean(v, max) { return String(v == null ? '' : v).trim().slice(0, max); }
 
@@ -54,19 +54,29 @@ module.exports = async function handler(req, res) {
       shipping = quoteShipping(buyer.zip, subtotal);
       if (shipping === null) return reply(res, 400, c.headers, { error: 'No pudimos calcular el envío para ese código postal. Revisalo o elegí retiro.' });
     }
-    const total = subtotal + shipping;
+    let discount = 0, couponCode = null;
+    if (data.coupon) {
+      const cp = await findCoupon(data.coupon);
+      if (!cp) return reply(res, 400, c.headers, { error: 'El cupón es inválido o está vencido.' });
+      discount = couponDiscount(cp, subtotal); couponCode = cp.code;
+    }
+    buyer.newsletter = !!data.newsletter;
+    const total = subtotal - discount + shipping;
     if (!(total > 0)) return reply(res, 400, c.headers, { error: 'Carrito inválido' });
 
     const ref = 'order:' + crypto.randomBytes(8).toString('hex');
     const ins = await fetch(base() + '/orders', {
       method: 'POST', headers: sbHeaders({ prefer: 'return=minimal' }),
-      body: JSON.stringify({ ref: ref, items: items, subtotal: subtotal, shipping: shipping, total: total, buyer: buyer, status: 'pending' })
+      body: JSON.stringify(Object.assign({ ref: ref, items: items, subtotal: subtotal, shipping: shipping, total: total, buyer: buyer, status: 'pending' }, discount > 0 ? { discount: discount, coupon_code: couponCode } : {}))
     });
     if (!ins.ok) return reply(res, 502, c.headers, { error: 'No se pudo crear el pedido. Intentá de nuevo.' });
 
     const site = c.origin || ('https://' + ((req.headers || {}).host || ''));
     const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(site);
-    const mpItems = items.map(function (i) { return { title: i.name.slice(0, 120), quantity: i.qty, currency_id: 'ARS', unit_price: i.price }; });
+    // Mercado Pago no admite precios negativos: con cupón se cobra una línea única con el total ya descontado.
+    const mpItems = discount > 0
+      ? [{ title: ('Pedido tienda (cupón ' + couponCode + ')').slice(0, 120), quantity: 1, currency_id: 'ARS', unit_price: subtotal - discount }]
+      : items.map(function (i) { return { title: i.name.slice(0, 120), quantity: i.qty, currency_id: 'ARS', unit_price: i.price }; });
     if (shipping > 0) mpItems.push({ title: 'Envío', quantity: 1, currency_id: 'ARS', unit_price: shipping });
     const body = {
       items: mpItems,

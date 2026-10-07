@@ -44,11 +44,43 @@ module.exports = async function handler(req, res) {
 
     if (data.action === 'order_status') {
       if (!data.id || ['paid', 'shipped', 'cancelled'].indexOf(data.status) === -1) return reply(res, 400, c.headers, { error: 'datos inválidos' });
+      const patch = { status: data.status };
+      if (data.tracking != null) patch.tracking = String(data.tracking).trim().slice(0, 60) || null;
       const r = await fetch(url + '/rest/v1/orders?id=eq.' + encodeURIComponent(data.id), {
-        method: 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify({ status: data.status })
+        method: 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify(patch)
       });
       if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo actualizar el pedido.' });
       return reply(res, 200, c.headers, { order: (await r.json())[0] });
+    }
+
+    if (data.action === 'coupons') {
+      const r = await fetch(url + '/rest/v1/coupons?select=*&order=created_at.desc', { headers: sbHeaders() });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo leer los cupones. ¿Ejecutaste supabase-coupons.sql?' });
+      return reply(res, 200, c.headers, { coupons: await r.json() });
+    }
+
+    if (data.action === 'coupon_save') {
+      const k = data.coupon || {};
+      const code = String(k.code || '').trim().toUpperCase();
+      const kind = k.kind === 'fixed' ? 'fixed' : 'percent';
+      const value = num(k.value, 1, kind === 'percent' ? 100 : 100000000);
+      if (!/^[A-Z0-9_-]{2,30}$/.test(code)) return reply(res, 400, c.headers, { error: 'El código debe tener 2 a 30 letras, números, guion o guion bajo.' });
+      if (value === null) return reply(res, 400, c.headers, { error: kind === 'percent' ? 'El porcentaje debe estar entre 1 y 100.' : 'El monto es inválido.' });
+      const maxUses = k.max_uses === '' || k.max_uses == null ? null : Math.floor(num(k.max_uses, 1, 1000000) || 0) || null;
+      let exp = null;
+      if (k.expires_at) { const d = new Date(k.expires_at + 'T23:59:59'); if (isNaN(d.getTime())) return reply(res, 400, c.headers, { error: 'Fecha inválida.' }); exp = d.toISOString(); }
+      const row = { code: code, kind: kind, value: value, active: k.active !== false, expires_at: exp, max_uses: maxUses, note: String(k.note || '').slice(0, 120) || null };
+      const r = await fetch(url + '/rest/v1/coupons', { method: 'POST', headers: sbHeaders({ prefer: 'resolution=merge-duplicates,return=representation' }), body: JSON.stringify(row) });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo guardar el cupón.' });
+      return reply(res, 200, c.headers, { coupon: (await r.json())[0] });
+    }
+
+    if (data.action === 'coupon_delete') {
+      const code = String(data.code || '').toUpperCase();
+      if (!/^[A-Z0-9_-]{2,30}$/.test(code)) return reply(res, 400, c.headers, { error: 'código inválido' });
+      const r = await fetch(url + '/rest/v1/coupons?code=eq.' + encodeURIComponent(code), { method: 'DELETE', headers: sbHeaders() });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo eliminar.' });
+      return reply(res, 200, c.headers, { ok: true });
     }
 
     if (data.action === 'save') {

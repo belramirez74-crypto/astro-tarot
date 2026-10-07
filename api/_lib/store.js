@@ -40,6 +40,35 @@ async function findApprovedPayment(ref) {
   return { payment: ok || null, status: list[0] ? list[0].status : 'pending' };
 }
 
+// Cupones: devuelve el cupón si existe, está activo, no venció y no agotó sus usos.
+async function findCoupon(code) {
+  const c = String(code || '').trim().toUpperCase();
+  if (!/^[A-Z0-9_-]{2,30}$/.test(c)) return null;
+  const r = await fetch(base() + '/coupons?select=*&code=eq.' + encodeURIComponent(c), { headers: sbHeaders() });
+  const rows = r.ok ? await r.json() : [];
+  const cp = rows[0];
+  if (!cp || !cp.active) return null;
+  if (cp.expires_at && new Date(cp.expires_at).getTime() < Date.now()) return null;
+  if (cp.max_uses != null && cp.used_count >= cp.max_uses) return null;
+  return cp;
+}
+function couponDiscount(cp, subtotal) {
+  const raw = cp.kind === 'percent' ? subtotal * Number(cp.value) / 100 : Number(cp.value);
+  return Math.max(0, Math.min(Math.round(raw), subtotal));
+}
+async function bumpCoupon(code) {
+  for (let i = 0; i < 4; i++) {
+    const g = await fetch(base() + '/coupons?select=used_count&code=eq.' + encodeURIComponent(code), { headers: sbHeaders() });
+    const rows = g.ok ? await g.json() : [];
+    if (!rows.length) return;
+    const p = await fetch(base() + '/coupons?code=eq.' + encodeURIComponent(code) + '&used_count=eq.' + rows[0].used_count, {
+      method: 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify({ used_count: rows[0].used_count + 1 })
+    });
+    const out = p.ok ? await p.json() : [];
+    if (out.length) return;
+  }
+}
+
 // Marca el pedido como pagado y descuenta el stock UNA sola vez (el que gana el PATCH condicional).
 async function finalizeOrder(ref) {
   const order = await getOrder(ref);
@@ -57,6 +86,7 @@ async function finalizeOrder(ref) {
   const won = claim.ok ? await claim.json() : [];
   if (won.length) {
     for (const it of order.items) await decrementStock(it.id, it.qty);
+    if (order.coupon_code) await bumpCoupon(order.coupon_code);
   }
   return { found: true, status: 'paid', order: won[0] || order };
 }
@@ -79,4 +109,4 @@ function quoteShipping(zip, subtotal) {
   return Number(z.price);
 }
 
-module.exports = { quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+module.exports = { findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };

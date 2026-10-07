@@ -6,7 +6,8 @@ const handlers = {
   checkout: require('./_lib/h/checkout.js'),
   verify: require('./_lib/h/verify.js'),
   webhook: require('./_lib/h/webhook.js'),
-  shipping: require('./_lib/h/shipping.js')
+  shipping: require('./_lib/h/shipping.js'),
+  coupon: require('./_lib/h/coupon.js')
 };
 
 module.exports = async function handler(req, res) {

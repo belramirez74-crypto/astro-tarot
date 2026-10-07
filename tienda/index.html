@@ -71,6 +71,7 @@ footer a{color:var(--acc)}
   <div id="delivery" style="display:none">
     <div class="opt"><label><input type="radio" name="dl" value="shipping" checked> Envío a domicilio</label>
     <label><input type="radio" name="dl" value="pickup"> Retiro gratis (coordinamos por WhatsApp)</label></div>
+    <div class="f"><span>¿Tenés un cupón de descuento?</span><div style="display:flex;gap:6px"><input id="cpInput" placeholder="CÓDIGO" style="text-transform:uppercase"><button class="btn sec" id="cpBtn" type="button" style="width:auto">Aplicar</button></div><span id="cpMsg"></span></div>
     <div class="f" id="zipQuote"><span>Código postal (para calcular el envío)</span><input id="qZip" inputmode="numeric" maxlength="8" placeholder="Ej: 1425"></div>
   </div>
   <div id="cartTotals"></div>
@@ -84,6 +85,7 @@ footer a{color:var(--acc)}
     </div>
     <p id="pickupNote" style="display:none;color:var(--mut);font-size:.85rem">Retiro sin costo. Después de tu pago te escribimos por WhatsApp al teléfono que dejaste para coordinar día y lugar.</p>
     <div class="f"><span>Notas para el envío (opcional)</span><textarea id="bNotes" rows="2"></textarea></div>
+    <label class="opt" style="margin:8px 0"><span style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="bNews"> Quiero recibir novedades y ofertas por email</span></label>
     <div class="err" id="cErr"></div>
     <button class="btn" id="payBtn" type="button">Pagar con Mercado Pago</button>
   </div>
@@ -93,7 +95,7 @@ footer a{color:var(--acc)}
 <script>
 (function () {
   var CAT = { 'mazos-tarot': 'Mazos de tarot', 'mazos-oraculo': 'Mazos oráculo', 'accesorios': 'Accesorios', 'velas-inciensos': 'Velas e inciensos', 'cristales': 'Cristales y piedras', 'libros': 'Libros y guías' };
-  var all = [], cur = '', cart = {}, mode = 'shipping', quote = null;
+  var all = [], cur = '', cart = {}, mode = 'shipping', quote = null, coupon = null; // coupon: {code, discount, label}
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return '$' + Number(n).toLocaleString('es-AR'); }
@@ -136,12 +138,25 @@ footer a{color:var(--acc)}
     }).join('') : '<div class="empty">Tu carrito está vacío.</div>';
     $('cartTotals').innerHTML = ids.length ?
       '<div class="tot"><span>Subtotal</span><span>' + money(sub) + '</span></div>' +
+      (coupon ? '<div class="tot"><span>Cupón ' + esc(coupon.code) + '</span><span>&minus;' + money(Math.min(coupon.discount, sub)) + '</span></div>' : '') +
       '<div class="tot"><span>Envío</span><span>' + (mode === 'pickup' ? 'Gratis (retiro)' : (quote === null ? 'Ingresá tu código postal' : (quote === 0 ? 'Gratis' : money(quote)))) + '</span></div>' +
-      '<div class="tot big"><span>Total</span><span>' + money(sub + (mode === 'pickup' ? 0 : (quote || 0))) + '</span></div>' : '';
+      '<div class="tot big"><span>Total</span><span>' + money(sub - (coupon ? Math.min(coupon.discount, sub) : 0) + (mode === 'pickup' ? 0 : (quote || 0))) + '</span></div>' : '';
     $('delivery').style.display = ids.length ? '' : 'none';
     $('goCheckout').style.display = ids.length && $('checkout').style.display === 'none' ? '' : 'none';
     if (!ids.length) $('checkout').style.display = 'none';
   }
+  async function applyCoupon() {
+    var code = $('cpInput').value.trim();
+    if (!code) { coupon = null; $('cpMsg').textContent = ''; renderCart(); return; }
+    var sub = Object.keys(cart).reduce(function (t, id) { return t + cart[id] * Number(prod(id).price); }, 0);
+    try {
+      var d = await fetch('/api/store-coupon?code=' + encodeURIComponent(code) + '&sub=' + sub).then(function (r) { return r.json(); });
+      if (d.ok) { coupon = { code: d.code, discount: d.discount, label: d.label }; $('cpMsg').style.color = '#4ade80'; $('cpMsg').textContent = '✓ ' + d.label; }
+      else { coupon = null; $('cpMsg').style.color = '#f87171'; $('cpMsg').textContent = d.error || 'Cupón inválido.'; }
+    } catch (e) { coupon = null; $('cpMsg').textContent = 'No se pudo validar el cupón.'; }
+    renderCart();
+  }
+  $('cpBtn').addEventListener('click', applyCoupon);
   var qTimer = null;
   function applyMode() {
     var pick = mode === 'pickup';
@@ -187,7 +202,7 @@ footer a{color:var(--acc)}
     var buyer = { name: $('bName').value, email: $('bEmail').value, phone: $('bPhone').value, address: $('bAddr').value, city: $('bCity').value, province: $('bProv').value, zip: $('qZip').value, notes: $('bNotes').value };
     btn.disabled = true; btn.textContent = 'Un momento…';
     try {
-      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer, delivery: mode }) });
+      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer, delivery: mode, coupon: coupon ? coupon.code : '', newsletter: $('bNews').checked }) });
       var d = await r.json();
       if (!r.ok || !d.url) throw new Error(d.error || 'No se pudo iniciar el pago');
       try { sessionStorage.setItem('store_pending_ref', d.ref); } catch (e) {}
