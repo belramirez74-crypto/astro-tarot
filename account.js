@@ -91,10 +91,10 @@
             var used = prof.plan_tiradas_used || 0;
             return '<div class="reading-card"><h4>Plan Astro Tarot <span class="plan-badge">ACTIVO</span></h4>' +
                 '<p>Informe natal completo, informe de compatibilidad completo y consultas al oráculo ilimitadas.</p>' +
-                '<p>Tiradas pagas usadas este mes: ' + used + ' / 4</p></div>';
+                '<p>Tiradas generales usadas este mes: ' + used + ' / 4</p></div>';
         }
         return '<div class="reading-card"><h4>Plan Astro Tarot</h4>' +
-            '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas pagas por mes incluidas y consultas al oráculo ilimitadas.</p>' +
+            '<p>Informe natal completo, informe de compatibilidad completo, 4 tiradas generales por mes incluidas (no se renuevan antes del mes siguiente; las lecturas por categoría se pagan aparte) y consultas al oráculo ilimitadas.</p>' +
             '<button class="astro-btn" id="subscribeBtn" type="button">Suscribirme — $' + (window.__planPrice || 7500) + ' ARS/mes</button>' +
             '<div class="astro-error" id="subscribeError" style="display:none"></div></div>';
     }
@@ -325,6 +325,29 @@
 
     // ---- API usada por app.js/horo.js ----
 
+    function getUserId() { return currentUser ? currentUser.id : null; }
+
+    // Última tirada paga guardada de un ítem ('full' o categoría), para que no cambie al volver a entrar.
+    async function getLatestReading(item) {
+        if (!sb || !currentUser) return null;
+        try {
+            var kind = item === 'full' ? 'tirada_full' : 'tirada_categoria';
+            var r = await sb.from('reading_history').select('detail').eq('user_id', currentUser.id).eq('kind', kind)
+                .filter('detail->>item', 'eq', item).order('created_at', { ascending: false }).limit(1);
+            var d = r.data && r.data[0] && r.data[0].detail;
+            return d && d.report ? d : null;
+        } catch (e) { return null; }
+    }
+
+    // Tiradas generales que le quedan al plan este mes (4 por mes, no se renuevan antes).
+    function tiradasLeft() {
+        var prof = currentProfile || {};
+        var now = new Date();
+        var ps = prof.plan_period_start ? new Date(prof.plan_period_start) : null;
+        var same = ps && ps.getUTCFullYear() === now.getUTCFullYear() && ps.getUTCMonth() === now.getUTCMonth();
+        return Math.max(0, 4 - (same ? (prof.plan_tiradas_used || 0) : 0));
+    }
+
     async function logReading(kind, label, detail) {
         if (!sb || !currentUser) return;
         try { await sb.from('reading_history').insert({ user_id: currentUser.id, kind: kind, label: label, detail: detail || {} }); } catch (e) {}
@@ -384,7 +407,7 @@
     }
 
     window.Account = {
-        logReading: logReading, saveNatalData: saveNatalData, isLoggedIn: isLoggedIn,
+        refreshProfile: refreshProfile, logReading: logReading, getUserId: getUserId, getLatestReading: getLatestReading, tiradasLeft: tiradasLeft, saveNatalData: saveNatalData, isLoggedIn: isLoggedIn,
         checkAndCountSenal: checkAndCountSenal, getAccessToken: getAccessToken,
         hasActivePlan: hasActivePlan, openSubscribeModal: openSubscribeModal, openAuthModal: openAuthModal
     };

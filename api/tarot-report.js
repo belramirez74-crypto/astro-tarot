@@ -32,9 +32,10 @@ module.exports = async function handler(req, res) {
   const payload = verifyToken(data.token, item);
   if (!payload) {
     const jwt = getAuthJwt(req);
-    const plan = jwt ? await consumeTiradaQuota(jwt).catch(function () { return null; }) : null;
-    if (!plan) return reply(res, 402, c.headers, { error: 'Esta lectura requiere un pago válido o el plan mensual.' });
-    if (!plan.quotaLeft) return reply(res, 402, c.headers, { error: 'Ya usaste tus 4 tiradas del plan este mes. Podés pagar esta lectura por separado.' });
+    // El cupo del plan cubre solo la tirada general; las categorías se pagan aparte.
+    const plan = (jwt && item === 'full') ? await consumeTiradaQuota(jwt).catch(function () { return null; }) : null;
+    if (!plan) return reply(res, 402, c.headers, { error: 'Esta lectura requiere un pago.' });
+    if (!plan.quotaLeft) return reply(res, 402, c.headers, { error: 'Ya usaste tus 4 tiradas generales de este mes. Se renuevan el mes próximo; mientras tanto podés pagar una lectura por categoría.' });
   }
 
   const cards = Array.isArray(data.cards) ? data.cards.slice(0, MAX_CARDS) : [];

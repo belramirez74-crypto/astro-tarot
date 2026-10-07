@@ -705,29 +705,85 @@
             document.addEventListener('visibilitychange', function() { if (!document.hidden) pollPendingPayment(); });
             window.addEventListener('focus', pollPendingPayment);
 
-            var unlockFullBtn = document.getElementById('unlockFullBtn');
-            if (unlockFullBtn) {
-                unlockFullBtn.addEventListener('click', function() {
-                    tryPlanOrCheckout('full', unlockFullBtn, document.getElementById('tiradaPayError'));
-                });
+            // ---- Lecturas pagas guardadas: una tirada, una vez. No se vuelve a sortear al volver a entrar. ----
+            function savedKey(item) {
+                var uid = (window.Account && Account.getUserId && Account.getUserId()) || 'guest';
+                return 'tarot_saved_' + uid + '_' + item;
             }
-            document.querySelectorAll('.categoria-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    var item = btn.getAttribute('data-item');
-                    var already = getToken(item);
-                    if (already) { runPremiumReading(item, already); return; }
-                    tryPlanOrCheckout(item, btn, document.getElementById('categoriaPayError'));
-                });
-            });
+            function storeSaved(item, saved) {
+                try { sessionStorage.setItem(savedKey(item), JSON.stringify(saved)); } catch (e) {}
+            }
+            async function loadSaved(item) {
+                try {
+                    var raw = sessionStorage.getItem(savedKey(item));
+                    if (raw) { var d = JSON.parse(raw); if (d && d.report) return d; }
+                } catch (e) {}
+                if (window.Account && Account.isLoggedIn && Account.isLoggedIn() && Account.getLatestReading) {
+                    var db = await Account.getLatestReading(item);
+                    if (db) { storeSaved(item, db); return db; }
+                }
+                return null;
+            }
+            function showSaved(item, saved, btn, errEl) {
+                var isFull = item === 'full';
+                var labels = isFull ? FULL_LABELS : CAT_LABELS;
+                var deck = allCards();
+                var picks = (saved.picks || []).map(function(p) {
+                    var card = deck.filter(function(c) { return c.name === p.name; })[0];
+                    return card ? { card: card, reversed: !!p.reversed } : null;
+                }).filter(Boolean);
+                renderSpread(document.getElementById(isFull ? 'fullSpread' : 'categoriaSpread'), picks, labels);
+                if (!isFull) document.getElementById('categoriaTitle').textContent = '✦ Tu Lectura: ' + CAT_NAMES[item] + ' ✦';
+                var outEl = document.getElementById(isFull ? 'fullAiOut' : 'categoriaAiOut');
+                tRenderReport(outEl, saved.report);
+                var note = document.createElement('p');
+                note.className = 'ai-status';
+                note.textContent = isFull
+                    ? 'Esta es tu tirada general. Queda guardada y no cambia hasta que pidas otra.'
+                    : 'Esta es tu lectura de esta categoría. Queda guardada y no cambia; para una nueva tirada hay que pagarla de nuevo.';
+                outEl.appendChild(note);
+                var again = document.createElement('button');
+                again.className = 'astro-btn'; again.type = 'button'; again.textContent = 'Pedir otra tirada';
+                again.addEventListener('click', function() { requestNew(item, btn, errEl); });
+                outEl.appendChild(again);
+                var resultEl = document.getElementById(isFull ? 'tiradaFullResult' : 'categoriaResult');
+                resultEl.style.display = '';
+                resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
 
-            // Si hay sesión con plan activo, intenta usar un cupo mensual (gratis) antes de cobrar por separado.
-            async function tryPlanOrCheckout(item, btn, errEl) {
-                if (window.Account && Account.isLoggedIn() && Account.hasActivePlan()) {
+            // Pide una tirada NUEVA: con pago ya hecho (token), con cupo del plan (solo tirada general) o cobrando.
+            async function requestNew(item, btn, errEl) {
+                var token = getToken(item);
+                if (token) { runPremiumReading(item, token, null, btn, errEl); return; }
+                if (item === 'full' && window.Account && Account.isLoggedIn() && Account.hasActivePlan()) {
+                    var left = Account.tiradasLeft();
+                    if (left <= 0) {
+                        tShowError(errEl, 'Ya usaste tus 4 tiradas generales de este mes. Se renuevan el mes próximo. Mientras tanto podés pagar una lectura por categoría, que es independiente.');
+                        return;
+                    }
+                    if (!confirm('Tu plan incluye 4 tiradas generales por mes y te quedan ' + left + '. Esta va a usar 1, y no se renuevan hasta el mes próximo. ¿Continuar?')) return;
                     var jwt = await Account.getAccessToken();
                     if (jwt) { runPremiumReading(item, null, jwt, btn, errEl); return; }
                 }
                 startCheckout(item, btn, errEl);
             }
+            async function openOrRequest(item, btn, errEl) {
+                var saved = await loadSaved(item);
+                if (saved) { showSaved(item, saved, btn, errEl); return; }
+                requestNew(item, btn, errEl);
+            }
+
+            var unlockFullBtn = document.getElementById('unlockFullBtn');
+            if (unlockFullBtn) {
+                unlockFullBtn.addEventListener('click', function() {
+                    openOrRequest('full', unlockFullBtn, document.getElementById('tiradaPayError'));
+                });
+            }
+            document.querySelectorAll('.categoria-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    openOrRequest(btn.getAttribute('data-item'), btn, document.getElementById('categoriaPayError'));
+                });
+            });
 
             async function runPremiumReading(item, token, jwt, btn, errEl) {
                 var isFull = item === 'full';
@@ -754,21 +810,17 @@
                     var data = await res.json();
                     if (!res.ok) {
                         if (res.status === 402 && token) { try { localStorage.removeItem('tarot_unlock_' + item); } catch (e) {} }
-                        if (res.status === 402 && jwt && btn) {
-                            // Cupo del plan agotado: ofrecer pagar esa lectura por separado, sin perder el intento.
-                            outEl.innerHTML = '<p class="ai-status">' + data.error + '</p>';
-                            var payBtn = document.createElement('button');
-                            payBtn.className = 'astro-btn'; payBtn.type = 'button'; payBtn.textContent = 'Pagar esta lectura';
-                            payBtn.addEventListener('click', function() { startCheckout(item, btn, errEl); });
-                            outEl.appendChild(payBtn);
-                            return;
-                        }
                         throw new Error(data.error || 'No se pudo generar la lectura');
                     }
-                    tRenderReport(outEl, data.report);
+                    var saved = { item: item, report: data.report, picks: picks.map(function(p) { return { name: p.card.name, reversed: p.reversed }; }) };
+                    storeSaved(item, saved);
+                    // El pago se usó: ese token ya no habilita otra tirada.
+                    if (token) { try { localStorage.removeItem('tarot_unlock_' + item); } catch (e) {} }
+                    showSaved(item, saved, btn, errEl);
+                    if (window.Account && jwt && Account.refreshProfile) Account.refreshProfile();
                     if (window.Account) {
                         Account.logReading(isFull ? 'tirada_full' : 'tirada_categoria',
-                            (isFull ? 'Lectura completa' : CAT_NAMES[item]) + ': ' + picks.map(function(p) { return p.card.name; }).join(', '));
+                            (isFull ? 'Lectura completa' : CAT_NAMES[item]) + ': ' + picks.map(function(p) { return p.card.name; }).join(', '), saved);
                     }
                 } catch (err) {
                     outEl.innerHTML = '<p class="ai-status">' + err.message + '</p>';
