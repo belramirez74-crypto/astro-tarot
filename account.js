@@ -56,6 +56,7 @@
         var banner = document.getElementById('authStatus');
         if (banner) banner.textContent = '';
         document.getElementById('authModal').style.display = 'none';
+        if (window.Survey) Survey.maybeShow();
         if (currentProfile && currentProfile.birth_datetime && window.showUserProfile) {
             var d = new Date(currentProfile.birth_datetime);
             window.showUserProfile(d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0') + '-' + String(d.getUTCDate()).padStart(2, '0'));
@@ -63,6 +64,7 @@
     }
 
     function onLoggedOut() {
+        if (window.Survey) Survey.clear();
         var np = document.getElementById('navProfile');
         if (np) np.classList.remove('show');
         var accBtn = document.getElementById('accountBtn');
@@ -110,7 +112,7 @@
         var enabled = prof.notify_enabled !== false;
         var senales = prof.plan_active ? 'Ilimitadas (plan activo)' : ((prof.senal_count || 0) + ' de ' + FREE_SENAL_LIMIT + ' usadas');
         var history = [];
-        try { var r2 = await sb.from('reading_history').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(15); history = r2.data || []; } catch (e) {}
+        try { var r2 = await sb.from('reading_history').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(15); history = (r2.data || []).filter(function (h) { return h.kind !== 'encuesta'; }); } catch (e) {}
         var histHtml = history.length
             ? history.map(function (h) {
                 var d = new Date(h.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -123,6 +125,8 @@
             '<p>Fecha de nacimiento: ' + esc(birth) + '</p>' +
             '<p>Consultas al oráculo: ' + esc(senales) + '</p></div>' +
             planStatusHtml(prof) +
+            '<div class="reading-card"><h4>Encuesta de perfil</h4><p>Sus respuestas nos permiten recomendarle la lectura más adecuada.</p>' +
+            '<button class="astro-btn" id="surveyBtn" type="button">Completar o actualizar encuesta</button></div>' +
             '<div class="reading-card"><h4>Recordatorios por email</h4>' +
             '<label class="astro-check"><input type="checkbox" id="notifyEnabledInput"' + (enabled ? ' checked' : '') + '> Quiero recibir recordatorios</label>' +
             '<p>Cada <select id="notifyFreqInput">' +
@@ -132,6 +136,8 @@
             '<button class="astro-btn" id="logoutBtn" type="button" style="margin-left:0.5rem">Cerrar sesión</button></div>' +
             '<h3 class="horo-subtitle">✦ Tus últimas lecturas ✦</h3>' + histHtml;
 
+        var surveyBtn = document.getElementById('surveyBtn');
+        if (surveyBtn) surveyBtn.addEventListener('click', function () { document.getElementById('accountModal').style.display = 'none'; if (window.Survey) Survey.open(); });
         var saveBtn = document.getElementById('saveNotifyBtn');
         if (saveBtn) saveBtn.addEventListener('click', async function () {
             var enabled2 = document.getElementById('notifyEnabledInput').checked;
@@ -326,6 +332,20 @@
 
     // ---- API usada por app.js/horo.js ----
 
+    async function getSurvey() {
+        if (!sb || !currentUser) return null;
+        try {
+            var r = await sb.from('reading_history').select('detail').eq('user_id', currentUser.id).eq('kind', 'encuesta')
+                .order('created_at', { ascending: false }).limit(1);
+            var d = r.data && r.data[0] && r.data[0].detail;
+            return d && d.answers ? d.answers : null;
+        } catch (e) { return null; }
+    }
+    async function saveSurvey(answers) {
+        if (!sb || !currentUser) return;
+        try { await sb.from('reading_history').insert({ user_id: currentUser.id, kind: 'encuesta', label: 'Encuesta de perfil', detail: { answers: answers } }); } catch (e) {}
+    }
+
     function getUserId() { return currentUser ? currentUser.id : null; }
 
     // Última tirada paga guardada de un ítem ('full' o categoría), para que no cambie al volver a entrar.
@@ -414,7 +434,7 @@
     }
 
     window.Account = {
-        refreshProfile: refreshProfile, logReading: logReading, getUserId: getUserId, getLatestReading: getLatestReading, tiradasLeft: tiradasLeft, saveNatalData: saveNatalData, isLoggedIn: isLoggedIn,
+        refreshProfile: refreshProfile, getSurvey: getSurvey, saveSurvey: saveSurvey, logReading: logReading, getUserId: getUserId, getLatestReading: getLatestReading, tiradasLeft: tiradasLeft, saveNatalData: saveNatalData, isLoggedIn: isLoggedIn,
         checkAndCountSenal: checkAndCountSenal, getAccessToken: getAccessToken,
         hasActivePlan: hasActivePlan, openSubscribeModal: openSubscribeModal, openAuthModal: openAuthModal
     };

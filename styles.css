@@ -1970,3 +1970,15 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
 
 .planet-table .axis-row td{color:#e6d5ff;background:rgba(198,134,221,.12)}
 .planet-table .axis-row:first-of-type td{border-top:1px solid rgba(198,134,221,.4)}
+
+.survey-progress{font-size:.8rem;color:#cdbde6;margin:.4rem 0 0;letter-spacing:.06em}
+.survey-q{font-family:'Marcellus',serif;font-size:1.15rem;margin:.4rem 0 .8rem;color:#f4ecff}
+.survey-opts{display:flex;flex-direction:column;gap:8px;text-align:left}
+.survey-opt{background:rgba(255,255,255,.06);border:1px solid rgba(198,134,221,.3);color:#f4ecff;border-radius:12px;padding:11px 14px;font:inherit;font-size:.92rem;cursor:pointer;text-align:left;transition:background .2s,border-color .2s}
+.survey-opt:hover{background:rgba(198,134,221,.15)}
+.survey-opt.on{background:rgba(123,51,126,.55);border-color:#C686DD;box-shadow:0 0 0 1px #C686DD inset}
+.survey-nav{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.survey-nav .astro-btn[disabled]{opacity:.45;cursor:not-allowed}
+.survey-skip{font-size:.8rem;color:#cdbde6}
+.survey-reco{text-align:center;color:#e6d5ff;background:rgba(198,134,221,.12);border:1px solid rgba(198,134,221,.4);border-radius:12px;padding:10px 14px;margin:0 0 14px}
+.categoria-btn.recommended,#unlockFullBtn.recommended{box-shadow:0 0 0 2px #C686DD,0 0 22px rgba(198,134,221,.55)}
