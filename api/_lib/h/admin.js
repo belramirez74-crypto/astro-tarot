@@ -1,7 +1,7 @@
 // Panel de administración de la tienda. Solo el admin (email verificado por Supabase) puede usarlo.
 // Todas las escrituras usan la service_role key; el navegador nunca escribe en la tabla products.
-const { handlePreflight, reply, parseBody, getAuthJwt } = require('./_lib/http.js');
-const { authUser } = require('./_lib/supa.js');
+const { handlePreflight, reply, parseBody, getAuthJwt } = require('../http.js');
+const { authUser } = require('../supa.js');
 
 const CATEGORIES = ['mazos-tarot', 'mazos-oraculo', 'accesorios', 'velas-inciensos', 'cristales', 'libros'];
 

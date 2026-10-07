@@ -1,5 +1,5 @@
 // Catálogo público de la tienda: solo productos activos. Lee con la anon key (RLS filtra los activos).
-const { handlePreflight, reply } = require('./_lib/http.js');
+const { handlePreflight, reply } = require('../http.js');
 
 module.exports = async function handler(req, res) {
   const c = handlePreflight(req, res, 'GET, OPTIONS');

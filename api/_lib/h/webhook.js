@@ -1,6 +1,6 @@
 // Aviso (webhook) de Mercado Pago: cubre el caso de que el cliente pague y cierre la pestaña
 // antes de volver al sitio. No se confía en el contenido del aviso: se consulta el pago a Mercado Pago.
-const { finalizeOrder } = require('./_lib/store.js');
+const { finalizeOrder } = require('../store.js');
 
 module.exports = async function handler(req, res) {
   try {

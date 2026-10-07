@@ -3,5 +3,8 @@
     "api/report.js": { "maxDuration": 30 },
     "api/tarot-report.js": { "maxDuration": 30 },
     "api/synastry-report.js": { "maxDuration": 30 }
-  }
+  },
+  "rewrites": [
+    { "source": "/api/store-:name(admin|products|checkout|verify|webhook|shipping)", "destination": "/api/store?a=:name" }
+  ]
 }

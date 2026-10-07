@@ -46,6 +46,7 @@ header h1{font-size:2.2rem}header p{color:var(--mut);margin:.4rem 0 0}
 .f input,.f textarea{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .err{color:var(--bad);font-size:.88rem;margin:8px 0;min-height:1em}
+.opt{display:flex;flex-direction:column;gap:6px;margin:10px 0;font-size:.92rem}.opt label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .msg{background:rgba(74,222,128,.12);border:1px solid var(--ok);border-radius:14px;padding:14px;margin:0 0 18px;text-align:center}
 .msg.w{background:rgba(251,191,36,.1);border-color:#fbbf24}
 footer{text-align:center;color:var(--mut);font-size:.8rem;margin-top:36px}
@@ -67,14 +68,21 @@ footer a{color:var(--acc)}
   <button class="close" id="closeCart" type="button" aria-label="Cerrar">&times;</button>
   <h2>&#x2726; Tu carrito &#x2726;</h2>
   <div id="cartItems"></div>
+  <div id="delivery" style="display:none">
+    <div class="opt"><label><input type="radio" name="dl" value="shipping" checked> Envío a domicilio</label>
+    <label><input type="radio" name="dl" value="pickup"> Retiro gratis (coordinamos por WhatsApp)</label></div>
+    <div class="f" id="zipQuote"><span>Código postal (para calcular el envío)</span><input id="qZip" inputmode="numeric" maxlength="8" placeholder="Ej: 1425"></div>
+  </div>
   <div id="cartTotals"></div>
   <div id="checkout" style="display:none">
     <h3 style="margin:14px 0 4px">Datos de contacto y envío</h3>
     <div class="f"><span>Nombre y apellido</span><input id="bName" autocomplete="name"></div>
     <div class="row"><div class="f"><span>Email</span><input id="bEmail" type="email" autocomplete="email"></div><div class="f"><span>Teléfono</span><input id="bPhone" type="tel" autocomplete="tel"></div></div>
+    <div id="addrBlock">
     <div class="f"><span>Dirección (calle y número, piso/depto)</span><input id="bAddr" autocomplete="street-address"></div>
     <div class="row"><div class="f"><span>Ciudad</span><input id="bCity"></div><div class="f"><span>Provincia</span><input id="bProv"></div></div>
-    <div class="f"><span>Código postal</span><input id="bZip"></div>
+    </div>
+    <p id="pickupNote" style="display:none;color:var(--mut);font-size:.85rem">Retiro sin costo. Después de tu pago te escribimos por WhatsApp al teléfono que dejaste para coordinar día y lugar.</p>
     <div class="f"><span>Notas para el envío (opcional)</span><textarea id="bNotes" rows="2"></textarea></div>
     <div class="err" id="cErr"></div>
     <button class="btn" id="payBtn" type="button">Pagar con Mercado Pago</button>
@@ -85,7 +93,7 @@ footer a{color:var(--acc)}
 <script>
 (function () {
   var CAT = { 'mazos-tarot': 'Mazos de tarot', 'mazos-oraculo': 'Mazos oráculo', 'accesorios': 'Accesorios', 'velas-inciensos': 'Velas e inciensos', 'cristales': 'Cristales y piedras', 'libros': 'Libros y guías' };
-  var all = [], cur = '', cart = {}, shipping = 0;
+  var all = [], cur = '', cart = {}, mode = 'shipping', quote = null;
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return '$' + Number(n).toLocaleString('es-AR'); }
@@ -128,11 +136,32 @@ footer a{color:var(--acc)}
     }).join('') : '<div class="empty">Tu carrito está vacío.</div>';
     $('cartTotals').innerHTML = ids.length ?
       '<div class="tot"><span>Subtotal</span><span>' + money(sub) + '</span></div>' +
-      '<div class="tot"><span>Envío</span><span>' + (shipping ? money(shipping) : 'A coordinar') + '</span></div>' +
-      '<div class="tot big"><span>Total</span><span>' + money(sub + shipping) + '</span></div>' : '';
+      '<div class="tot"><span>Envío</span><span>' + (mode === 'pickup' ? 'Gratis (retiro)' : (quote === null ? 'Ingresá tu código postal' : (quote === 0 ? 'Gratis' : money(quote)))) + '</span></div>' +
+      '<div class="tot big"><span>Total</span><span>' + money(sub + (mode === 'pickup' ? 0 : (quote || 0))) + '</span></div>' : '';
+    $('delivery').style.display = ids.length ? '' : 'none';
     $('goCheckout').style.display = ids.length && $('checkout').style.display === 'none' ? '' : 'none';
     if (!ids.length) $('checkout').style.display = 'none';
   }
+  var qTimer = null;
+  function applyMode() {
+    var pick = mode === 'pickup';
+    $('zipQuote').style.display = pick ? 'none' : '';
+    $('addrBlock').style.display = pick ? 'none' : '';
+    $('pickupNote').style.display = pick ? '' : 'none';
+  }
+  async function doQuote() {
+    var zip = $('qZip').value.trim();
+    if (!/\d{4}/.test(zip)) { quote = null; renderCart(); return; }
+    var sub = Object.keys(cart).reduce(function (t, id) { return t + cart[id] * Number(prod(id).price); }, 0);
+    try {
+      var d = await fetch('/api/store-shipping?zip=' + encodeURIComponent(zip) + '&sub=' + sub).then(function (r) { return r.json(); });
+      quote = d.ok ? d.price : null;
+      $('cErr').textContent = d.ok ? '' : 'No pudimos calcular el envío para ese código postal.';
+    } catch (e) { quote = null; }
+    renderCart();
+  }
+  $('qZip').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(doQuote, 450); });
+  document.querySelectorAll('input[name=dl]').forEach(function (r) { r.addEventListener('change', function () { mode = r.value; applyMode(); renderCart(); }); });
   function openCart() { renderCart(); $('ov').classList.add('show'); }
   $('cartBtn').addEventListener('click', openCart);
   $('closeCart').addEventListener('click', function () { $('ov').classList.remove('show'); });
@@ -155,10 +184,10 @@ footer a{color:var(--acc)}
   $('payBtn').addEventListener('click', async function () {
     var btn = this; $('cErr').textContent = '';
     var items = Object.keys(cart).map(function (id) { return { id: id, qty: cart[id] }; });
-    var buyer = { name: $('bName').value, email: $('bEmail').value, phone: $('bPhone').value, address: $('bAddr').value, city: $('bCity').value, province: $('bProv').value, zip: $('bZip').value, notes: $('bNotes').value };
+    var buyer = { name: $('bName').value, email: $('bEmail').value, phone: $('bPhone').value, address: $('bAddr').value, city: $('bCity').value, province: $('bProv').value, zip: $('qZip').value, notes: $('bNotes').value };
     btn.disabled = true; btn.textContent = 'Un momento…';
     try {
-      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer }) });
+      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer, delivery: mode }) });
       var d = await r.json();
       if (!r.ok || !d.url) throw new Error(d.error || 'No se pudo iniciar el pago');
       try { sessionStorage.setItem('store_pending_ref', d.ref); } catch (e) {}
@@ -185,8 +214,8 @@ footer a{color:var(--acc)}
     notice('Todavía no recibimos la confirmación del pago. Si ya pagaste, quedate tranquilo/a: se acredita en unos minutos y nos va a llegar tu pedido.', true);
   }
 
-  load();
-  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; shipping = Number(d.shipping) || 0; render(); renderCart(); checkReturn(); })
+  load(); applyMode();
+  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; render(); renderCart(); checkReturn(); })
     .catch(function () { render(); renderCart(); });
 })();
 </script>

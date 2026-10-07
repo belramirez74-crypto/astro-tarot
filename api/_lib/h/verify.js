@@ -1,6 +1,6 @@
 // Confirma el pago de un pedido de la tienda (al volver de Mercado Pago). Idempotente.
-const { handlePreflight, reply } = require('./_lib/http.js');
-const { finalizeOrder } = require('./_lib/store.js');
+const { handlePreflight, reply } = require('../http.js');
+const { finalizeOrder } = require('../store.js');
 
 module.exports = async function handler(req, res) {
   const c = handlePreflight(req, res, 'GET, OPTIONS');

@@ -1,8 +1,8 @@
 // Crea el pedido de la tienda y la preferencia de pago de Mercado Pago.
 // Los precios y el stock se leen de la base: del navegador solo llegan ids y cantidades.
 const crypto = require('crypto');
-const { handlePreflight, reply, parseBody } = require('./_lib/http.js');
-const { sbHeaders, base } = require('./_lib/store.js');
+const { handlePreflight, reply, parseBody } = require('../http.js');
+const { sbHeaders, base, quoteShipping } = require('../store.js');
 
 function clean(v, max) { return String(v == null ? '' : v).trim().slice(0, max); }
 
@@ -20,8 +20,13 @@ module.exports = async function handler(req, res) {
     name: clean(b.name, 100), email: clean(b.email, 120).toLowerCase(), phone: clean(b.phone, 40),
     address: clean(b.address, 160), city: clean(b.city, 80), province: clean(b.province, 60), zip: clean(b.zip, 12), notes: clean(b.notes, 300)
   };
-  if (!buyer.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(buyer.email) || !buyer.phone || !buyer.address || !buyer.city || !buyer.province || !buyer.zip) {
-    return reply(res, 400, c.headers, { error: 'Completá todos tus datos de contacto y envío.' });
+  const pickup = data.delivery === 'pickup';
+  buyer.delivery = pickup ? 'pickup' : 'shipping';
+  if (!buyer.name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(buyer.email) || !buyer.phone) {
+    return reply(res, 400, c.headers, { error: 'Completá tu nombre, email y teléfono.' });
+  }
+  if (!pickup && (!buyer.address || !buyer.city || !buyer.province || !buyer.zip)) {
+    return reply(res, 400, c.headers, { error: 'Completá tu dirección de envío.' });
   }
 
   // Cantidades por producto (se juntan repetidos)
@@ -44,7 +49,11 @@ module.exports = async function handler(req, res) {
       items.push({ id: id, name: p.name, qty: qtys[id], price: Number(p.price) });
     }
     const subtotal = items.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
-    const shipping = Number(process.env.STORE_SHIPPING) || 0;
+    let shipping = 0;
+    if (!pickup) {
+      shipping = quoteShipping(buyer.zip, subtotal);
+      if (shipping === null) return reply(res, 400, c.headers, { error: 'No pudimos calcular el envío para ese código postal. Revisalo o elegí retiro.' });
+    }
     const total = subtotal + shipping;
     if (!(total > 0)) return reply(res, 400, c.headers, { error: 'Carrito inválido' });
 

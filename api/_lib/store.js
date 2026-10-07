@@ -61,4 +61,22 @@ async function finalizeOrder(ref) {
   return { found: true, status: 'paid', order: won[0] || order };
 }
 
-module.exports = { sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+// Costo de envío por zona según el código postal (los 4 dígitos numéricos, también dentro de un CPA tipo C1425ABC).
+// Zonas y precios editables con la variable STORE_ZONES (JSON: [{"max":1999,"price":5500}, ...], ordenado por "max").
+// STORE_FREE_SHIPPING_OVER: subtotal desde el cual el envío es gratis (0 = nunca).
+const DEFAULT_ZONES = [{ max: 1999, price: 5500 }, { max: 5999, price: 7000 }, { max: 9999, price: 9000 }];
+function quoteShipping(zip, subtotal) {
+  const m = /(\d{4})/.exec(String(zip || ''));
+  if (!m) return null;
+  const n = Number(m[1]);
+  if (n < 1000) return null;
+  let zones = DEFAULT_ZONES;
+  try { if (process.env.STORE_ZONES) zones = JSON.parse(process.env.STORE_ZONES); } catch (e) {}
+  const z = zones.filter(function (x) { return n <= x.max; })[0];
+  if (!z) return null;
+  const free = Number(process.env.STORE_FREE_SHIPPING_OVER) || 0;
+  if (free > 0 && Number(subtotal) >= free) return 0;
+  return Number(z.price);
+}
+
+module.exports = { quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };

@@ -293,7 +293,7 @@ button,input,select,textarea{font:inherit;color:inherit}
       return '<div class="ord" data-id="' + o.id + '"><header><strong>' + esc(b.name) + ' · ' + money(o.total) + '</strong><span class="st ' + o.status + '">' + (ST[o.status] || o.status) + '</span></header>' +
         '<small>' + new Date(o.created_at).toLocaleString('es-AR') + '</small><ul>' + (o.items || []).map(function (i) { return '<li>' + i.qty + ' × ' + esc(i.name) + ' (' + money(i.price) + ')</li>'; }).join('') + '</ul>' +
         (Number(o.shipping) ? '<small>Envío: ' + money(o.shipping) + '</small><br>' : '') +
-        '<small>' + esc(b.email) + ' · ' + esc(b.phone) + '<br>' + esc(b.address) + ', ' + esc(b.city) + ', ' + esc(b.province) + ' (' + esc(b.zip) + ')' + (b.notes ? '<br>Nota: ' + esc(b.notes) : '') + '</small>' +
+        '<small>' + esc(b.email) + ' · ' + esc(b.phone) + '<br>' + (b.delivery === 'pickup' ? '<strong>RETIRO: coordinar por WhatsApp</strong>' : esc(b.address) + ', ' + esc(b.city) + ', ' + esc(b.province) + ' (' + esc(b.zip) + ')') + (b.notes ? '<br>Nota: ' + esc(b.notes) : '') + '</small>' +
         '<div class="act">' + (o.status === 'paid' ? '<button class="btn" data-s="shipped">Marcar enviado</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
     }).join('') : '<div class="empty">Todavía no hay pedidos.</div>';
   }
