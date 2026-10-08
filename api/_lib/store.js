@@ -129,4 +129,99 @@ function quoteShipping(zip, subtotal) {
   return Number(z.price);
 }
 
-module.exports = { getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+// ---- Cotización automática con MiCorreo (Correo Argentino) ----
+// Variables: MICORREO_USER_TOKEN, MICORREO_PASSWORD_TOKEN, MICORREO_EMAIL, MICORREO_PASSWORD, MICORREO_ORIGIN_CP
+// (opcionales: MICORREO_ENV=test|prod, MICORREO_CUSTOMER_ID, MICORREO_MARKUP_PCT, MICORREO_HANDLING,
+//  DEFAULT_WEIGHT_G, DEFAULT_LENGTH_CM, DEFAULT_WIDTH_CM, DEFAULT_HEIGHT_CM). Si faltan o falla, se usa la tabla por zona.
+let mcAuth = { jwt: null, exp: 0, customerId: null };
+function mcBase() { return process.env.MICORREO_ENV === 'test' ? 'https://apitest.correoargentino.com.ar/micorreo/v1' : 'https://api.correoargentino.com.ar/micorreo/v1'; }
+function mcConfigured() {
+  const e = process.env;
+  return !!(e.MICORREO_USER_TOKEN && e.MICORREO_PASSWORD_TOKEN && e.MICORREO_ORIGIN_CP && (e.MICORREO_CUSTOMER_ID || (e.MICORREO_EMAIL && e.MICORREO_PASSWORD)));
+}
+async function mcLogin() {
+  if (mcAuth.jwt && Date.now() < mcAuth.exp) return mcAuth;
+  const basic = Buffer.from(process.env.MICORREO_USER_TOKEN + ':' + process.env.MICORREO_PASSWORD_TOKEN).toString('base64');
+  const t = await fetch(mcBase() + '/token', { method: 'POST', headers: { authorization: 'Basic ' + basic } });
+  if (!t.ok) throw new Error('micorreo token ' + t.status);
+  const tj = await t.json();
+  mcAuth.jwt = tj.token;
+  const exp = Date.parse(tj.expires);
+  mcAuth.exp = isFinite(exp) ? exp - 60000 : Date.now() + 10 * 60000;
+  if (process.env.MICORREO_CUSTOMER_ID) mcAuth.customerId = process.env.MICORREO_CUSTOMER_ID;
+  if (!mcAuth.customerId) {
+    const v = await fetch(mcBase() + '/users/validate', {
+      method: 'POST', headers: { authorization: 'Bearer ' + mcAuth.jwt, 'content-type': 'application/json' },
+      body: JSON.stringify({ email: process.env.MICORREO_EMAIL, password: process.env.MICORREO_PASSWORD })
+    });
+    if (!v.ok) throw new Error('micorreo validate ' + v.status);
+    mcAuth.customerId = (await v.json()).customerId;
+  }
+  return mcAuth;
+}
+
+// Junta todos los productos del carrito en un solo bulto: pesos sumados, apilados en altura.
+function packageFor(items) {
+  const d = process.env;
+  const defW = Number(d.DEFAULT_WEIGHT_G) || 500, defL = Number(d.DEFAULT_LENGTH_CM) || 20, defA = Number(d.DEFAULT_WIDTH_CM) || 15, defH = Number(d.DEFAULT_HEIGHT_CM) || 8;
+  let w = 0, l = 0, a = 0, h = 0;
+  items.forEach(function (it) {
+    const q = it.qty || 1;
+    w += (it.weight_g || defW) * q; l = Math.max(l, it.length_cm || defL); a = Math.max(a, it.width_cm || defA); h += (it.height_cm || defH) * q;
+  });
+  return { weight: Math.min(25000, Math.max(1, Math.round(w))), length: Math.min(150, l), width: Math.min(150, a), height: Math.min(150, Math.max(1, h)) };
+}
+
+async function micorreoRates(zip, items) {
+  const dest = (/(\d{4})/.exec(String(zip || '')) || [])[1];
+  if (!dest) return null;
+  const auth = await mcLogin();
+  const pkg = packageFor(items);
+  const r = await fetch(mcBase() + '/rates', {
+    method: 'POST', headers: { authorization: 'Bearer ' + auth.jwt, 'content-type': 'application/json' },
+    body: JSON.stringify({ customerId: auth.customerId, postalCodeOrigin: process.env.MICORREO_ORIGIN_CP, postalCodeDestination: dest, dimensions: [Object.assign({ quantity: 1 }, pkg)] })
+  });
+  if (r.status === 401) { mcAuth.jwt = null; }
+  if (!r.ok) throw new Error('micorreo rates ' + r.status);
+  const out = await r.json();
+  const markup = 1 + (Number(process.env.MICORREO_MARKUP_PCT) || 0) / 100, handling = Number(process.env.MICORREO_HANDLING) || 0;
+  // Se ofrece el servicio más barato de cada modalidad (D = a domicilio, S = a sucursal).
+  const best = {};
+  (out.rates || []).forEach(function (x) {
+    if (typeof x.price !== 'number' || (x.deliveredType !== 'D' && x.deliveredType !== 'S')) return;
+    if (!best[x.deliveredType] || x.price < best[x.deliveredType].price) best[x.deliveredType] = x;
+  });
+  return ['D', 'S'].filter(function (t) { return best[t]; }).map(function (t) {
+    const x = best[t], days = x.deliveryTimeMin && x.deliveryTimeMax ? ' (' + x.deliveryTimeMin + ' a ' + x.deliveryTimeMax + ' días)' : '';
+    return { type: t, label: (t === 'D' ? 'Envío a domicilio' : 'Envío a sucursal de Correo Argentino') + days, price: Math.round(x.price * markup + handling) };
+  });
+}
+
+// Opciones de envío para un código postal: cotización real si está configurada; si no, tabla por zona.
+async function quoteOptions(zip, items, subtotal) {
+  const free = Number(process.env.STORE_FREE_SHIPPING_OVER) || 0;
+  const isFree = free > 0 && Number(subtotal) >= free;
+  let opts = null, source = 'zonas';
+  if (mcConfigured()) {
+    try { opts = await micorreoRates(zip, items); if (opts && opts.length) source = 'micorreo'; else opts = null; }
+    catch (e) { console.error('MiCorreo', e.message); opts = null; }
+  }
+  if (!opts) {
+    const p = quoteShipping(zip, subtotal);
+    if (p === null) return { ok: false };
+    opts = [{ type: 'D', label: 'Envío a domicilio', price: p }];
+  }
+  if (isFree) opts = opts.map(function (o) { return Object.assign({}, o, { price: 0 }); });
+  return { ok: true, source: source, options: opts };
+}
+
+// Productos con sus medidas; si las columnas todavía no existen en la base, se piden sin ellas.
+async function fetchProducts(ids) {
+  const cols = 'id,name,price,stock,active';
+  const dims = ',weight_g,length_cm,width_cm,height_cm';
+  let r = await fetch(base() + '/products?select=' + cols + dims + '&id=in.(' + ids.join(',') + ')', { headers: sbHeaders() });
+  if (!r.ok) r = await fetch(base() + '/products?select=' + cols + '&id=in.(' + ids.join(',') + ')', { headers: sbHeaders() });
+  return r.ok ? await r.json() : [];
+}
+
+module.exports = { quoteOptions: quoteOptions, fetchProducts: fetchProducts, getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };

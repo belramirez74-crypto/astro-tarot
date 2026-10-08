@@ -148,6 +148,15 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div class="f"><span>Stock *</span><input id="mStock" type="number" min="0" step="1"></div>
     <div class="f"><span>Avisar con stock menor o igual a</span><input id="mLow" type="number" min="0" step="1"></div>
   </div>
+  <div class="f"><span>Peso y medidas del paquete (para cotizar el envío con Correo Argentino)</span></div>
+  <div class="row">
+    <div class="f"><span>Peso (gramos)</span><input id="mW" type="number" min="1" max="25000" step="1"></div>
+    <div class="f"><span>Largo (cm)</span><input id="mL" type="number" min="1" max="150" step="1"></div>
+  </div>
+  <div class="row">
+    <div class="f"><span>Ancho (cm)</span><input id="mA" type="number" min="1" max="150" step="1"></div>
+    <div class="f"><span>Alto (cm)</span><input id="mH" type="number" min="1" max="150" step="1"></div>
+  </div>
   <div class="chk"><label><input type="checkbox" id="mActive"> Visible en la tienda</label><label><input type="checkbox" id="mFeat"> Destacado</label></div>
   <div class="err" id="mErr"></div>
   <div class="mact"><button class="btn sec" id="mCancel">Cancelar</button><button class="btn" id="mSave">Guardar</button></div>
@@ -280,6 +289,7 @@ button,input,select,textarea{font:inherit;color:inherit}
     $('mCat').value = p ? p.category : CATS[0]; $('mSku').value = p ? (p.sku || '') : '';
     $('mPrice').value = p ? p.price : ''; $('mCmp').value = p && p.compare_price ? p.compare_price : '';
     $('mStock').value = p ? p.stock : 0; $('mLow').value = p ? p.low_stock_threshold : 3;
+    $('mW').value = p && p.weight_g ? p.weight_g : ''; $('mL').value = p && p.length_cm ? p.length_cm : ''; $('mA').value = p && p.width_cm ? p.width_cm : ''; $('mH').value = p && p.height_cm ? p.height_cm : '';
     $('mActive').checked = p ? p.active : true; $('mFeat').checked = p ? p.featured : false;
     $('mFile').value = ''; $('mErr').textContent = '';
     var pv = $('prev'); if (p && p.image_url) { pv.src = p.image_url; pv.style.display = 'block'; } else pv.style.display = 'none';
@@ -315,7 +325,7 @@ button,input,select,textarea{font:inherit;color:inherit}
       if (pendingImage) { var up = await api({ action: 'upload', dataUrl: pendingImage }); image = up.url; }
       var prod = { id: editing ? editing.id : undefined, name: $('mName').value, description: $('mDesc').value, category: $('mCat').value, sku: $('mSku').value,
         price: $('mPrice').value, compare_price: $('mCmp').value, stock: $('mStock').value, low_stock_threshold: $('mLow').value,
-        image_url: image, active: $('mActive').checked, featured: $('mFeat').checked };
+        image_url: image, weight_g: $('mW').value, length_cm: $('mL').value, width_cm: $('mA').value, height_cm: $('mH').value, active: $('mActive').checked, featured: $('mFeat').checked };
       var r = await api({ action: 'save', product: prod });
       if (editing) replaceProduct(r.product); else { products.unshift(r.product); render(); }
       $('ov').classList.remove('show'); toast('Producto guardado');

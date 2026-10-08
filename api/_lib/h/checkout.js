@@ -2,7 +2,7 @@
 // Los precios y el stock se leen de la base: del navegador solo llegan ids y cantidades.
 const crypto = require('crypto');
 const { handlePreflight, reply, parseBody } = require('../http.js');
-const { sbHeaders, base, quoteShipping, findCoupon, couponDiscount } = require('../store.js');
+const { sbHeaders, base, quoteOptions, fetchProducts, findCoupon, couponDiscount } = require('../store.js');
 
 function clean(v, max) { return String(v == null ? '' : v).trim().slice(0, max); }
 
@@ -39,20 +39,21 @@ module.exports = async function handler(req, res) {
   const ids = Object.keys(qtys);
 
   try {
-    const r = await fetch(base() + '/products?select=id,name,price,stock,active&id=in.(' + ids.join(',') + ')', { headers: sbHeaders() });
-    const rows = r.ok ? await r.json() : [];
+    const rows = await fetchProducts(ids);
     const items = [];
     for (const id of ids) {
       const p = rows.filter(function (x) { return x.id === id; })[0];
       if (!p || !p.active) return reply(res, 409, c.headers, { error: 'Un producto del carrito ya no está disponible. Actualizá el carrito.' });
       if (p.stock < qtys[id]) return reply(res, 409, c.headers, { error: 'No hay stock suficiente de "' + p.name + '" (quedan ' + p.stock + ').' });
-      items.push({ id: id, name: p.name, qty: qtys[id], price: Number(p.price) });
+      items.push({ id: id, name: p.name, qty: qtys[id], price: Number(p.price), weight_g: p.weight_g, length_cm: p.length_cm, width_cm: p.width_cm, height_cm: p.height_cm });
     }
     const subtotal = items.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
     let shipping = 0;
     if (!pickup) {
-      shipping = quoteShipping(buyer.zip, subtotal);
-      if (shipping === null) return reply(res, 400, c.headers, { error: 'No pudimos calcular el envío para ese código postal. Revisalo o elegí retiro.' });
+      const q = await quoteOptions(buyer.zip, items, subtotal);
+      if (!q.ok) return reply(res, 400, c.headers, { error: 'No pudimos calcular el envío para ese código postal. Revisalo o elegí retiro.' });
+      const opt = q.options.filter(function (o) { return o.type === data.shippingType; })[0] || q.options[0];
+      shipping = opt.price; buyer.shipping_label = opt.label;
     }
     let discount = 0, couponCode = null;
     if (data.coupon) {
@@ -67,7 +68,7 @@ module.exports = async function handler(req, res) {
     const ref = 'order:' + crypto.randomBytes(8).toString('hex');
     const ins = await fetch(base() + '/orders', {
       method: 'POST', headers: sbHeaders({ prefer: 'return=minimal' }),
-      body: JSON.stringify(Object.assign({ ref: ref, items: items, subtotal: subtotal, shipping: shipping, total: total, buyer: buyer, status: 'pending' }, discount > 0 ? { discount: discount, coupon_code: couponCode } : {}))
+      body: JSON.stringify(Object.assign({ ref: ref, items: items.map(function (i) { return { id: i.id, name: i.name, qty: i.qty, price: i.price }; }), subtotal: subtotal, shipping: shipping, total: total, buyer: buyer, status: 'pending' }, discount > 0 ? { discount: discount, coupon_code: couponCode } : {}))
     });
     if (!ins.ok) return reply(res, 502, c.headers, { error: 'No se pudo crear el pedido. Intentá de nuevo.' });
 

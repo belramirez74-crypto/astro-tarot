@@ -125,6 +125,7 @@ header h1{font-size:1.7rem}
     <label><input type="radio" name="dl" value="pickup"> Retiro gratis (coordinamos por WhatsApp)</label></div>
     <div class="f"><span>¿Tenés un cupón de descuento?</span><div style="display:flex;gap:6px"><input id="cpInput" placeholder="CÓDIGO" style="text-transform:uppercase"><button class="btn sec" id="cpBtn" type="button" style="width:auto">Aplicar</button></div><span id="cpMsg"></span></div>
     <div class="f" id="zipQuote"><span>Código postal (para calcular el envío)</span><input id="qZip" inputmode="numeric" maxlength="8" placeholder="Ej: 1425"></div>
+    <div class="opt" id="shipOpts" style="display:none"></div>
   </div>
   <div id="cartTotals"></div>
   <div id="checkout" style="display:none">
@@ -147,7 +148,7 @@ header h1{font-size:1.7rem}
 <script>
 (function () {
   var CAT = {}, catList = [], term = '', sb = null, sbUser = null;
-  var all = [], cur = '', cart = {}, mode = 'shipping', quote = null, coupon = null; // coupon: {code, discount, label}
+  var all = [], cur = '', cart = {}, mode = 'shipping', quote = null, coupon = null, shipOptions = [], shipType = ''; // coupon: {code, discount, label}
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return '$' + Number(n).toLocaleString('es-AR'); }
@@ -301,19 +302,35 @@ header h1{font-size:1.7rem}
     $('addrBlock').style.display = pick ? 'none' : '';
     $('pickupNote').style.display = pick ? '' : 'none';
   }
+  function renderShipOpts() {
+    var box = $('shipOpts');
+    if (shipOptions.length < 2 || mode === 'pickup') { box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.style.display = '';
+    box.innerHTML = shipOptions.map(function (o) {
+      return '<label><input type="radio" name="st" value="' + o.type + '"' + (o.type === shipType ? ' checked' : '') + '> ' + esc(o.label) + ' &mdash; ' + (o.price ? money(o.price) : 'Gratis') + '</label>';
+    }).join('');
+  }
   async function doQuote() {
     var zip = $('qZip').value.trim();
-    if (!/\d{4}/.test(zip)) { quote = null; renderCart(); return; }
+    if (!/\d{4}/.test(zip)) { quote = null; shipOptions = []; renderShipOpts(); renderCart(); return; }
     var sub = Object.keys(cart).reduce(function (t, id) { return t + cart[id] * Number(prod(id).price); }, 0);
+    var cs = Object.keys(cart).map(function (id) { return id + ':' + cart[id]; }).join(',');
     try {
-      var d = await fetch('/api/store-shipping?zip=' + encodeURIComponent(zip) + '&sub=' + sub).then(function (r) { return r.json(); });
-      quote = d.ok ? d.price : null;
+      var d = await fetch('/api/store-shipping?zip=' + encodeURIComponent(zip) + '&sub=' + sub + '&cart=' + encodeURIComponent(cs)).then(function (r) { return r.json(); });
+      shipOptions = d.ok ? (d.options || [{ type: 'D', label: 'Envío a domicilio', price: d.price }]) : [];
+      var keep = shipOptions.filter(function (o) { return o.type === shipType; })[0];
+      var pick = keep || shipOptions[0];
+      shipType = pick ? pick.type : ''; quote = pick ? pick.price : null;
       $('cErr').textContent = d.ok ? '' : 'No pudimos calcular el envío para ese código postal.';
-    } catch (e) { quote = null; }
-    renderCart();
+    } catch (e) { quote = null; shipOptions = []; }
+    renderShipOpts(); renderCart();
   }
+  $('shipOpts').addEventListener('change', function (e) {
+    var t = e.target.value, o = shipOptions.filter(function (x) { return x.type === t; })[0];
+    if (o) { shipType = t; quote = o.price; renderCart(); }
+  });
   $('qZip').addEventListener('input', function () { clearTimeout(qTimer); qTimer = setTimeout(doQuote, 450); });
-  document.querySelectorAll('input[name=dl]').forEach(function (r) { r.addEventListener('change', function () { mode = r.value; applyMode(); renderCart(); }); });
+  document.querySelectorAll('input[name=dl]').forEach(function (r) { r.addEventListener('change', function () { mode = r.value; applyMode(); renderShipOpts(); renderCart(); }); });
   function openCart() { renderCart(); $('ov').classList.add('show'); }
   $('cartBtn').addEventListener('click', openCart);
   $('closeCart').addEventListener('click', function () { $('ov').classList.remove('show'); });
@@ -339,7 +356,7 @@ header h1{font-size:1.7rem}
     var buyer = { name: $('bName').value, email: $('bEmail').value, phone: $('bPhone').value, address: $('bAddr').value, city: $('bCity').value, province: $('bProv').value, zip: $('qZip').value, notes: $('bNotes').value };
     btn.disabled = true; btn.textContent = 'Un momento…';
     try {
-      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer, delivery: mode, coupon: coupon ? coupon.code : '', newsletter: $('bNews').checked }) });
+      var r = await fetch('/api/store-checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: items, buyer: buyer, delivery: mode, shippingType: shipType, coupon: coupon ? coupon.code : '', newsletter: $('bNews').checked }) });
       var d = await r.json();
       if (!r.ok || !d.url) throw new Error(d.error || 'No se pudo iniciar el pago');
       try { sessionStorage.setItem('store_pending_ref', d.ref); } catch (e) {}

@@ -14,6 +14,11 @@ function sbHeaders(extra) {
   const sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
   return Object.assign({ apikey: sk, authorization: 'Bearer ' + sk, 'content-type': 'application/json' }, extra || {});
 }
+function optInt(v, min, max) {
+  if (v === '' || v == null) return null;
+  const n = Math.floor(Number(v));
+  return isFinite(n) && n >= min && n <= max ? n : null;
+}
 function num(v, min, max) {
   const n = Number(v);
   return isFinite(n) && n >= min && n <= max ? n : null;
@@ -148,6 +153,10 @@ module.exports = async function handler(req, res) {
         active: !!p.active, featured: !!p.featured,
         updated_at: new Date().toISOString()
       };
+      // Medidas: solo se envían si se cargaron (así guardar productos no depende de haber creado las columnas).
+      const dims = { weight_g: optInt(p.weight_g, 1, 25000), length_cm: optInt(p.length_cm, 1, 150), width_cm: optInt(p.width_cm, 1, 150), height_cm: optInt(p.height_cm, 1, 150) };
+      const hasDims = Object.keys(dims).some(function (k) { return dims[k] !== null; });
+      if (hasDims || p.id) Object.assign(row, hasDims ? dims : {});
       const isNew = !p.id;
       const r = await fetch(url + '/rest/v1/products' + (isNew ? '' : '?id=eq.' + encodeURIComponent(p.id)), {
         method: isNew ? 'POST' : 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify(row)
