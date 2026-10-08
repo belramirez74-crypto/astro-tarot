@@ -12,6 +12,6 @@ module.exports = async function handler(req, res) {
       { headers: { apikey: key, authorization: 'Bearer ' + key } });
     if (!r.ok) return reply(res, 200, c.headers, { products: [] });
     const cats = await getCategories({ apikey: key, authorization: 'Bearer ' + key }, true);
-    return reply(res, 200, c.headers, { products: await r.json(), categories: cats.cats.map(function (x) { return { slug: x.slug, name: x.name }; }) });
+    return reply(res, 200, c.headers, { products: await r.json(), categories: cats.cats.map(function (x) { return { slug: x.slug, name: x.name }; }), whatsapp: String(process.env.STORE_WHATSAPP || '').replace(/\D/g, '') });
   } catch (e) { return reply(res, 500, c.headers, { error: 'error interno' }); }
 };
