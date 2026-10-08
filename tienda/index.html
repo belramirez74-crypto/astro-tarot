@@ -108,6 +108,8 @@ header h1{font-size:1.7rem}
   <button class="mi" id="miProd" type="button">Productos <span class="ar" id="miArrow">&#9662;</span></button>
   <div class="msub" id="msub"></div>
   <button class="mi" id="miAcc" type="button">Mi cuenta</button>
+  <a class="mi" id="miIg" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none">Instagram</a>
+  <a class="mi" id="miWa" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none">WhatsApp</a>
 </div></div>
 <div class="ovl accov" id="accOv"><div class="modal">
   <button class="close" id="closeAcc" type="button" aria-label="Cerrar">&times;</button>
@@ -119,7 +121,7 @@ header h1{font-size:1.7rem}
   <div id="notice"></div>
   <div class="cats" id="cats"></div>
   <div class="grid" id="grid" style="scroll-margin-top:70px"></div>
-  <footer><a id="waFoot" href="#" target="_blank" rel="noopener" style="display:none">Contacto por WhatsApp</a><span id="waSep" style="display:none"> &middot; </span>Pagos seguros con Mercado Pago &middot; <a href="/legal.html#arrepentimiento">Arrepentimiento y cambios</a> &middot; <a href="/legal.html#terminos">Términos</a></footer>
+  <footer><a id="igFoot" href="#" target="_blank" rel="noopener" style="display:none">Instagram</a><span id="igSep" style="display:none"> &middot; </span><a id="waFoot" href="#" target="_blank" rel="noopener" style="display:none">Contacto por WhatsApp</a><span id="waSep" style="display:none"> &middot; </span>Pagos seguros con Mercado Pago &middot; <a href="/legal.html#arrepentimiento">Arrepentimiento y cambios</a> &middot; <a href="/legal.html#terminos">Términos</a></footer>
 </div>
 
 <div class="ov" id="ov"><div class="drawer">
@@ -186,7 +188,16 @@ header h1{font-size:1.7rem}
     waNum = num;
     var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent('Hola! Tengo una consulta sobre la tienda.');
     ['waBtn', 'waLink2', 'waFoot'].forEach(function (id) { var a = $(id); if (a) a.href = url; });
+    $('miWa').href = url; $('miWa').style.display = '';
     $('waBtn').classList.add('show'); $('waLink2').style.display = ''; $('waFoot').style.display = ''; $('waSep').style.display = '';
+  }
+  function setInstagram(v) {
+    // acepta @usuario, usuario o la URL completa
+    var h = String(v || '').trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@/, '').replace(/[\/?#].*$/, '');
+    if (!/^[A-Za-z0-9._]{1,30}$/.test(h)) return;
+    var url = 'https://www.instagram.com/' + h + '/';
+    ['igFoot', 'miIg'].forEach(function (id) { var a = $(id); if (a) { a.href = url; a.style.display = ''; } });
+    $('igSep').style.display = '';
   }
   function setCategories(list) {
     catList = list || []; CAT = {}; catList.forEach(function (c) { CAT[c.slug] = c.name; });
@@ -407,7 +418,7 @@ header h1{font-size:1.7rem}
   }
 
   load(); applyMode();
-  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; setCategories(d.categories || []); setWhatsapp(d.whatsapp); render(); renderCart(); checkReturn(); })
+  fetch('/api/store-products').then(function (r) { return r.json(); }).then(function (d) { all = d.products || []; setCategories(d.categories || []); setWhatsapp(d.whatsapp); setInstagram(d.instagram); render(); renderCart(); checkReturn(); })
     .catch(function () { setCategories([]); render(); renderCart(); });
 })();
 </script>
