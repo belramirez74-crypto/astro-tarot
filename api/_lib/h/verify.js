@@ -11,6 +11,8 @@ module.exports = async function handler(req, res) {
   try {
     const r = await finalizeOrder(ref);
     if (!r.found) return reply(res, 404, c.headers, { error: 'Pedido no encontrado' });
-    return reply(res, 200, c.headers, { paid: r.status === 'paid' || r.status === 'shipped', status: r.status });
+    const b = (r.order && r.order.buyer) || {};
+    return reply(res, 200, c.headers, { paid: r.status === 'paid' || r.status === 'shipped', status: r.status,
+      delivery: b.delivery || null, name: String(b.name || '').split(' ')[0], number: String(ref).replace('order:', '').slice(0, 8).toUpperCase() });
   } catch (e) { return reply(res, 500, c.headers, { error: 'error interno' }); }
 };

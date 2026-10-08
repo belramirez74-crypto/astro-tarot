@@ -153,7 +153,7 @@ header h1{font-size:1.7rem}
 
 <script>
 (function () {
-  var CAT = {}, catList = [], term = '', sb = null, sbUser = null;
+  var CAT = {}, catList = [], term = '', sb = null, sbUser = null, waNum = '';
   var all = [], cur = '', cart = {}, mode = 'shipping', quote = null, coupon = null, shipOptions = [], shipType = ''; // coupon: {code, discount, label}
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -183,6 +183,7 @@ header h1{font-size:1.7rem}
   }
   function setWhatsapp(num) {
     if (!/^\d{8,15}$/.test(num || '')) return;
+    waNum = num;
     var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent('Hola! Tengo una consulta sobre la tienda.');
     ['waBtn', 'waLink2', 'waFoot'].forEach(function (id) { var a = $(id); if (a) a.href = url; });
     $('waBtn').classList.add('show'); $('waLink2').style.display = ''; $('waFoot').style.display = ''; $('waSep').style.display = '';
@@ -388,7 +389,17 @@ header h1{font-size:1.7rem}
     for (var i = 0; i < 12; i++) {
       try {
         var d = await fetch('/api/store-verify?ref=' + encodeURIComponent(ref)).then(function (r) { return r.json(); });
-        if (d.paid) { cart = {}; save(); renderCart(); notice('<strong>¡Gracias por tu compra!</strong> Recibimos tu pago y vamos a preparar tu pedido. Te contactamos por email o teléfono para coordinar el envío.'); return; }
+        if (d.paid) {
+          cart = {}; save(); renderCart();
+          if (d.delivery === 'pickup') {
+            var msg = 'Hola! Soy ' + (d.name || 'un cliente') + '. Hice una compra con retiro (pedido ' + (d.number || '') + ') y quiero coordinar el retiro.';
+            notice('<strong>¡Gracias por tu compra!</strong> Recibimos tu pago. Para <strong>coordinar el retiro</strong> escribinos por WhatsApp:' +
+              (waNum ? '<br><a class="btn" style="display:inline-block;width:auto;margin-top:10px;text-decoration:none;background:#25D366;color:#073b1d" href="https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg) + '" target="_blank" rel="noopener">Coordinar retiro por WhatsApp</a>' : '<br>Te vamos a escribir al teléfono que dejaste para coordinar día y lugar.'));
+          } else {
+            notice('<strong>¡Gracias por tu compra!</strong> Recibimos tu pago y vamos a preparar tu pedido. Te contactamos por email o teléfono para coordinar el envío.');
+          }
+          return;
+        }
       } catch (e) {}
       await new Promise(function (r) { setTimeout(r, 3000); });
     }
