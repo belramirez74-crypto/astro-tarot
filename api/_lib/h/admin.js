@@ -2,7 +2,8 @@
 // Todas las escrituras usan la service_role key; el navegador nunca escribe en la tabla products.
 const { handlePreflight, reply, parseBody, getAuthJwt } = require('../http.js');
 const { authUser } = require('../supa.js');
-const { getCategories } = require('../store.js');
+const { getCategories, fetchProducts, packageFor } = require('../store.js');
+const paqar = require('../paqar.js');
 
 function slugify(t) {
   return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
@@ -49,6 +50,56 @@ module.exports = async function handler(req, res) {
       const r = await fetch(url + '/rest/v1/orders?select=*&order=created_at.desc&limit=200', { headers: sbHeaders() });
       if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo leer los pedidos. ¿Creaste la tabla orders en Supabase?' });
       return reply(res, 200, c.headers, { orders: await r.json() });
+    }
+
+    if (['paqar_prepare', 'paqar_create', 'paqar_label', 'paqar_cancel'].indexOf(data.action) !== -1) {
+      if (!paqar.configured()) return reply(res, 400, c.headers, { error: 'Correo Argentino todavía no está configurado (faltan PAQAR_AGREEMENT y PAQAR_APIKEY en Vercel).' });
+      const og = await fetch(url + '/rest/v1/orders?select=*&id=eq.' + encodeURIComponent(String(data.id || '')), { headers: sbHeaders() });
+      const order = (og.ok ? await og.json() : [])[0];
+      if (!order) return reply(res, 404, c.headers, { error: 'Pedido no encontrado' });
+      const patchOrder = async function (patch) {
+        const r = await fetch(url + '/rest/v1/orders?id=eq.' + encodeURIComponent(order.id), { method: 'PATCH', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify(patch) });
+        return r.ok ? (await r.json())[0] : null;
+      };
+
+      if (data.action === 'paqar_prepare') {
+        const b = order.buyer || {};
+        const rows = await fetchProducts(order.items.map(function (i) { return i.id; }));
+        const pk = packageFor(order.items.map(function (i) { const p = rows.filter(function (x) { return x.id === i.id; })[0] || {}; return Object.assign({}, p, { qty: i.qty }); }));
+        const sp = paqar.splitAddress(b.address);
+        return reply(res, 200, c.headers, {
+          missingSender: paqar.senderMissing(), provinces: paqar.PROVINCES,
+          recipient: { name: b.name || '', phone: b.phone || '', email: b.email || '', street: sp.street, number: sp.number, floor: '', department: sp.rest, city: b.city || '', state: paqar.provinceCode(b.province), zip: b.zip || '', observation: b.notes || '' },
+          parcel: { height: pk.height, width: pk.length, depth: pk.width, weight: pk.weight, declaredValue: Number(order.subtotal) }
+        });
+      }
+
+      if (data.action === 'paqar_create') {
+        if (order.status !== 'paid' || order.tracking) return reply(res, 409, c.headers, { error: 'Este pedido no está pendiente de envío.' });
+        const miss = paqar.senderMissing();
+        if (miss.length) return reply(res, 400, c.headers, { error: 'Faltan datos del remitente en Vercel: ' + miss.join(', ') });
+        const rc = data.recipient || {}, pc = data.parcel || {};
+        const need = ['name', 'street', 'number', 'city', 'state', 'zip'].filter(function (k) { return !String(rc[k] || '').trim(); });
+        if (need.length) return reply(res, 400, c.headers, { error: 'Completá los datos del destinatario (' + need.join(', ') + ').' });
+        const nums = ['height', 'width', 'depth', 'weight', 'declaredValue'].filter(function (k) { return !(Number(pc[k]) > 0); });
+        if (nums.length) return reply(res, 400, c.headers, { error: 'Completá el peso, las medidas y el valor declarado del paquete.' });
+        const out = await paqar.createOrder(order, rc, pc);
+        if (!out.ok) return reply(res, 502, c.headers, { error: 'Correo Argentino rechazó el envío: ' + out.message });
+        const saved = await patchOrder({ tracking: out.trackingNumber, status: 'shipped' });
+        return reply(res, 200, c.headers, { order: saved, trackingNumber: out.trackingNumber });
+      }
+
+      if (!order.tracking) return reply(res, 409, c.headers, { error: 'Este pedido no tiene envío creado.' });
+      if (data.action === 'paqar_label') {
+        const lb = await paqar.getLabel(order.tracking);
+        if (!lb.ok) return reply(res, 502, c.headers, { error: lb.message });
+        return reply(res, 200, c.headers, { fileBase64: lb.fileBase64, fileName: lb.fileName });
+      }
+      if (data.action === 'paqar_cancel') {
+        const cn = await paqar.cancelOrder(order.tracking);
+        if (!cn.ok) return reply(res, 502, c.headers, { error: 'No se pudo cancelar en Correo: ' + cn.message });
+        return reply(res, 200, c.headers, { order: await patchOrder({ tracking: null, status: 'paid' }) });
+      }
     }
 
     if (data.action === 'order_status') {

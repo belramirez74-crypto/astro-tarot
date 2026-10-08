@@ -161,6 +161,22 @@ button,input,select,textarea{font:inherit;color:inherit}
   <div class="err" id="mErr"></div>
   <div class="mact"><button class="btn sec" id="mCancel">Cancelar</button><button class="btn" id="mSave">Guardar</button></div>
 </div></div>
+<div class="ov" id="pqOv"><div class="modal">
+  <h2>Crear envío en Correo Argentino</h2>
+  <div class="err" id="pqWarn"></div>
+  <div class="f"><span>Nombre del destinatario</span><input id="pqName"></div>
+  <div class="row"><div class="f"><span>Teléfono</span><input id="pqPhone"></div><div class="f"><span>Email</span><input id="pqEmail"></div></div>
+  <div class="row"><div class="f"><span>Calle</span><input id="pqStreet"></div><div class="f"><span>Altura</span><input id="pqNumber"></div></div>
+  <div class="row"><div class="f"><span>Piso</span><input id="pqFloor"></div><div class="f"><span>Depto / otros</span><input id="pqDept"></div></div>
+  <div class="row"><div class="f"><span>Localidad</span><input id="pqCity"></div><div class="f"><span>Provincia</span><select id="pqState"></select></div></div>
+  <div class="row"><div class="f"><span>Código postal</span><input id="pqZip"></div><div class="f"><span>Observaciones</span><input id="pqObs"></div></div>
+  <div class="f"><span>Paquete: peso (g) y medidas (cm)</span></div>
+  <div class="row"><div class="f"><span>Peso (g)</span><input id="pqW" type="number" min="1"></div><div class="f"><span>Valor declarado ($)</span><input id="pqV" type="number" min="1"></div></div>
+  <div class="row"><div class="f"><span>Alto</span><input id="pqH" type="number" min="1"></div><div class="f"><span>Ancho</span><input id="pqA" type="number" min="1"></div></div>
+  <div class="f"><span>Largo</span><input id="pqL" type="number" min="1"></div>
+  <div class="err" id="pqErr"></div>
+  <div class="mact"><button class="btn sec" id="pqCancel">Cancelar</button><button class="btn" id="pqGo">Crear envío</button></div>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -348,7 +364,7 @@ button,input,select,textarea{font:inherit;color:inherit}
         (o.coupon_code ? '<br><small>Cupón ' + esc(o.coupon_code) + ' (−' + money(o.discount) + ')</small>' : '') + (b.newsletter ? '<br><small>✉ Acepta novedades por email</small>' : '') +
         (o.tracking ? '<br><small>Seguimiento: <strong>' + esc(o.tracking) + '</strong></small>' : '') +
         (o.status === 'paid' && b.delivery !== 'pickup' ? '<div class="f" style="margin-top:8px"><span>Nº de seguimiento</span><input class="trk" placeholder="Ej: AB123456789AR"></div>' : '') +
-        '<div class="act">' + (o.status === 'paid' ? '<button class="btn" data-s="shipped">Marcar enviado</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-copy="1">Copiar mensaje para el cliente</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
+        '<div class="act">' + (o.status === 'paid' && b.delivery !== 'pickup' ? '<button class="btn" data-pq="new">Crear envío en Correo Argentino</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-pq="label">Imprimir rótulo</button><button class="btn sec" data-pq="cancel">Cancelar envío en Correo</button>' : '') + (o.status === 'paid' ? '<button class="btn sec" data-s="shipped">Marcar enviado (a mano)</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-copy="1">Copiar mensaje para el cliente</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
     }).join('') : '<div class="empty">Todavía no hay pedidos.</div>';
   }
   async function loadOrders() {
@@ -367,6 +383,23 @@ button,input,select,textarea{font:inherit;color:inherit}
   $('tabCup').addEventListener('click', function () { tab('c'); });
   $('tabCat').addEventListener('click', function () { tab('k'); });
   $('ordList').addEventListener('click', async function (e) {
+    var pq = e.target.closest('button[data-pq]');
+    if (pq) {
+      var oid = pq.closest('.ord').getAttribute('data-id'), ord = orders.filter(function (x) { return x.id === oid; })[0], act = pq.getAttribute('data-pq');
+      $('ordErr').textContent = '';
+      if (act === 'new') { openPaqar(ord); return; }
+      try {
+        if (act === 'label') {
+          var lb = await api({ action: 'paqar_label', id: oid });
+          var bin = atob(lb.fileBase64), arr = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          window.open(URL.createObjectURL(new Blob([arr], { type: 'application/pdf' })), '_blank');
+        } else if (act === 'cancel') {
+          if (!confirm('¿Cancelar el envío en Correo Argentino? El pedido vuelve a "Pagado".')) return;
+          var cr = await api({ action: 'paqar_cancel', id: oid }); orders = orders.map(function (x) { return x.id === oid ? cr.order : x; }); renderOrders(); toast('Envío cancelado');
+        }
+      } catch (er) { $('ordErr').textContent = er.message; }
+      return;
+    }
     var cp = e.target.closest('button[data-copy]');
     if (cp) {
       var oo = orders.filter(function (x) { return x.id === cp.closest('.ord').getAttribute('data-id'); })[0], first = String((oo.buyer || {}).name || '').split(' ')[0];
@@ -379,6 +412,35 @@ button,input,select,textarea{font:inherit;color:inherit}
     var trkEl = b.closest('.ord').querySelector('.trk');
     try { var r = await api({ action: 'order_status', id: id, status: b.getAttribute('data-s'), tracking: trkEl ? trkEl.value : undefined }); orders = orders.map(function (o) { return o.id === id ? r.order : o; }); renderOrders(); }
     catch (err) { $('ordErr').textContent = err.message; }
+  });
+
+  // ---- Correo Argentino (Paq.ar) ----
+  var pqOrder = null;
+  function pqVal(id) { return $(id).value; }
+  async function openPaqar(o) {
+    $('pqErr').textContent = ''; $('pqWarn').textContent = '';
+    try {
+      var d = await api({ action: 'paqar_prepare', id: o.id });
+      pqOrder = o;
+      $('pqState').innerHTML = '<option value="">Elegí…</option>' + d.provinces.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      var r = d.recipient, k = d.parcel;
+      $('pqName').value = r.name; $('pqPhone').value = r.phone; $('pqEmail').value = r.email; $('pqStreet').value = r.street; $('pqNumber').value = r.number;
+      $('pqFloor').value = r.floor; $('pqDept').value = r.department; $('pqCity').value = r.city; $('pqState').value = r.state; $('pqZip').value = r.zip; $('pqObs').value = r.observation;
+      $('pqW').value = k.weight; $('pqV').value = k.declaredValue; $('pqH').value = k.height; $('pqA').value = k.width; $('pqL').value = k.depth;
+      if (d.missingSender.length) $('pqWarn').textContent = 'Faltan datos del remitente en Vercel: ' + d.missingSender.join(', ');
+      $('pqOv').classList.add('show');
+    } catch (e) { $('ordErr').textContent = e.message; }
+  }
+  $('pqCancel').addEventListener('click', function () { $('pqOv').classList.remove('show'); });
+  $('pqGo').addEventListener('click', async function () {
+    var btn = this; $('pqErr').textContent = ''; btn.disabled = true;
+    try {
+      var r = await api({ action: 'paqar_create', id: pqOrder.id,
+        recipient: { name: pqVal('pqName'), phone: pqVal('pqPhone'), email: pqVal('pqEmail'), street: pqVal('pqStreet'), number: pqVal('pqNumber'), floor: pqVal('pqFloor'), department: pqVal('pqDept'), city: pqVal('pqCity'), state: pqVal('pqState'), zip: pqVal('pqZip'), observation: pqVal('pqObs') },
+        parcel: { weight: pqVal('pqW'), declaredValue: pqVal('pqV'), height: pqVal('pqH'), width: pqVal('pqL'), depth: pqVal('pqA') } });
+      orders = orders.map(function (x) { return x.id === pqOrder.id ? r.order : x; }); renderOrders(); $('pqOv').classList.remove('show'); toast('Envío creado: ' + r.trackingNumber);
+    } catch (e) { $('pqErr').textContent = e.message; }
+    btn.disabled = false;
   });
 
   // ---- Categorías ----

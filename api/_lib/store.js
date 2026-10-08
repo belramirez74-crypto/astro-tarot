@@ -224,4 +224,4 @@ async function fetchProducts(ids) {
   return r.ok ? await r.json() : [];
 }
 
-module.exports = { quoteOptions: quoteOptions, fetchProducts: fetchProducts, getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+module.exports = { packageFor: packageFor, quoteOptions: quoteOptions, fetchProducts: fetchProducts, getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
