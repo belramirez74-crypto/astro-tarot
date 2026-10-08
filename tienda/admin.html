@@ -174,6 +174,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   <div class="row"><div class="f"><span>Peso (g)</span><input id="pqW" type="number" min="1"></div><div class="f"><span>Valor declarado ($)</span><input id="pqV" type="number" min="1"></div></div>
   <div class="row"><div class="f"><span>Alto</span><input id="pqH" type="number" min="1"></div><div class="f"><span>Ancho</span><input id="pqA" type="number" min="1"></div></div>
   <div class="f"><span>Largo</span><input id="pqL" type="number" min="1"></div>
+  <small id="pqNote" style="color:var(--mut)"></small>
   <div class="err" id="pqErr"></div>
   <div class="mact"><button class="btn sec" id="pqCancel">Cancelar</button><button class="btn" id="pqGo">Crear envío</button></div>
 </div></div>
@@ -362,9 +363,9 @@ button,input,select,textarea{font:inherit;color:inherit}
         (Number(o.shipping) ? '<small>Envío: ' + money(o.shipping) + '</small><br>' : '') +
         '<small>' + esc(b.email) + ' · ' + esc(b.phone) + '<br>' + (b.delivery === 'pickup' ? '<strong>RETIRO: coordinar por WhatsApp</strong>' : esc(b.address) + ', ' + esc(b.city) + ', ' + esc(b.province) + ' (' + esc(b.zip) + ')') + (b.notes ? '<br>Nota: ' + esc(b.notes) : '') + '</small>' +
         (o.coupon_code ? '<br><small>Cupón ' + esc(o.coupon_code) + ' (−' + money(o.discount) + ')</small>' : '') + (b.newsletter ? '<br><small>✉ Acepta novedades por email</small>' : '') +
-        (o.tracking ? '<br><small>Seguimiento: <strong>' + esc(o.tracking) + '</strong></small>' : '') +
+        (o.tracking ? '<br><small>Seguimiento: <strong>' + esc(o.tracking) + '</strong></small>' : '') + (o.note === 'micorreo' && !o.tracking ? '<br><small>📦 Importado a MiCorreo: imprimí el rótulo y pedí el retiro ahí, y cargá el seguimiento abajo.</small>' : '') +
         (o.status === 'paid' && b.delivery !== 'pickup' ? '<div class="f" style="margin-top:8px"><span>Nº de seguimiento</span><input class="trk" placeholder="Ej: AB123456789AR"></div>' : '') +
-        '<div class="act">' + (o.status === 'paid' && b.delivery !== 'pickup' ? '<button class="btn" data-pq="new">Crear envío en Correo Argentino</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-pq="label">Imprimir rótulo</button><button class="btn sec" data-pq="cancel">Cancelar envío en Correo</button>' : '') + (o.status === 'paid' ? '<button class="btn sec" data-s="shipped">Marcar enviado (a mano)</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-copy="1">Copiar mensaje para el cliente</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
+        '<div class="act">' + (o.status === 'paid' && b.delivery !== 'pickup' ? '<button class="btn" data-pq="new">' + (o.note === 'micorreo' ? 'Ya importado a MiCorreo' : 'Enviar con Correo Argentino') + '</button>' : '') + (o.status === 'shipped' && o.tracking && o.note === 'paqar' ? '<button class="btn sec" data-pq="label">Imprimir rótulo</button><button class="btn sec" data-pq="cancel">Cancelar envío en Correo</button>' : '') + (o.status === 'paid' ? '<button class="btn sec" data-s="shipped">Marcar enviado (a mano)</button>' : '') + (o.status === 'shipped' && o.tracking ? '<button class="btn sec" data-copy="1">Copiar mensaje para el cliente</button>' : '') + (o.status !== 'cancelled' && o.status !== 'shipped' ? '<button class="btn bad" data-s="cancelled">Cancelar</button>' : '') + '</div></div>';
     }).join('') : '<div class="empty">Todavía no hay pedidos.</div>';
   }
   async function loadOrders() {
@@ -415,7 +416,7 @@ button,input,select,textarea{font:inherit;color:inherit}
   });
 
   // ---- Correo Argentino (Paq.ar) ----
-  var pqOrder = null;
+  var pqOrder = null, pqProvider = 'paqar';
   function pqVal(id) { return $(id).value; }
   async function openPaqar(o) {
     $('pqErr').textContent = ''; $('pqWarn').textContent = '';
@@ -423,10 +424,11 @@ button,input,select,textarea{font:inherit;color:inherit}
       var d = await api({ action: 'paqar_prepare', id: o.id });
       pqOrder = o;
       $('pqState').innerHTML = '<option value="">Elegí…</option>' + d.provinces.map(function (p) { return '<option value="' + p[0] + '">' + esc(p[1]) + '</option>'; }).join('');
+      pqProvider = d.provider; $('pqNote').textContent = pqProvider === 'micorreo' ? 'El envío se carga en tu cuenta de MiCorreo: desde ahí imprimís el rótulo y pedís el retiro.' : ''; $('pqGo').textContent = pqProvider === 'micorreo' ? 'Importar a MiCorreo' : 'Crear envío';
       var r = d.recipient, k = d.parcel;
       $('pqName').value = r.name; $('pqPhone').value = r.phone; $('pqEmail').value = r.email; $('pqStreet').value = r.street; $('pqNumber').value = r.number;
       $('pqFloor').value = r.floor; $('pqDept').value = r.department; $('pqCity').value = r.city; $('pqState').value = r.state; $('pqZip').value = r.zip; $('pqObs').value = r.observation;
-      $('pqW').value = k.weight; $('pqV').value = k.declaredValue; $('pqH').value = k.height; $('pqA').value = k.width; $('pqL').value = k.depth;
+      $('pqW').value = k.weight; $('pqV').value = k.declaredValue; $('pqH').value = k.height; $('pqA').value = k.width; $('pqL').value = k.length != null ? k.length : k.depth;
       if (d.missingSender.length) $('pqWarn').textContent = 'Faltan datos del remitente en Vercel: ' + d.missingSender.join(', ');
       $('pqOv').classList.add('show');
     } catch (e) { $('ordErr').textContent = e.message; }
@@ -437,8 +439,8 @@ button,input,select,textarea{font:inherit;color:inherit}
     try {
       var r = await api({ action: 'paqar_create', id: pqOrder.id,
         recipient: { name: pqVal('pqName'), phone: pqVal('pqPhone'), email: pqVal('pqEmail'), street: pqVal('pqStreet'), number: pqVal('pqNumber'), floor: pqVal('pqFloor'), department: pqVal('pqDept'), city: pqVal('pqCity'), state: pqVal('pqState'), zip: pqVal('pqZip'), observation: pqVal('pqObs') },
-        parcel: { weight: pqVal('pqW'), declaredValue: pqVal('pqV'), height: pqVal('pqH'), width: pqVal('pqL'), depth: pqVal('pqA') } });
-      orders = orders.map(function (x) { return x.id === pqOrder.id ? r.order : x; }); renderOrders(); $('pqOv').classList.remove('show'); toast('Envío creado: ' + r.trackingNumber);
+        parcel: { weight: pqVal('pqW'), declaredValue: pqVal('pqV'), height: pqVal('pqH'), length: pqVal('pqL'), width: pqVal('pqA'), depth: pqVal('pqL') } });
+      orders = orders.map(function (x) { return x.id === pqOrder.id ? r.order : x; }); renderOrders(); $('pqOv').classList.remove('show'); toast(r.imported ? 'Importado a MiCorreo' : 'Envío creado: ' + r.trackingNumber);
     } catch (e) { $('pqErr').textContent = e.message; }
     btn.disabled = false;
   });

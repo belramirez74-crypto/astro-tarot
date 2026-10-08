@@ -2,7 +2,7 @@
 // Todas las escrituras usan la service_role key; el navegador nunca escribe en la tabla products.
 const { handlePreflight, reply, parseBody, getAuthJwt } = require('../http.js');
 const { authUser } = require('../supa.js');
-const { getCategories, fetchProducts, packageFor } = require('../store.js');
+const { getCategories, fetchProducts, packageFor, mcConfigured, micorreoImport } = require('../store.js');
 const paqar = require('../paqar.js');
 
 function slugify(t) {
@@ -53,7 +53,10 @@ module.exports = async function handler(req, res) {
     }
 
     if (['paqar_prepare', 'paqar_create', 'paqar_label', 'paqar_cancel'].indexOf(data.action) !== -1) {
-      if (!paqar.configured()) return reply(res, 400, c.headers, { error: 'Correo Argentino todavía no está configurado (faltan PAQAR_AGREEMENT y PAQAR_APIKEY en Vercel).' });
+      // Dos vías: API Paq.ar (acuerdo comercial) o importación a MiCorreo. Se usa la que esté configurada.
+      const provider = paqar.configured() ? 'paqar' : (mcConfigured() ? 'micorreo' : null);
+      if (!provider) return reply(res, 400, c.headers, { error: 'Correo Argentino todavía no está configurado (faltan las credenciales en Vercel).' });
+      if (provider === 'micorreo' && data.action !== 'paqar_prepare' && data.action !== 'paqar_create') return reply(res, 400, c.headers, { error: 'Con MiCorreo, el rótulo y la cancelación se hacen desde MiCorreo.' });
       const og = await fetch(url + '/rest/v1/orders?select=*&id=eq.' + encodeURIComponent(String(data.id || '')), { headers: sbHeaders() });
       const order = (og.ok ? await og.json() : [])[0];
       if (!order) return reply(res, 404, c.headers, { error: 'Pedido no encontrado' });
@@ -68,24 +71,30 @@ module.exports = async function handler(req, res) {
         const pk = packageFor(order.items.map(function (i) { const p = rows.filter(function (x) { return x.id === i.id; })[0] || {}; return Object.assign({}, p, { qty: i.qty }); }));
         const sp = paqar.splitAddress(b.address);
         return reply(res, 200, c.headers, {
-          missingSender: paqar.senderMissing(), provinces: paqar.PROVINCES,
+          provider: provider, missingSender: provider === 'paqar' ? paqar.senderMissing() : [], provinces: paqar.PROVINCES,
           recipient: { name: b.name || '', phone: b.phone || '', email: b.email || '', street: sp.street, number: sp.number, floor: '', department: sp.rest, city: b.city || '', state: paqar.provinceCode(b.province), zip: b.zip || '', observation: b.notes || '' },
-          parcel: { height: pk.height, width: pk.length, depth: pk.width, weight: pk.weight, declaredValue: Number(order.subtotal) }
+          parcel: { height: pk.height, length: pk.length, width: pk.width, weight: pk.weight, declaredValue: Number(order.subtotal) }
         });
       }
 
       if (data.action === 'paqar_create') {
         if (order.status !== 'paid' || order.tracking) return reply(res, 409, c.headers, { error: 'Este pedido no está pendiente de envío.' });
-        const miss = paqar.senderMissing();
+        const miss = provider === 'paqar' ? paqar.senderMissing() : [];
         if (miss.length) return reply(res, 400, c.headers, { error: 'Faltan datos del remitente en Vercel: ' + miss.join(', ') });
         const rc = data.recipient || {}, pc = data.parcel || {};
         const need = ['name', 'street', 'number', 'city', 'state', 'zip'].filter(function (k) { return !String(rc[k] || '').trim(); });
         if (need.length) return reply(res, 400, c.headers, { error: 'Completá los datos del destinatario (' + need.join(', ') + ').' });
-        const nums = ['height', 'width', 'depth', 'weight', 'declaredValue'].filter(function (k) { return !(Number(pc[k]) > 0); });
+        const nums = (provider === 'micorreo' ? ['height', 'width', 'length', 'weight', 'declaredValue'] : ['height', 'width', 'depth', 'weight', 'declaredValue']).filter(function (k) { return !(Number(pc[k]) > 0); });
         if (nums.length) return reply(res, 400, c.headers, { error: 'Completá el peso, las medidas y el valor declarado del paquete.' });
-        const out = await paqar.createOrder(order, rc, pc);
+        if (provider === 'micorreo') {
+          const imp = await micorreoImport(order, rc, { weight: Number(pc.weight), height: Number(pc.height), length: Number(pc.length), width: Number(pc.width), declaredValue: Number(pc.declaredValue) });
+          if (!imp.ok) return reply(res, 502, c.headers, { error: 'MiCorreo rechazó el envío: ' + imp.message });
+          const savedM = await patchOrder({ note: 'micorreo' });
+          return reply(res, 200, c.headers, { order: savedM, imported: true });
+        }
+        const out = await paqar.createOrder(order, rc, { height: pc.height, width: pc.width, depth: pc.depth, weight: pc.weight, declaredValue: pc.declaredValue });
         if (!out.ok) return reply(res, 502, c.headers, { error: 'Correo Argentino rechazó el envío: ' + out.message });
-        const saved = await patchOrder({ tracking: out.trackingNumber, status: 'shipped' });
+        const saved = await patchOrder({ tracking: out.trackingNumber, status: 'shipped', note: 'paqar' });
         return reply(res, 200, c.headers, { order: saved, trackingNumber: out.trackingNumber });
       }
 

@@ -146,8 +146,9 @@ async function mcLogin() {
   if (!t.ok) throw new Error('micorreo token ' + t.status);
   const tj = await t.json();
   mcAuth.jwt = tj.token;
-  const exp = Date.parse(tj.expires);
-  mcAuth.exp = isFinite(exp) ? exp - 60000 : Date.now() + 10 * 60000;
+  // "expires" viene como "AAAA-MM-DD HH:mm:ss" (hora argentina); se renueva antes y como máximo a los 20 minutos.
+  const exp = Date.parse(String(tj.expires || '').replace(' ', 'T') + '-03:00');
+  mcAuth.exp = isFinite(exp) ? Math.min(exp - 60000, Date.now() + 20 * 60000) : Date.now() + 10 * 60000;
   if (process.env.MICORREO_CUSTOMER_ID) mcAuth.customerId = process.env.MICORREO_CUSTOMER_ID;
   if (!mcAuth.customerId) {
     const v = await fetch(mcBase() + '/users/validate', {
@@ -172,16 +173,23 @@ function packageFor(items) {
   return { weight: Math.min(25000, Math.max(1, Math.round(w))), length: Math.min(150, l), width: Math.min(150, a), height: Math.min(150, Math.max(1, h)) };
 }
 
+async function micorreoCall(method, path, body) {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const auth = await mcLogin();
+    const r = await fetch(mcBase() + path, { method: method, headers: { authorization: 'Bearer ' + auth.jwt, 'content-type': 'application/json' }, body: body ? JSON.stringify(body(auth)) : undefined });
+    if (r.status === 401 && attempt === 0) { mcAuth.jwt = null; continue; }
+    return r;
+  }
+}
+
 async function micorreoRates(zip, items) {
   const dest = (/(\d{4})/.exec(String(zip || '')) || [])[1];
   if (!dest) return null;
-  const auth = await mcLogin();
   const pkg = packageFor(items);
-  const r = await fetch(mcBase() + '/rates', {
-    method: 'POST', headers: { authorization: 'Bearer ' + auth.jwt, 'content-type': 'application/json' },
-    body: JSON.stringify({ customerId: auth.customerId, postalCodeOrigin: process.env.MICORREO_ORIGIN_CP, postalCodeDestination: dest, dimensions: [Object.assign({ quantity: 1 }, pkg)] })
+  const r = await micorreoCall('POST', '/rates', function (auth) {
+    return { customerId: auth.customerId, postalCodeOrigin: String(process.env.MICORREO_ORIGIN_CP), postalCodeDestination: dest,
+      dimensions: { weight: pkg.weight, height: pkg.height, width: pkg.width, length: pkg.length } };
   });
-  if (r.status === 401) { mcAuth.jwt = null; }
   if (!r.ok) throw new Error('micorreo rates ' + r.status);
   const out = await r.json();
   const markup = 1 + (Number(process.env.MICORREO_MARKUP_PCT) || 0) / 100, handling = Number(process.env.MICORREO_HANDLING) || 0;
@@ -195,6 +203,31 @@ async function micorreoRates(zip, items) {
     const x = best[t], days = x.deliveryTimeMin && x.deliveryTimeMax ? ' (' + x.deliveryTimeMin + ' a ' + x.deliveryTimeMax + ' días)' : '';
     return { type: t, label: (t === 'D' ? 'Envío a domicilio' : 'Envío a sucursal de Correo Argentino') + days, price: Math.round(x.price * markup + handling) };
   });
+}
+
+// Importa el envío a la cuenta de MiCorreo (ahí se imprime el rótulo y se pide el retiro). Devuelve { ok, message }.
+async function micorreoImport(order, rcpt, parcel) {
+  const e = process.env;
+  const hasSender = !!(e.PAQAR_SENDER_NAME && e.PAQAR_SENDER_STREET);
+  const r = await micorreoCall('POST', '/shipping/import', function (auth) {
+    return {
+      customerId: auth.customerId, extOrderId: String(order.id), orderNumber: String(order.ref).replace('order:', '').slice(0, 12),
+      sender: hasSender ? {
+        name: e.PAQAR_SENDER_NAME, phone: e.PAQAR_SENDER_PHONE || null, cellPhone: null, email: e.PAQAR_SENDER_EMAIL || null,
+        originAddress: { streetName: e.PAQAR_SENDER_STREET, streetNumber: e.PAQAR_SENDER_NUMBER || null, floor: e.PAQAR_SENDER_FLOOR || null, apartment: e.PAQAR_SENDER_DEPT || null,
+          city: e.PAQAR_SENDER_CITY || null, provinceCode: e.PAQAR_SENDER_STATE || null, postalCode: e.PAQAR_SENDER_ZIP || e.MICORREO_ORIGIN_CP || null }
+      } : { name: null, phone: null, cellPhone: null, email: null, originAddress: { streetName: null, streetNumber: null, floor: null, apartment: null, city: null, provinceCode: null, postalCode: null } },
+      recipient: { name: rcpt.name, phone: String(rcpt.phone || ''), cellPhone: '', email: rcpt.email || '' },
+      shipping: {
+        deliveryType: 'D', agency: null,
+        address: { streetName: rcpt.street, streetNumber: String(rcpt.number), floor: String(rcpt.floor || '').slice(0, 3), apartment: String(rcpt.department || '').slice(0, 3), city: rcpt.city, provinceCode: rcpt.state, postalCode: String(rcpt.zip) },
+        weight: Math.round(parcel.weight), declaredValue: Math.round(parcel.declaredValue), height: Math.round(parcel.height), length: Math.round(parcel.length), width: Math.round(parcel.width)
+      }
+    };
+  });
+  let out = null; try { out = await r.json(); } catch (er) { out = null; }
+  if (!r.ok) return { ok: false, message: (out && out.message) || 'Error ' + r.status };
+  return { ok: true };
 }
 
 // Opciones de envío para un código postal: cotización real si está configurada; si no, tabla por zona.
@@ -224,4 +257,4 @@ async function fetchProducts(ids) {
   return r.ok ? await r.json() : [];
 }
 
-module.exports = { packageFor: packageFor, quoteOptions: quoteOptions, fetchProducts: fetchProducts, getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
+module.exports = { mcConfigured: mcConfigured, micorreoImport: micorreoImport, packageFor: packageFor, quoteOptions: quoteOptions, fetchProducts: fetchProducts, getCategories: getCategories, DEFAULT_CATS: DEFAULT_CATS, findCoupon: findCoupon, couponDiscount: couponDiscount, quoteShipping: quoteShipping, sbHeaders: sbHeaders, base: base, getOrder: getOrder, finalizeOrder: finalizeOrder };
