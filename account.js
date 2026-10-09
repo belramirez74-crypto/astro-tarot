@@ -52,6 +52,14 @@
             patch.birth_time_unknown = !!birth.unknown;
         }
         try { await sb.from('profiles').upsert(patch); } catch (e) {}
+        // Si le regalaron un acceso al plan, se aplica ahora.
+        try {
+            var sess = (await sb.auth.getSession()).data.session;
+            if (sess) {
+                var cr = await fetch('/api/store-grants', { method: 'POST', headers: { 'Authorization': 'Bearer ' + sess.access_token } }).then(function (r) { return r.json(); });
+                if (cr && cr.applied) { /* el perfil se vuelve a leer justo abajo */ }
+            }
+        } catch (e) {}
         await refreshProfile();
         var banner = document.getElementById('authStatus');
         if (banner) banner.textContent = '';
@@ -420,7 +428,10 @@
     }
 
     function isLoggedIn() { return !!currentUser; }
-    function hasActivePlan() { return !!(currentProfile && currentProfile.plan_active); }
+    function hasActivePlan() {
+        if (!(currentProfile && currentProfile.plan_active)) return false;
+        return !(currentProfile.plan_expires_at && new Date(currentProfile.plan_expires_at).getTime() < Date.now());
+    }
     function openSubscribeModal() {
         if (!currentUser) {
             document.getElementById('authModal').style.display = 'flex';

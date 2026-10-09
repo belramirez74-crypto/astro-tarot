@@ -90,7 +90,20 @@ button,input,select,textarea{font:inherit;color:inherit}
     <div><h1>&#x2726; Panel de la tienda</h1><small id="who"></small></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sec" href="/tienda/" target="_blank" style="text-decoration:none">Ver tienda</a><button class="btn" id="newBtn">+ Nuevo producto</button><button class="btn sec" id="outBtn">Salir</button></div>
   </div>
-  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button><button class="btn sec" id="tabCup">Cupones</button><button class="btn sec" id="tabCat">Categorías</button></div>
+  <div class="tabs"><button class="btn" id="tabProd">Productos</button><button class="btn sec" id="tabOrd">Pedidos <span id="ordBadge"></span></button><button class="btn sec" id="tabCup">Cupones</button><button class="btn sec" id="tabCat">Categorías</button><button class="btn sec" id="tabAcc">Accesos</button></div>
+  <div id="accView" style="display:none">
+    <div class="ord"><strong>Invitar a un servicio</strong>
+      <div class="f" style="margin-top:8px"><span>Email de la persona (el que usa en LUBE)</span><input id="gEmail" type="email" placeholder="persona@gmail.com"></div>
+      <div class="row">
+        <div class="f"><span>Servicio</span><select id="gService"><option value="plan">Plan mensual de LUBE (completo)</option></select></div>
+        <div class="f"><span>Duración</span><select id="gDays"><option value="30">30 días</option><option value="90">90 días</option><option value="365">1 año</option><option value="">Sin vencimiento</option></select></div>
+      </div>
+      <div class="f"><span>Nota (ej: sorteo, influencer)</span><input id="gNote" maxlength="120"></div>
+      <button class="btn" id="gAdd">Dar acceso</button>
+      <small style="display:block;margin-top:8px">Incluye informe natal completo, compatibilidad, oráculo ilimitado y 4 tiradas generales por mes. Si la persona todavía no tiene cuenta en LUBE, queda pendiente y se activa solo cuando entre.</small>
+    </div>
+    <div class="err" id="accErr"></div><div id="accList"></div>
+  </div>
   <div id="catView" style="display:none">
     <div class="ord"><strong>Nueva categoría</strong>
       <div class="f" style="margin-top:8px"><span>Nombre</span><input id="catName" maxlength="40" placeholder="Ej: Inciensos y sahumerios"></div>
@@ -373,16 +386,18 @@ button,input,select,textarea{font:inherit;color:inherit}
     try { orders = (await api({ action: 'orders' })).orders; renderOrders(); } catch (e) { $('ordErr').textContent = e.message; }
   }
   function tab(which) {
-    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none'; $('cupView').style.display = which === 'c' ? '' : 'none'; $('catView').style.display = which === 'k' ? '' : 'none';
-    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec'); $('tabCup').className = 'btn' + (which === 'c' ? '' : ' sec'); $('tabCat').className = 'btn' + (which === 'k' ? '' : ' sec');
+    $('prodView').style.display = which === 'p' ? '' : 'none'; $('ordView').style.display = which === 'o' ? '' : 'none'; $('cupView').style.display = which === 'c' ? '' : 'none'; $('catView').style.display = which === 'k' ? '' : 'none'; $('accView').style.display = which === 'a' ? '' : 'none';
+    $('tabProd').className = 'btn' + (which === 'p' ? '' : ' sec'); $('tabOrd').className = 'btn' + (which === 'o' ? '' : ' sec'); $('tabCup').className = 'btn' + (which === 'c' ? '' : ' sec'); $('tabCat').className = 'btn' + (which === 'k' ? '' : ' sec'); $('tabAcc').className = 'btn' + (which === 'a' ? '' : ' sec');
     if (which === 'o') loadOrders();
     if (which === 'c') loadCoupons();
     if (which === 'k') renderCats();
+    if (which === 'a') loadGrants();
   }
   $('tabProd').addEventListener('click', function () { tab('p'); });
   $('tabOrd').addEventListener('click', function () { tab('o'); });
   $('tabCup').addEventListener('click', function () { tab('c'); });
   $('tabCat').addEventListener('click', function () { tab('k'); });
+  $('tabAcc').addEventListener('click', function () { tab('a'); });
   $('ordList').addEventListener('click', async function (e) {
     var pq = e.target.closest('button[data-pq]');
     if (pq) {
@@ -443,6 +458,34 @@ button,input,select,textarea{font:inherit;color:inherit}
       orders = orders.map(function (x) { return x.id === pqOrder.id ? r.order : x; }); renderOrders(); $('pqOv').classList.remove('show'); toast(r.imported ? 'Importado a MiCorreo' : 'Envío creado: ' + r.trackingNumber);
     } catch (e) { $('pqErr').textContent = e.message; }
     btn.disabled = false;
+  });
+
+  // ---- Accesos regalados ----
+  var grantList = [];
+  function renderGrants() {
+    $('accList').innerHTML = grantList.length ? grantList.map(function (g) {
+      var exp = g.expires_at ? new Date(g.expires_at) : null, expired = exp && exp < new Date();
+      var state = !g.claimed_at ? 'Pendiente: todavía no entró a LUBE' : (expired ? 'Vencido' : 'Activo');
+      return '<div class="ord" data-id="' + g.id + '"><header><strong>' + esc(g.email) + '</strong><span class="st ' + (expired ? 'cancelled' : (g.claimed_at ? 'paid' : 'pending')) + '">' + state + '</span></header>' +
+        '<small>Plan mensual · ' + (g.days ? g.days + ' días' : 'sin vencimiento') + (exp ? ' · vence ' + exp.toLocaleDateString('es-AR') : '') + (g.note ? ' · ' + esc(g.note) : '') + '</small>' +
+        '<div class="act"><button class="btn bad" data-gr="1">Quitar acceso</button></div></div>';
+    }).join('') : '<div class="empty">Todavía no diste accesos.</div>';
+  }
+  async function loadGrants() { $('accErr').textContent = ''; try { grantList = (await api({ action: 'grants_list' })).grants; renderGrants(); } catch (e) { $('accErr').textContent = e.message; } }
+  $('gAdd').addEventListener('click', async function () {
+    var btn = this; $('accErr').textContent = ''; btn.disabled = true;
+    try {
+      var r = await api({ action: 'grant_add', email: $('gEmail').value, days: $('gDays').value, note: $('gNote').value });
+      $('gEmail').value = ''; $('gNote').value = '';
+      toast(r.hasAccount ? 'Acceso activado' : 'Guardado: se activa cuando entre a LUBE'); await loadGrants();
+    } catch (e) { $('accErr').textContent = e.message; }
+    btn.disabled = false;
+  });
+  $('accList').addEventListener('click', async function (e) {
+    var b = e.target.closest('[data-gr]'); if (!b) return;
+    var id = b.closest('.ord').getAttribute('data-id');
+    if (!confirm('¿Quitar este acceso?')) return;
+    try { await api({ action: 'grant_revoke', id: id }); toast('Acceso quitado'); await loadGrants(); } catch (er) { $('accErr').textContent = er.message; }
   });
 
   // ---- Categorías ----

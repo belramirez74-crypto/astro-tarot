@@ -4,6 +4,8 @@ const { handlePreflight, reply, parseBody, getAuthJwt } = require('../http.js');
 const { authUser } = require('../supa.js');
 const { getCategories, fetchProducts, packageFor, mcConfigured, micorreoImport } = require('../store.js');
 const paqar = require('../paqar.js');
+const grants = require('../grants.js');
+const { adminPatchProfile } = require('../supa.js');
 
 function slugify(t) {
   return String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
@@ -109,6 +111,44 @@ module.exports = async function handler(req, res) {
         if (!cn.ok) return reply(res, 502, c.headers, { error: 'No se pudo cancelar en Correo: ' + cn.message });
         return reply(res, 200, c.headers, { order: await patchOrder({ tracking: null, status: 'paid' }) });
       }
+    }
+
+    if (data.action === 'grants_list') {
+      const r = await fetch(url + '/rest/v1/access_grants?select=*&order=created_at.desc&limit=200', { headers: sbHeaders() });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo leer. ¿Ejecutaste supabase-grants.sql en Supabase?' });
+      return reply(res, 200, c.headers, { grants: await r.json() });
+    }
+
+    if (data.action === 'grant_add') {
+      const email = String(data.email || '').trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return reply(res, 400, c.headers, { error: 'Ingresá un email válido.' });
+      const days = data.days === '' || data.days == null ? null : Math.floor(num(data.days, 1, 3650) || 0) || null;
+      if (data.days !== '' && data.days != null && !days) return reply(res, 400, c.headers, { error: 'La duración debe ser de 1 a 3650 días.' });
+      const row = { email: email, service: 'plan', days: days, note: String(data.note || '').slice(0, 120) || null };
+      const prof = await grants.profileByEmail(email);
+      let applied = false;
+      if (prof) {
+        applied = await grants.applyToProfile(prof, days);
+        row.claimed_at = new Date().toISOString();
+        row.expires_at = days ? new Date(Date.now() + days * 86400000).toISOString() : null;
+      }
+      const r = await fetch(url + '/rest/v1/access_grants', { method: 'POST', headers: sbHeaders({ prefer: 'return=representation' }), body: JSON.stringify(row) });
+      if (!r.ok) return reply(res, 502, c.headers, { error: 'No se pudo guardar el acceso. ¿Ejecutaste supabase-grants.sql?' });
+      return reply(res, 200, c.headers, { grant: (await r.json())[0], appliedNow: applied, hasAccount: !!prof });
+    }
+
+    if (data.action === 'grant_revoke') {
+      const gr = await fetch(url + '/rest/v1/access_grants?select=email&id=eq.' + encodeURIComponent(String(data.id || '')), { headers: sbHeaders() });
+      const g = (gr.ok ? await gr.json() : [])[0];
+      if (!g) return reply(res, 404, c.headers, { error: 'Acceso no encontrado' });
+      await fetch(url + '/rest/v1/access_grants?id=eq.' + encodeURIComponent(String(data.id)), { method: 'DELETE', headers: sbHeaders() });
+      // Si no le queda otro acceso y su plan no es una suscripción paga, se le quita.
+      const left = await fetch(url + '/rest/v1/access_grants?select=id&email=eq.' + encodeURIComponent(g.email), { headers: sbHeaders() });
+      const prof = await grants.profileByEmail(g.email);
+      if (prof && prof.plan_active && !prof.plan_preapproval_id && !((left.ok ? await left.json() : []).length)) {
+        await adminPatchProfile(prof.id, { plan_active: false, plan_expires_at: null });
+      }
+      return reply(res, 200, c.headers, { ok: true });
     }
 
     if (data.action === 'order_status') {

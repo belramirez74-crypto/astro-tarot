@@ -8,7 +8,8 @@ const handlers = {
   webhook: require('./_lib/h/webhook.js'),
   shipping: require('./_lib/h/shipping.js'),
   coupon: require('./_lib/h/coupon.js'),
-  account: require('./_lib/h/account.js')
+  account: require('./_lib/h/account.js'),
+  grants: require('./_lib/h/grants.js')
 };
 
 module.exports = async function handler(req, res) {

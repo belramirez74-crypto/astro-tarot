@@ -20,9 +20,10 @@ async function isAdminJwt(jwt) {
 async function getProfileForJwt(jwt) {
   const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_ANON_KEY;
   if (!url || !key || !jwt) return null;
-  const res = await fetch(url + '/rest/v1/profiles?select=id,plan_active,plan_preapproval_id,plan_tiradas_used,plan_period_start,senal_count', {
-    headers: { apikey: key, authorization: 'Bearer ' + jwt }
-  });
+  const base = 'id,plan_active,plan_preapproval_id,plan_tiradas_used,plan_period_start,senal_count';
+  // plan_expires_at puede no existir todavía en la base: si falla, se pide sin esa columna.
+  let res = await fetch(url + '/rest/v1/profiles?select=' + base + ',plan_expires_at', { headers: { apikey: key, authorization: 'Bearer ' + jwt } });
+  if (!res.ok) res = await fetch(url + '/rest/v1/profiles?select=' + base, { headers: { apikey: key, authorization: 'Bearer ' + jwt } });
   if (!res.ok) return null;
   const rows = await res.json().catch(function () { return []; });
   return rows[0] || null;
@@ -31,6 +32,7 @@ async function getProfileForJwt(jwt) {
 // ¿El plan sigue vigente? Sin suscripción asociada (otorgado a mano) vale mientras plan_active sea true.
 async function planStillValid(prof) {
   if (!prof || !prof.plan_active) return false;
+  if (prof.plan_expires_at && new Date(prof.plan_expires_at).getTime() < Date.now()) return false;
   if (!prof.plan_preapproval_id) return true;
   if (!process.env.MP_ACCESS_TOKEN) return false;
   try {
