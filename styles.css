@@ -2006,3 +2006,25 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
 .tirada-section #tiradaGeneral,.tirada-section #tiradaPreguntas{width:100%;display:flex;flex-direction:column;align-items:center}
 .tirada-section .tirada-premium{width:100%}
 .tirada-section .ai-report,.tirada-section .natal-reading{max-width:780px;width:100%;margin-left:auto;margin-right:auto}
+
+/* ---- Escritorio: más ancho útil (solo pantallas grandes; celular y tablet no cambian) ---- */
+@media (min-width: 1200px) {
+  .hero p { max-width: 950px; }
+  .intro, .history-section { max-width: 1040px; }
+  .transits-section, .recommendations-section { max-width: 1120px; }
+  .signal-section { max-width: 900px; }
+  .houses-section, .planets-section, .elements-section, .modalidades-section,
+  .natal-section, .horoscope-section, .compatibility-section { max-width: 1200px; }
+  .tirada-section .signal-inner { max-width: 1140px; }
+  footer { max-width: 1280px; }
+}
+@media (min-width: 1700px) {
+  .intro, .history-section { max-width: 1200px; }
+  .transits-section, .recommendations-section { max-width: 1280px; }
+  .houses-section, .planets-section, .elements-section, .modalidades-section,
+  .natal-section, .horoscope-section, .compatibility-section { max-width: 1360px; }
+  .cards-section { max-width: 1560px; }
+  .zodiac-section { max-width: 1480px; }
+  .tirada-section .signal-inner { max-width: 1280px; }
+  footer { max-width: 1440px; }
+}
