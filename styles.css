@@ -2028,3 +2028,24 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
   .tirada-section .signal-inner { max-width: 1280px; }
   footer { max-width: 1440px; }
 }
+
+/* ---- Legibilidad: tamaños mínimos (los textos más chicos de las tarjetas eran de 9 a 11 px) ---- */
+.card-detail-item .label{font-size:.72rem !important;opacity:1 !important}
+.zodiac-detail .label,.zodiac-cards .label{font-size:.7rem !important;letter-spacing:.04em !important;overflow-wrap:anywhere;opacity:1 !important}
+.zodiac-details>*,.zodiac-grid>*,.zodiac-card,.zodiac-detail{min-width:0}
+.zodiac-name{font-size:max(.85rem,13px) !important}
+.card-detail-item .value,.zodiac-detail .value{font-size:.8rem !important}
+.card-desc{font-size:.8rem !important;line-height:1.5}
+.card-name{font-size:max(.85rem,13px) !important}
+.zodiac-name small{font-size:.75rem !important}
+.zodiac-img-label{font-size:.75rem !important}
+.zodiac-cards-list a,.zodiac-cards a{font-size:.78rem !important}
+.zodiac-rasgos li{font-size:.8rem !important}
+.house-sign{font-size:.8rem !important}
+.planet-sign{font-size:.8rem !important}
+.element-signs span{font-size:.8rem !important}
+.transit-card .planet-name{font-size:.82rem !important}
+.transit-card .planet-degree{font-size:.8rem !important}
+.transit-card .planet-sign{font-size:.88rem !important}
+footer .lube-foot-tag{font-size:12px !important}
+.nav-account-btn{font-size:13px}
