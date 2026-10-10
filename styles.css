@@ -1999,3 +1999,10 @@ footer .lube-foot-tag{font-size:11px;letter-spacing:.3em;text-transform:uppercas
 .preg-input:focus{outline:none;border-color:#C686DD}
 .preg-qlist{max-width:620px;margin:0 auto 1rem;text-align:left;color:#e6d5ff;line-height:1.5}
 @media(max-width:640px){.tirada-choice{grid-template-columns:1fr;gap:12px}.choice-card{padding:16px 14px}}
+
+/* ---- Tirada en escritorio: usar el ancho disponible (antes se ajustaba al contenido, ~640 px) ---- */
+.tirada-section .signal-inner{width:100%;max-width:1000px;margin-left:auto;margin-right:auto}
+.tirada-section #tiradaChoice{width:100%}
+.tirada-section #tiradaGeneral,.tirada-section #tiradaPreguntas{width:100%;display:flex;flex-direction:column;align-items:center}
+.tirada-section .tirada-premium{width:100%}
+.tirada-section .ai-report,.tirada-section .natal-reading{max-width:780px;width:100%;margin-left:auto;margin-right:auto}
