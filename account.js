@@ -92,7 +92,7 @@
 
     var KIND_LABEL = {
         natal: 'Carta natal', tirada_gratis: 'Tirada gratis (Pasado/Presente/Futuro)',
-        tirada_full: 'Lectura completa (7 cartas)', tirada_categoria: 'Lectura por categoría',
+        tirada_full: 'Lectura completa (7 cartas)', tirada_preguntas: 'Tirada con preguntas', tirada_categoria: 'Lectura por categoría',
         horoscopo: 'Horóscopo del día', senal: 'Señal del Tarot', oraculo: 'Oráculo (I Ching)', compatibilidad: 'Informe de compatibilidad'
     };
 
@@ -360,7 +360,7 @@
     async function getLatestReading(item) {
         if (!sb || !currentUser) return null;
         try {
-            var kind = item === 'full' ? 'tirada_full' : 'tirada_categoria';
+            var kind = item === 'full' ? 'tirada_full' : (item === 'preguntas' ? 'tirada_preguntas' : 'tirada_categoria');
             var r = await sb.from('reading_history').select('detail').eq('user_id', currentUser.id).eq('kind', kind)
                 .filter('detail->>item', 'eq', item).order('created_at', { ascending: false }).limit(1);
             var d = r.data && r.data[0] && r.data[0].detail;

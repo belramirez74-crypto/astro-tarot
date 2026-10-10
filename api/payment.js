@@ -8,6 +8,7 @@ const ITEMS = {
   finanzas: { title: 'Lectura de Tarot — Finanzas y dinero', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
   profesion: { title: 'Lectura de Tarot — Profesión y trabajo', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
   familia: { title: 'Lectura de Tarot — Familia y hogar', envPrice: 'MP_PRICE_CATEGORY', fallback: 1200 },
+  preguntas: { title: 'Tirada de Tarot con tus preguntas', envPrice: 'MP_PRICE_PREGUNTAS', altPrice: 'MP_PRICE_FULL', fallback: 1500 },
   oraculo: { title: 'Consulta al Oráculo (I Ching)', envPrice: 'MP_PRICE_ORACULO', fallback: 1000 }
 };
 
@@ -28,7 +29,7 @@ module.exports = async function handler(req, res) {
   const useDiscount = !!data.discount && item.envPrice === 'MP_PRICE_CATEGORY';
   const price = useDiscount
     ? (Number(process.env.MP_PRICE_CATEGORY_DISCOUNT) || 2500)
-    : (Number(process.env[item.envPrice]) || item.fallback);
+    : (Number(process.env[item.envPrice]) || (item.altPrice && Number(process.env[item.altPrice])) || item.fallback);
   const site = c.origin || ('https://' + ((req.headers || {}).host || ''));
 
   try {

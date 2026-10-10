@@ -684,7 +684,7 @@
                 if (!pending && sessionStorage) {
                     try {
                         var it = sessionStorage.getItem('tarot_pending_item'), rf = sessionStorage.getItem('tarot_pending_ref');
-                        if (it && rf) pending = { item: it, ref: rf, errEl: document.getElementById(it === 'full' ? 'tiradaPayError' : 'categoriaPayError') };
+                        if (it && rf) pending = { item: it, ref: rf, errEl: document.getElementById(it === 'preguntas' ? 'pregError' : (it === 'full' ? 'tiradaPayError' : 'categoriaPayError')) };
                     } catch (e) {}
                 }
                 if (!pending || !pending.ref || getToken(pending.item)) return;
@@ -701,7 +701,8 @@
                                 document.getElementById('mpModalOverlay').style.display = 'none';
                                 saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
                                 if (data.item === 'oraculo') doOracleConsult();
-                                else runPremiumReading(data.item, data.token);
+                                else if (data.item === 'preguntas') { if (window.Preguntas) Preguntas.run(data.token, null); }
+                                else { if (window.Preguntas) Preguntas.setMode('general'); runPremiumReading(data.item, data.token); }
                             } else if (attempts < 20) {
                                 pollTimer = setTimeout(tick, 3000);
                             }
@@ -835,6 +836,12 @@
                 }
             }
 
+            // La tirada con preguntas (preguntas.js) reutiliza el pago, el guardado y el dibujo de cartas.
+            window.TarotCore = {
+                allCards: allCards, drawSpread: drawSpread, renderSpread: renderSpread, tRenderReport: tRenderReport,
+                getToken: getToken, startCheckout: startCheckout, storeSaved: storeSaved, loadSaved: loadSaved
+            };
+
             // ---- Vuelta desde Mercado Pago ----
             (function checkPaymentReturn() {
                 var qs = new URLSearchParams(location.search);
@@ -846,7 +853,7 @@
                 if (pago !== 'exito' || !paymentId || !item) return;
                 (async function() {
                     var isOraculo = item === 'oraculo';
-                    var errEl = document.getElementById(isOraculo ? 'signalLimitMsg' : (item === 'full' ? 'tiradaPayError' : 'categoriaPayError'));
+                    var errEl = document.getElementById(isOraculo ? 'signalLimitMsg' : (item === 'preguntas' ? 'pregError' : (item === 'full' ? 'tiradaPayError' : 'categoriaPayError')));
                     // Se espera al siguiente tick: recién ahí ya está armado el resto de la página
                     // (el link de menú todavía no tiene su listener en este punto del script).
                     await new Promise(function(r) { setTimeout(r, 0); });
@@ -858,7 +865,8 @@
                         if (!res.ok || !data.approved) throw new Error((data && data.error) || 'El pago no se pudo confirmar todavía. Si ya pagaste, esperá un minuto y volvé a intentar.');
                         saveToken(data.item, data.token, Date.now() + 1000 * 60 * 60 * 24 * 30);
                         if (data.item === 'oraculo') doOracleConsult();
-                        else runPremiumReading(data.item, data.token);
+                        else if (data.item === 'preguntas') { if (window.Preguntas) Preguntas.run(data.token, null); }
+                        else { if (window.Preguntas) Preguntas.setMode('general'); runPremiumReading(data.item, data.token); }
                     } catch (err) {
                         if (errEl) tShowError(errEl, err.message);
                     }

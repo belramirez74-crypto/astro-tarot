@@ -428,6 +428,23 @@
         <section class="tirada-section fade-section view-hidden" id="tirada">
             <div class="signal-inner">
                 <h2>&#x2726; Tirada de Tarot &#x2726;</h2>
+                <p class="subtitle">Eleg&iacute; c&oacute;mo quer&eacute;s consultar las cartas</p>
+                <div class="tirada-choice" id="tiradaChoice">
+                    <div class="choice-card" data-mode="general">
+                        <span class="choice-icon">&#x2726;</span>
+                        <h3>Tirada general</h3>
+                        <p>Las cartas hablan al azar: una tirada gratis de tres cartas, y si quer&eacute;s ir m&aacute;s profundo, la lectura completa o una enfocada en un &aacute;rea.</p>
+                        <button class="astro-btn" type="button" data-mode="general">Elegir tirada general</button>
+                    </div>
+                    <div class="choice-card" data-mode="preguntas">
+                        <span class="choice-icon">&#x2753;</span>
+                        <h3>Tirada con tus preguntas</h3>
+                        <p>Escrib&iacute; hasta tres preguntas concretas y sacamos cartas para responder cada una de ellas.</p>
+                        <button class="astro-btn" type="button" data-mode="preguntas">Hacer mis preguntas</button>
+                    </div>
+                </div>
+
+                <div id="tiradaGeneral" style="display:none">
                 <p class="subtitle">La tirada cl&aacute;sica de tres cartas: Pasado, Presente y Futuro</p>
                 <div style="text-align:center"><span class="tirada-free-badge">gratis</span></div>
                 <button class="signal-btn" id="tiradaBtn">Tirar las cartas</button>
@@ -473,6 +490,32 @@
                     <h3 id="categoriaTitle">&#x2726; Tu Lectura &#x2726;</h3>
                     <div class="tirada-spread" id="categoriaSpread"></div>
                     <div class="ai-report" id="categoriaAiOut"></div>
+                </div>
+                </div>
+
+                <div id="tiradaPreguntas" style="display:none">
+                    <div id="pregForm" class="preg-form">
+                        <h3>&#x2726; Tus preguntas &#x2726;</h3>
+                        <p class="preg-hint">Escrib&iacute; preguntas concretas y abiertas (por ejemplo, &laquo;&iquest;Qu&eacute; necesito entender sobre mi situaci&oacute;n laboral?&raquo;). Sacamos dos cartas por pregunta y una carta final con el mensaje central.</p>
+                        <label class="preg-label">Pregunta 1 <span class="preg-count" id="pregCount1">0/200</span>
+                            <input class="preg-input" data-n="1" type="text" maxlength="200" placeholder="Tu pregunta principal">
+                        </label>
+                        <label class="preg-label">Pregunta 2 (opcional) <span class="preg-count" id="pregCount2">0/200</span>
+                            <input class="preg-input" data-n="2" type="text" maxlength="200">
+                        </label>
+                        <label class="preg-label">Pregunta 3 (opcional) <span class="preg-count" id="pregCount3">0/200</span>
+                            <input class="preg-input" data-n="3" type="text" maxlength="200">
+                        </label>
+                        <button class="astro-btn" id="pregBtn" type="button">Consultar las cartas &mdash; <span id="pregPrice">$&mdash;</span></button>
+                        <p class="preg-hint" style="margin-top:.8rem">Con el plan mensual esta consulta cuenta como una de tus 4 tiradas del mes.</p>
+                        <div class="astro-error" id="pregError" style="display:none"></div>
+                    </div>
+                    <div class="tirada-premium" id="pregResult" style="display:none">
+                        <h3>&#x2726; Tu Consulta &#x2726;</h3>
+                        <ol class="preg-qlist" id="pregQList"></ol>
+                        <div class="tirada-spread" id="pregSpread"></div>
+                        <div class="ai-report" id="pregOut"></div>
+                    </div>
                 </div>
             </div>
             <div class="section-divider"><span class="divider-icon">&#x2727;</span></div>
@@ -528,6 +571,7 @@
     <script src="survey.js"></script>
     <script src="account.js"></script>
     <script src="app.js"></script>
+    <script src="preguntas.js"></script>
     <script src="lube.js"></script>
 </body>
 </html>
